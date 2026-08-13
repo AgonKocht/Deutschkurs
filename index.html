@@ -528,18 +528,19 @@
   /* ---- Maskotti: Shqiponja (Adler) ---- */
   .mascot-fab {
     position: fixed; right: 16px; bottom: calc(18px + env(safe-area-inset-bottom));
-    z-index: 850; width: 58px; height: 58px; border-radius: 50%;
+    z-index: 850; width: 64px; height: 64px; border-radius: 50%;
     background: radial-gradient(circle at 32% 28%, #ffe08a, var(--gold));
-    border: 2px solid rgba(255,255,255,.25); font-size: 1.7rem;
+    border: 2px solid rgba(255,255,255,.25); font-size: 1.7rem; padding: 0; overflow: hidden;
     display: flex; align-items: center; justify-content: center; cursor: pointer;
     box-shadow: 0 8px 26px var(--gold-glow), 0 4px 14px rgba(0,0,0,.4);
     animation: mascotFloat 3.2s ease-in-out infinite;
     transition: transform .12s ease;
   }
+  .mascot-fab img { width: 82%; height: 82%; object-fit: contain; pointer-events: none; }
   .mascot-fab:active { transform: scale(.9); }
   @keyframes mascotFloat { 0%,100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-6px) rotate(4deg); } }
   .mascot-bubble {
-    position: fixed; right: 16px; bottom: calc(84px + env(safe-area-inset-bottom));
+    position: fixed; right: 16px; bottom: calc(90px + env(safe-area-inset-bottom));
     z-index: 851; max-width: min(320px, calc(100vw - 32px));
     background: var(--surface); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
     border: 1px solid var(--line-strong); border-radius: 20px 20px 4px 20px;
@@ -551,7 +552,9 @@
     position: absolute; top: 8px; right: 10px; background: none; border: none;
     color: var(--muted); font-size: .85rem; cursor: pointer; padding: 4px;
   }
-  .mascot-bubble-text { font-size: .88rem; font-weight: 700; line-height: 1.5; color: var(--ink); padding-right: 14px; }
+  .mascot-bubble-inner { display: flex; align-items: flex-start; gap: 10px; }
+  .mascot-bubble-avatar { width: 34px; height: 34px; object-fit: contain; flex-shrink: 0; margin-top: 2px; }
+  .mascot-bubble-text { font-size: .88rem; font-weight: 700; line-height: 1.5; color: var(--ink); padding-right: 10px; }
   .mascot-bubble-cta {
     margin-top: 10px; width: 100%; padding: 10px; border-radius: 12px; border: none;
     background: linear-gradient(135deg, var(--gold), #ffe08a); color: #241a03;
@@ -584,10 +587,16 @@
 <!-- MASKOTTI: SHQIPONJA -->
 <div class="mascot-bubble hidden" id="mascotBubble">
   <button class="mascot-bubble-close" id="mascotBubbleClose">✕</button>
-  <div class="mascot-bubble-text" id="mascotBubbleText"></div>
+  <div class="mascot-bubble-inner">
+    <img src="mascot/eagle-64.png" alt="" class="mascot-bubble-avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='none';">
+    <div class="mascot-bubble-text" id="mascotBubbleText"></div>
+  </div>
   <button class="mascot-bubble-cta hidden" id="mascotBubbleCta"></button>
 </div>
-<button class="mascot-fab" id="mascotFab" aria-label="Shqiponja">🦅</button>
+<button class="mascot-fab" id="mascotFab" aria-label="Shqiponja">
+  <img src="mascot/eagle-120.png" alt="" id="mascotFabImg" onerror="this.style.display='none'; document.getElementById('mascotFabEmoji').style.display='block';">
+  <span id="mascotFabEmoji" style="display:none;">🦅</span>
+</button>
 
 <header>
   <div class="header-row">
