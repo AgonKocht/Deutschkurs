@@ -3258,10 +3258,15 @@ async function loadProgress() {
       document.getElementById("syncMsg").textContent = "Përparimi u ngarkua: " + totalPoints + " pikë, " + custom.length + " fjalë të shtuara vetë.";
     } else {
       document.getElementById("syncMsg").textContent = "Llogari e re — përparimi yt ruhet tani e tutje.";
+      placementTaken = false;
       touchStreak();
+      renderLevelCard();
       await saveProgress();
-      if (!placementTaken) openPlacementOverlay();
     }
+    // Einstufungstest zeigen, solange er für dieses Konto noch nie gemacht
+    // oder bewusst übersprungen wurde – unabhängig davon, ob schon ein
+    // Fortschritts-Datensatz existiert.
+    if (!placementTaken) openPlacementOverlay();
   } catch (err) {
     document.getElementById("syncMsg").textContent = "Gabim gjatë ngarkimit: " + err.message;
   }
