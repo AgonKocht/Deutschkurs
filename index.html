@@ -483,6 +483,14 @@
     font-size: 1.2rem; font-weight: 700; line-height: 1.5;
     animation: fadeSlideIn .35s cubic-bezier(.2,.8,.2,1);
   }
+  .placement-img-frame {
+    width: 100%; max-width: 300px; height: 210px; margin: 0 auto 16px;
+    border-radius: var(--radius-lg); background: rgba(255,255,255,.05);
+    box-shadow: 0 8px 26px rgba(0,0,0,.45); display: flex; align-items: center;
+    justify-content: center; overflow: hidden;
+    animation: popIn .4s cubic-bezier(.2,.8,.2,1);
+  }
+  .placement-img-frame img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
   .placement-celebrate { text-align: center; animation: popIn .55s cubic-bezier(.2,.8,.2,1); }
   .placement-celebrate .badge-big {
     font-size: 4.6rem; font-weight: 800; letter-spacing: -.03em; line-height: 1;
@@ -1687,24 +1695,45 @@ const CEFR_INFO = {
 const CEFR_ORDER = ["A1","A2","B1","B2","C1","C2"];
 
 const PLACEMENT_TEST = [
-  { level: "A1", q: "Ich ___ Uran.", opts: ["bin","bist","ist"], a: 0 },
-  { level: "A1", q: "Das ist ___ Auto.", opts: ["mein","meine","meinen"], a: 0 },
-  { level: "A1", q: "Wie viel ist zwei plus drei?", opts: ["vier","fünf","sechs"], a: 1 },
-  { level: "A2", q: "Ich habe gestern einen Film ___.", opts: ["sehe","gesehen","sah"], a: 1 },
-  { level: "A2", q: "Er ___ jeden Tag zur Arbeit.", opts: ["gehst","geht","gehe"], a: 1 },
-  { level: "A2", q: "Können Sie mir bitte ___ Weg zum Bahnhof zeigen?", opts: ["der","den","dem"], a: 1 },
-  { level: "B1", q: "Ich lerne Deutsch, ___ ich in Deutschland arbeiten möchte.", opts: ["weil","aber","oder"], a: 0 },
-  { level: "B1", q: "Wenn ich Zeit hätte, ___ ich mehr Sport.", opts: ["treibe","würde treiben","trieb"], a: 1 },
-  { level: "B1", q: "Der Brief, ___ ich gestern bekommen habe, war wichtig.", opts: ["der","den","dem"], a: 1 },
-  { level: "B2", q: "Er tat so, als ___ er nichts davon gewusst.", opts: ["hat","habe","hätte"], a: 2 },
-  { level: "B2", q: "Trotz ___ Regens gingen wir spazieren.", opts: ["der","des","dem"], a: 1 },
-  { level: "B2", q: "Kaum hatte er das Haus verlassen, ___ es zu regnen.", opts: ["begann","beginnt","begonnen"], a: 0 },
-  { level: "C1", q: "Es ist davon auszugehen, dass die Maßnahmen ___ Wirkung zeigen werden.", opts: ["ihre","ihrer","ihren"], a: 0 },
-  { level: "C1", q: "___ des schlechten Wetters fand die Veranstaltung wie geplant statt.", opts: ["Ungeachtet","Trotzdem","Deswegen"], a: 0 },
-  { level: "C1", q: "Er hätte die Prüfung bestanden, ___ er mehr gelernt hätte.", opts: ["wenn","als","ob"], a: 0 },
-  { level: "C2", q: "Nicht selten ___ sich Sprachwandel erst im Nachhinein als solcher erkennen.", opts: ["lässt","lasst","ließt"], a: 0 },
-  { level: "C2", q: "Kaum ein Experte hätte vorhersehen können, ___ rasant sich die Lage entwickeln würde.", opts: ["wie","dass","ob"], a: 0 },
-  { level: "C2", q: "Man ___ kaum umhin, die Komplexität des Sachverhalts anzuerkennen.", opts: ["kommt","geht","läuft"], a: 0 }
+  // ---------- A1 ----------
+  { level: "A1", type: "image", word: "der Apfel", wiki: "Apfel",
+    q: "Çfarë është kjo?", opts: ["der Apfel","das Brot","der Käse"], a: 0 },
+  { level: "A1", type: "vocab", q: "Si thuhet „ujë\" në gjermanisht?", opts: ["das Wasser","die Milch","der Wein"], a: 0 },
+  { level: "A1", type: "grammar", q: "Ich ___ Uran.", opts: ["bin","bist","ist"], a: 0 },
+  { level: "A1", type: "vocab", q: "Si thuhet „faleminderit\" në gjermanisht?", opts: ["bitte","danke","tschüss"], a: 1 },
+
+  // ---------- A2 ----------
+  { level: "A2", type: "image", word: "der Bahnhof", wiki: "Bahnhof",
+    q: "Çfarë është kjo?", opts: ["der Flughafen","der Bahnhof","das Krankenhaus"], a: 1 },
+  { level: "A2", type: "grammar", q: "Ich habe gestern einen Film ___.", opts: ["sehe","gesehen","sah"], a: 1 },
+  { level: "A2", type: "vocab", q: "Çfarë do të thotë „die Rechnung\"?", opts: ["fatura","dhoma","rruga"], a: 0 },
+  { level: "A2", type: "grammar", q: "Können Sie mir bitte ___ Weg zum Bahnhof zeigen?", opts: ["der","den","dem"], a: 1 },
+
+  // ---------- B1 ----------
+  { level: "B1", type: "image", word: "der Wasserfall", wiki: "Wasserfall",
+    q: "Çfarë është kjo?", opts: ["der Fluss","der Wasserfall","der See"], a: 1 },
+  { level: "B1", type: "grammar", q: "Ich lerne Deutsch, ___ ich in Deutschland arbeiten möchte.", opts: ["weil","aber","oder"], a: 0 },
+  { level: "B1", type: "vocab", q: "Çfarë do të thotë „die Bewerbung\"?", opts: ["aplikimi për punë","pushimi vjetor","kontrata e qirasë"], a: 0 },
+  { level: "B1", type: "grammar", q: "Der Brief, ___ ich gestern bekommen habe, war wichtig.", opts: ["der","den","dem"], a: 1 },
+
+  // ---------- B2 ----------
+  { level: "B2", type: "image", word: "das Gerüst", wiki: "Gerüst",
+    q: "Çfarë është kjo?", opts: ["das Gerüst","der Zaun","die Leiter"], a: 0 },
+  { level: "B2", type: "grammar", q: "Er tat so, als ___ er nichts davon gewusst.", opts: ["hat","habe","hätte"], a: 2 },
+  { level: "B2", type: "vocab", q: "Çfarë do të thotë „die Voraussetzung\"?", opts: ["kushti paraprak","përfundimi","përjashtimi"], a: 0 },
+  { level: "B2", type: "grammar", q: "Trotz ___ Regens gingen wir spazieren.", opts: ["der","des","dem"], a: 1 },
+
+  // ---------- C1 ----------
+  { level: "C1", type: "vocab", q: "Çfarë do të thotë „die Nachhaltigkeit\"?", opts: ["qëndrueshmëria","pakujdesia","shkathtësia"], a: 0 },
+  { level: "C1", type: "grammar", q: "___ des schlechten Wetters fand die Veranstaltung wie geplant statt.", opts: ["Ungeachtet","Trotzdem","Deswegen"], a: 0 },
+  { level: "C1", type: "vocab", q: "Çfarë do të thotë shprehja „etwas in Kauf nehmen\"?", opts: ["e pranon diçka të pakëndshme","e blen diçka lirë","e refuzon diçka"], a: 0 },
+  { level: "C1", type: "grammar", q: "Es ist davon auszugehen, dass die Maßnahmen ___ Wirkung zeigen werden.", opts: ["ihre","ihrer","ihren"], a: 0 },
+
+  // ---------- C2 ----------
+  { level: "C2", type: "vocab", q: "Çfarë do të thotë „die Gratwanderung\"?", opts: ["ecja në teh të thikës","udhëtimi i gjatë","festimi i madh"], a: 0 },
+  { level: "C2", type: "grammar", q: "Nicht selten ___ sich Sprachwandel erst im Nachhinein als solcher erkennen.", opts: ["lässt","lasst","ließt"], a: 0 },
+  { level: "C2", type: "vocab", q: "Çfarë do të thotë „beiläufig\"?", opts: ["kalimthi, pa u ndalur","me qëllim të qartë","me zë të lartë"], a: 0 },
+  { level: "C2", type: "grammar", q: "Man ___ kaum umhin, die Komplexität des Sachverhalts anzuerkennen.", opts: ["kommt","geht","läuft"], a: 0 }
 ];
 
 let placementAnswers = [];
@@ -1732,20 +1761,40 @@ function startPlacementTest() {
   renderPlacementQuestion(0);
 }
 
+const TYPE_LABEL = { image: "🖼️ Foto", vocab: "📖 Fjalor", grammar: "🧩 Gramatikë" };
+
 function renderPlacementQuestion(index) {
   const runner = document.getElementById("placementRunner");
   if (index >= PLACEMENT_TEST.length) { finishPlacementTest(); return; }
   const q = PLACEMENT_TEST[index];
   const pct = Math.round((index / PLACEMENT_TEST.length) * 100);
+  const isImage = q.type === "image";
   runner.innerHTML = `
     <div class="placement-meta">
       <span>Pyetja ${index+1} / ${PLACEMENT_TEST.length}</span>
-      <span class="placement-level-tag">${q.level}</span>
+      <span class="placement-level-tag">${TYPE_LABEL[q.type] || ""}</span>
     </div>
     <div class="placement-progress-track"><div class="placement-progress-fill" style="width:${pct}%"></div></div>
+    ${isImage ? `
+      <div class="placement-img-frame" id="placementImgFrame">
+        <div id="placementImgLoading" style="color:var(--muted);font-size:.85rem;font-weight:700;">Fotoja po ngarkohet…</div>
+        <img id="placementImg" class="hidden" alt="">
+      </div>` : ""}
     <div class="placement-question">${esc(q.q)}</div>
     <div class="quiz-options" id="placementOptions"></div>
   `;
+
+  if (isImage) {
+    const imgEl = document.getElementById("placementImg");
+    const loadEl = document.getElementById("placementImgLoading");
+    fetchWikiImage(q.wiki).then(src => preloadImage(src).then(ok => {
+      if (!ok || !src) { loadEl.textContent = "(pa foto)"; return; }
+      imgEl.src = src;
+      imgEl.classList.remove("hidden");
+      loadEl.classList.add("hidden");
+    }));
+  }
+
   const box = document.getElementById("placementOptions");
   q.opts.forEach((opt, i) => {
     const el = document.createElement("button");
@@ -1757,7 +1806,7 @@ function renderPlacementQuestion(index) {
       el.classList.add(correct ? "correct" : "wrong");
       if (!correct) box.children[q.a].classList.add("correct");
       correct ? feedbackCorrect() : feedbackWrong();
-      placementAnswers.push({ level: q.level, correct });
+      placementAnswers.push({ level: q.level, correct, type: q.type });
       setTimeout(() => renderPlacementQuestion(index + 1), 700);
     });
     box.appendChild(el);
@@ -1766,14 +1815,15 @@ function renderPlacementQuestion(index) {
 }
 
 function determineCefrLevel() {
-  // Stufenweise auswerten: pro Niveau 3 Fragen, mind. 2/3 richtig zum Bestehen.
-  // Höchstes bestandene Niveau gewinnt; sobald ein Niveau durchfällt, wird abgebrochen.
+  // Pro Niveau 4 gemischte Fragen (Bild, Vokabel, Grammatik).
+  // Bestanden ab 3 von 4 richtig. Höchstes bestandenes Niveau zählt;
+  // sobald ein Niveau nicht bestanden wird, endet die Bewertung dort.
   let reached = "A1";
   for (const lvl of CEFR_ORDER) {
     const forLevel = placementAnswers.filter(a => a.level === lvl);
     if (!forLevel.length) break;
     const correctCount = forLevel.filter(a => a.correct).length;
-    if (correctCount >= 2) reached = lvl;
+    if (correctCount >= Math.ceil(forLevel.length * 0.75)) reached = lvl;
     else break;
   }
   return reached;
@@ -1796,7 +1846,7 @@ async function finishPlacementTest() {
     const forLevel = placementAnswers.filter(a => a.level === lvl);
     if (!forLevel.length) return "";
     const okCount = forLevel.filter(a => a.correct).length;
-    const passed = okCount >= 2;
+    const passed = okCount >= Math.ceil(forLevel.length * 0.75);
     return `<span class="placement-score-chip ${passed ? "passed" : ""}">${lvl} ${okCount}/${forLevel.length}</span>`;
   }).join("");
 
