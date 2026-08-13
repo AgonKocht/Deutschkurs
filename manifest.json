@@ -2,7 +2,7 @@
   "name": "Shqip-Deutsch B1 Trainer",
   "short_name": "B1 Trainer",
   "description": "Fjalor dhe përgatitje provimi për certifikatën gjermane B1",
-  "start_url": "./",
+  "start_url": "./b1-trainer.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",

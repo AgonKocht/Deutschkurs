@@ -1,7 +1,6 @@
 const CACHE_NAME = "b1-trainer-v1";
 const CORE_FILES = [
-  "./",
-  "./index.html",
+  "./b1-trainer.html",
   "./manifest.json",
   "./icons/icon-192.png",
   "./icons/icon-512.png"

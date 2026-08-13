@@ -65,46 +65,50 @@
   @keyframes confettiFall { to { transform: translateY(320px) rotate(540deg); opacity: 0; } }
   @keyframes ringPulse { 0% { box-shadow: 0 0 0 0 var(--pulse-color, rgba(91,140,255,.5)); } 100% { box-shadow: 0 0 0 18px rgba(91,140,255,0); } }
 
-  .view, .hud, .account-bar { animation: fadeSlideIn .35s cubic-bezier(.2,.8,.2,1); }
+  .view, .points-bar, .level-progress-wrap, .account-bar { animation: fadeSlideIn .35s cubic-bezier(.2,.8,.2,1); }
 
   header { text-align: center; margin-bottom: 4px; width: 100%; max-width: 520px; }
-  .header-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
   h1 {
-    font-size: 1.35rem; margin: 0 0 3px 0; font-weight: 800; letter-spacing: -.015em;
-    display: flex; align-items: center; gap: 8px;
+    font-size: 1.55rem; margin: 0 0 3px 0; font-weight: 800; letter-spacing: -.01em;
+    display: flex; align-items: center; justify-content: center; gap: 9px;
   }
-  h1 .mascot { animation: flicker 2.4s ease-in-out infinite; display: inline-block; filter: drop-shadow(0 0 10px var(--gold-glow)); }
-  .subtitle { color: var(--muted); font-size: .82rem; font-weight: 600; }
-  .cefr-pill {
-    padding: 5px 12px; border-radius: var(--radius-pill); font-size: .78rem; font-weight: 800;
-    background: rgba(91,140,255,.16); border: 1px solid rgba(91,140,255,.4); color: var(--blue);
-    letter-spacing: .03em;
-  }
+  h1 span:first-child { animation: flicker 2.4s ease-in-out infinite; display: inline-block; filter: drop-shadow(0 0 10px var(--gold-glow)); }
+  .subtitle { color: var(--muted); font-size: .85rem; font-weight: 600; }
 
-  /* ---- HUD ---- */
-  .hud {
-    width: 100%; max-width: 520px; margin: 14px 0 12px;
-    background: var(--surface); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 14px 16px;
-    box-shadow: 0 10px 32px rgba(0,0,0,.38);
+  /* ---- glass surfaces ---- */
+  .points-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--surface); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border-radius: var(--radius-lg); padding: 13px 18px; margin: 14px 0 8px;
+    border: 1px solid var(--line); width: 100%; max-width: 520px;
+    box-shadow: 0 8px 28px rgba(0,0,0,.35);
   }
-  .hud-stats { display: flex; align-items: center; gap: 10px; }
-  .hud-stat { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
-  .hud-stat-icon { font-size: 1.15rem; flex-shrink: 0; filter: drop-shadow(0 0 8px rgba(255,200,87,.35)); }
-  .hud-stat-text { display: flex; flex-direction: column; line-height: 1.1; min-width: 0; }
-  .hud-stat-value { font-size: 1.15rem; font-weight: 800; color: var(--ink); }
-  .hud-stat-value.bump { animation: popIn .35s ease; }
-  .hud-stat-label { font-size: .62rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }
-  .hud-divider { width: 1px; align-self: stretch; background: var(--line); flex-shrink: 0; }
+  .points-left { display: flex; align-items: center; gap: 11px; }
+  .points-icon {
+    width: 40px; height: 40px; border-radius: var(--radius-pill);
+    background: radial-gradient(circle at 30% 30%, #ffe08a, var(--gold));
+    display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;
+    box-shadow: 0 0 18px var(--gold-glow); animation: floatGlow 2.6s ease-in-out infinite;
+  }
+  .points-text { display: flex; flex-direction: column; line-height: 1.15; }
+  .points-value { font-size: 1.35rem; font-weight: 800; color: var(--ink); transition: transform .25s ease; }
+  .points-value.bump { animation: popIn .35s ease; }
+  .points-label { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; font-weight: 700; }
+  .streak-pill {
+    display: flex; align-items: center; gap: 5px; background: rgba(255,200,87,.12);
+    border: 1px solid rgba(255,200,87,.35); border-radius: var(--radius-pill); padding: 5px 10px;
+    font-size: .78rem; font-weight: 800; color: var(--gold); margin-left: 10px;
+  }
+  .streak-pill span:first-child { animation: flicker 1.8s ease-in-out infinite; display: inline-block; }
   .level-badge {
     background: linear-gradient(135deg, var(--blue), #7aa2ff); color: #fff;
-    padding: 7px 13px; border-radius: var(--radius-pill); font-weight: 800; font-size: .76rem;
-    box-shadow: 0 0 16px var(--blue-glow), inset 0 1px 0 rgba(255,255,255,.3); flex-shrink: 0;
+    padding: 8px 17px; border-radius: var(--radius-pill); font-weight: 800; font-size: .82rem;
+    box-shadow: 0 0 16px var(--blue-glow), inset 0 1px 0 rgba(255,255,255,.3);
   }
-  .hud-bars { display: flex; flex-direction: column; gap: 7px; margin-top: 14px; }
-  .hud-bar-row { display: flex; align-items: center; gap: 10px; }
-  .hud-bar-label { font-size: .64rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; width: 68px; flex-shrink: 0; }
-  .hud-bar-track { flex: 1; height: 7px; background: rgba(255,255,255,.07); border-radius: var(--radius-pill); overflow: hidden; }
+  .level-progress-wrap {
+    width: 100%; max-width: 520px; height: 10px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: var(--radius-pill); margin-bottom: 16px; overflow: hidden;
+  }
   .level-progress-bar {
     height: 100%; border-radius: var(--radius-pill); transition: width .5s cubic-bezier(.2,.8,.2,1);
     background: linear-gradient(90deg, var(--gold), #ffe08a, var(--gold));
@@ -393,8 +397,16 @@
   .sync-note { font-size: .76rem; color: var(--muted); text-align: center; margin-top: 14px; line-height: 1.5; font-weight: 600; }
 
   /* ---- badges / achievements ---- */
-  .badges-row { display: flex; gap: 7px; justify-content: center; flex-wrap: wrap; margin: 14px 0 0; }
+  .badges-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin: 4px 0 12px; width: 100%; max-width: 520px; }
 
+  .answer-streak-wrap {
+    width: 100%; max-width: 520px; margin: 0 0 16px;
+    background: var(--surface); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--line); border-radius: var(--radius-md); padding: 10px 14px;
+  }
+  .answer-streak-label { display: flex; justify-content: space-between; font-size: .78rem; font-weight: 800; color: var(--muted); margin-bottom: 7px; }
+  .answer-streak-label b { color: var(--gold); font-size: .92rem; }
+  .answer-streak-track { height: 8px; background: rgba(255,255,255,.06); border-radius: var(--radius-pill); overflow: hidden; }
   .answer-streak-fill {
     height: 100%; border-radius: var(--radius-pill); transition: width .4s cubic-bezier(.2,.8,.2,1);
     background: linear-gradient(90deg, var(--red), var(--gold), var(--green));
@@ -437,90 +449,10 @@
   .levelup-card p { margin: 0 0 18px; color: var(--muted); font-size: .88rem; font-weight: 600; }
   .confetti-piece { position: fixed; top: -10px; z-index: 1000; border-radius: 2px; animation: confettiFall linear forwards; pointer-events: none; }
 
-  /* ---- Vollbild-Einstufungstest ---- */
-  #placementOverlay {
-    position: fixed; inset: 0; z-index: 900; overflow-y: auto;
-    background:
-      radial-gradient(900px 500px at 20% -10%, rgba(91,140,255,.22), transparent 60%),
-      radial-gradient(700px 450px at 100% 20%, rgba(255,95,109,.14), transparent 55%),
-      var(--bg-0);
-    padding: calc(28px + env(safe-area-inset-top)) 20px calc(40px + env(safe-area-inset-bottom));
-    animation: overlayIn .4s cubic-bezier(.2,.8,.2,1);
-  }
-  @keyframes overlayIn { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
-  .placement-shell { max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; justify-content: center; min-height: 100%; }
-  .placement-hero { text-align: center; margin-bottom: 22px; animation: popIn .5s cubic-bezier(.2,.8,.2,1); }
-  .placement-hero-icon {
-    font-size: 3.4rem; line-height: 1; margin-bottom: 14px;
-    filter: drop-shadow(0 0 24px var(--gold-glow)); animation: flicker 3s ease-in-out infinite;
-  }
-  .placement-hero h2 { margin: 0 0 10px; font-size: 1.6rem; font-weight: 800; letter-spacing: -.01em; }
-  .placement-hero p { margin: 0; color: var(--muted); font-size: .92rem; line-height: 1.6; font-weight: 600; }
-  .placement-levels-preview {
-    display: flex; gap: 7px; justify-content: center; flex-wrap: wrap; margin-bottom: 26px;
-  }
-  .placement-levels-preview span {
-    padding: 7px 14px; border-radius: var(--radius-pill); font-size: .8rem; font-weight: 800;
-    background: var(--surface); border: 1px solid var(--line); color: var(--muted);
-  }
-  .placement-actions { display: flex; flex-direction: column; gap: 10px; }
-  .placement-actions .btn { width: 100%; padding: 16px; font-size: 1rem; }
-  .placement-progress-track {
-    height: 8px; background: rgba(255,255,255,.07); border-radius: var(--radius-pill);
-    overflow: hidden; margin-bottom: 20px;
-  }
-  .placement-progress-fill {
-    height: 100%; border-radius: var(--radius-pill); transition: width .45s cubic-bezier(.2,.8,.2,1);
-    background: linear-gradient(90deg, var(--blue), var(--gold));
-    box-shadow: 0 0 12px var(--blue-glow);
-  }
-  .placement-meta { display: flex; justify-content: space-between; font-size: .8rem; font-weight: 800; color: var(--muted); margin-bottom: 12px; }
-  .placement-level-tag { color: var(--blue); }
-  .placement-question {
-    background: var(--surface); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-    border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 26px 22px;
-    text-align: center; margin-bottom: 18px; box-shadow: 0 10px 34px rgba(0,0,0,.4);
-    font-size: 1.2rem; font-weight: 700; line-height: 1.5;
-    animation: fadeSlideIn .35s cubic-bezier(.2,.8,.2,1);
-  }
-  .placement-celebrate { text-align: center; animation: popIn .55s cubic-bezier(.2,.8,.2,1); }
-  .placement-celebrate .badge-big {
-    font-size: 4.6rem; font-weight: 800; letter-spacing: -.03em; line-height: 1;
-    margin-bottom: 6px; animation: floatGlow 2.2s ease-in-out infinite;
-  }
-  .placement-celebrate .friendly { font-size: 1.15rem; font-weight: 800; margin-bottom: 4px; }
-  .placement-celebrate .sub-line { color: var(--muted); font-size: .9rem; font-weight: 600; line-height: 1.6; margin-bottom: 22px; }
-  .placement-score-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap; }
-  .placement-score-chip {
-    padding: 8px 14px; border-radius: var(--radius-pill); font-size: .78rem; font-weight: 800;
-    background: var(--surface); border: 1px solid var(--line); color: var(--muted);
-  }
-  .placement-score-chip.passed { color: var(--green); border-color: rgba(53,220,156,.4); background: rgba(53,220,156,.12); }
-
-  /* ---- Stufenauswahl ---- */
-  .level-picker { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .level-chip {
-    position: relative; overflow: hidden;
-    padding: 12px 6px; border-radius: var(--radius-md); border: 1px solid var(--line);
-    background: var(--surface); color: var(--ink); font-family: var(--font);
-    font-weight: 800; font-size: .95rem; cursor: pointer; text-align: center;
-    transition: transform .12s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
-  }
-  .level-chip small { display: block; font-size: .62rem; font-weight: 700; color: var(--muted); margin-top: 3px; letter-spacing: .02em; }
-  .level-chip:active { transform: scale(.95); }
-  .level-chip.selected {
-    background: linear-gradient(140deg, var(--blue), #6f97ff); color: #fff; border-color: transparent;
-    box-shadow: 0 6px 20px var(--blue-glow), inset 0 1px 0 rgba(255,255,255,.3);
-  }
-  .level-chip.selected small { color: rgba(255,255,255,.85); }
-  .level-chip.recommended::after {
-    content: "★"; position: absolute; top: 4px; right: 6px; font-size: .6rem; color: var(--gold);
-  }
-
   /* ---- iPad / größere Bildschirme ---- */
   @media (min-width: 700px) {
     body { padding-left: calc(28px + env(safe-area-inset-left)); padding-right: calc(28px + env(safe-area-inset-right)); }
-    .view, .hud, .account-bar, nav { max-width: 680px; }
+    .view, .points-bar, .level-progress-wrap, .account-bar, nav, .badges-row { max-width: 680px; }
     h1 { font-size: 1.9rem; }
     .subtitle { font-size: .95rem; }
     .card-wrap { height: 260px; }
@@ -532,7 +464,7 @@
     .exam-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   }
   @media (min-width: 1024px) {
-    .view, .hud, .account-bar, nav { max-width: 800px; }
+    .view, .points-bar, .level-progress-wrap, .account-bar, nav, .badges-row { max-width: 800px; }
     #wordList { grid-template-columns: 1fr 1fr 1fr; }
   }
 </style>
@@ -541,53 +473,30 @@
 <body>
 
 <header>
-  <div class="header-row">
-    <h1><span class="mascot">🦅</span> Shqip–Gjermanisht</h1>
-    <div class="cefr-pill hidden" id="cefrPill">B1</div>
-  </div>
-  <div class="subtitle">Fjalor &amp; përgatitje provimi</div>
+  <h1><span>🦅</span> Shqip–Gjermanisht <span style="color:var(--blue)">B1</span></h1>
+  <div class="subtitle">Fjalor &amp; përgatitje provimi për certifikatën B1</div>
 </header>
 
-<div class="hud">
-  <div class="hud-stats">
-    <div class="hud-stat">
-      <span class="hud-stat-icon">⭐</span>
-      <div class="hud-stat-text">
-        <span class="hud-stat-value" id="pointsValue">0</span>
-        <span class="hud-stat-label">Pikë</span>
-      </div>
+<div class="points-bar">
+  <div class="points-left">
+    <div class="points-icon">⭐</div>
+    <div class="points-text">
+      <span class="points-value" id="pointsValue">0</span>
+      <span class="points-label">Pikë</span>
     </div>
-    <div class="hud-divider"></div>
-    <div class="hud-stat">
-      <span class="hud-stat-icon">🔥</span>
-      <div class="hud-stat-text">
-        <span class="hud-stat-value" id="streakCount">0</span>
-        <span class="hud-stat-label">Ditë</span>
-      </div>
-    </div>
-    <div class="hud-divider"></div>
-    <div class="hud-stat">
-      <span class="hud-stat-icon">⚡</span>
-      <div class="hud-stat-text">
-        <span class="hud-stat-value" id="answerStreakCount">0</span>
-        <span class="hud-stat-label">Seri</span>
-      </div>
-    </div>
-    <div class="level-badge" id="levelBadge">Niv. 1</div>
+    <div class="streak-pill" id="streakPill"><span>🔥</span><span id="streakCount">0</span></div>
   </div>
+  <div class="level-badge" id="levelBadge">Niveli 1</div>
+</div>
+<div class="level-progress-wrap"><div class="level-progress-bar" id="levelProgressBar" style="width:0%"></div></div>
+<div class="badges-row" id="badgesRow"></div>
 
-  <div class="hud-bars">
-    <div class="hud-bar-row">
-      <span class="hud-bar-label">Niveli</span>
-      <div class="hud-bar-track"><div class="level-progress-bar" id="levelProgressBar" style="width:0%"></div></div>
-    </div>
-    <div class="hud-bar-row">
-      <span class="hud-bar-label" id="answerStreakGoal">Synimi: 5</span>
-      <div class="hud-bar-track"><div class="answer-streak-fill" id="answerStreakFill" style="width:0%"></div></div>
-    </div>
+<div class="answer-streak-wrap" id="answerStreakWrap">
+  <div class="answer-streak-label">
+    <span>🔥 Seria: <b id="answerStreakCount">0</b></span>
+    <span id="answerStreakGoal">Synimi: 5</span>
   </div>
-
-  <div class="badges-row" id="badgesRow"></div>
+  <div class="answer-streak-track"><div class="answer-streak-fill" id="answerStreakFill" style="width:0%"></div></div>
 </div>
 
 <div class="account-bar">
@@ -706,7 +615,7 @@
       <h3 id="authTitle">Identifikohu</h3>
       <div class="sub">Identifikohu që përparimi yt të ruhet në çdo pajisje.</div>
       <div class="auth-msg" id="authMsg"></div>
-      <input type="email" id="authEmail" placeholder="E-mail" autocomplete="email" autocapitalize="off" autocorrect="off">
+      <input type="text" id="authEmail" placeholder="Emri i përdoruesit" autocomplete="username" autocapitalize="off" autocorrect="off">
       <input type="password" id="authPassword" placeholder="Fjalëkalimi" autocomplete="current-password">
       <button class="btn btn-primary" id="btnAuthSubmit" style="width:100%;">Identifikohu</button>
       <div class="auth-toggle" id="authToggle">Nuk ke llogari? <a id="authToggleLink">Regjistrohu tani</a></div>
@@ -727,42 +636,6 @@
       <div id="leaderboardList"></div>
       <button class="btn btn-secondary" id="btnRefreshLeaderboard" style="width:100%;margin-top:12px;">↺ Rifresko renditjen</button>
     </div>
-  </div>
-
-  <div class="hidden" id="levelCard" style="margin-top:14px;">
-    <div class="auth-card">
-      <h3>🎓 Niveli gjuhësor</h3>
-      <div class="sub" id="levelCardSub">Bazuar në testin e vlerësimit fillestar.</div>
-      <div style="display:flex;align-items:center;gap:14px;margin:6px 0 16px;">
-        <div id="levelCefrBadge" style="font-size:1.8rem;font-weight:800;color:var(--gold);text-shadow:0 0 16px var(--gold-glow);">—</div>
-        <div id="levelFriendlyName" style="font-weight:700;color:var(--ink);">—</div>
-      </div>
-      <div class="sub" style="margin-bottom:8px;">Zgjidh nivelin që dëshiron të ushtrosh:</div>
-      <div class="level-picker" id="levelPicker"></div>
-      <button class="btn btn-secondary" id="btnRetakePlacement" style="width:100%;margin-top:14px;font-size:.82rem;">↺ Përsërit testin e vlerësimit</button>
-    </div>
-  </div>
-</div>
-
-<!-- EINSTUFUNGSTEST: VOLLBILD-OVERLAY -->
-<div class="hidden" id="placementOverlay">
-  <div class="placement-shell">
-    <div id="placementIntro">
-      <div class="placement-hero">
-        <div class="placement-hero-icon">🎓</div>
-        <h2>Testi i vlerësimit</h2>
-        <p>Mirë se erdhe! Ky test i shkurtër na ndihmon të gjejmë nivelin tënd aktual të gjermanishtes — nga A1 deri në C2. Bëhet vetëm një herë.</p>
-      </div>
-      <div class="placement-levels-preview">
-        <span>A1</span><span>A2</span><span>B1</span><span>B2</span><span>C1</span><span>C2</span>
-      </div>
-      <div class="placement-actions">
-        <button class="btn btn-primary" id="btnStartPlacement">Fillo testin</button>
-        <button class="btn btn-secondary" id="btnSkipPlacement">Kapërce tani</button>
-      </div>
-    </div>
-    <div class="hidden" id="placementRunner"></div>
-    <div class="hidden" id="placementResult"></div>
   </div>
 </div>
 
@@ -1675,241 +1548,9 @@ sprechen: {
 }
 };
 
-/* ============ EINSTUFUNGSTEST (A1-C2, nur einmal beim ersten Registrieren) ============ */
-const CEFR_INFO = {
-  A1: { friendly: "Fillestar", color: "#5fd68a" },
-  A2: { friendly: "Fillestar i avancuar", color: "#7fd6c9" },
-  B1: { friendly: "Mesatar", color: "#5b8cff" },
-  B2: { friendly: "Mesatar i avancuar", color: "#8f7bff" },
-  C1: { friendly: "I avancuar", color: "#ffc857" },
-  C2: { friendly: "Kompetencë e plotë", color: "#ff8a5c" }
-};
-const CEFR_ORDER = ["A1","A2","B1","B2","C1","C2"];
-
-const PLACEMENT_TEST = [
-  { level: "A1", q: "Ich ___ Uran.", opts: ["bin","bist","ist"], a: 0 },
-  { level: "A1", q: "Das ist ___ Auto.", opts: ["mein","meine","meinen"], a: 0 },
-  { level: "A1", q: "Wie viel ist zwei plus drei?", opts: ["vier","fünf","sechs"], a: 1 },
-  { level: "A2", q: "Ich habe gestern einen Film ___.", opts: ["sehe","gesehen","sah"], a: 1 },
-  { level: "A2", q: "Er ___ jeden Tag zur Arbeit.", opts: ["gehst","geht","gehe"], a: 1 },
-  { level: "A2", q: "Können Sie mir bitte ___ Weg zum Bahnhof zeigen?", opts: ["der","den","dem"], a: 1 },
-  { level: "B1", q: "Ich lerne Deutsch, ___ ich in Deutschland arbeiten möchte.", opts: ["weil","aber","oder"], a: 0 },
-  { level: "B1", q: "Wenn ich Zeit hätte, ___ ich mehr Sport.", opts: ["treibe","würde treiben","trieb"], a: 1 },
-  { level: "B1", q: "Der Brief, ___ ich gestern bekommen habe, war wichtig.", opts: ["der","den","dem"], a: 1 },
-  { level: "B2", q: "Er tat so, als ___ er nichts davon gewusst.", opts: ["hat","habe","hätte"], a: 2 },
-  { level: "B2", q: "Trotz ___ Regens gingen wir spazieren.", opts: ["der","des","dem"], a: 1 },
-  { level: "B2", q: "Kaum hatte er das Haus verlassen, ___ es zu regnen.", opts: ["begann","beginnt","begonnen"], a: 0 },
-  { level: "C1", q: "Es ist davon auszugehen, dass die Maßnahmen ___ Wirkung zeigen werden.", opts: ["ihre","ihrer","ihren"], a: 0 },
-  { level: "C1", q: "___ des schlechten Wetters fand die Veranstaltung wie geplant statt.", opts: ["Ungeachtet","Trotzdem","Deswegen"], a: 0 },
-  { level: "C1", q: "Er hätte die Prüfung bestanden, ___ er mehr gelernt hätte.", opts: ["wenn","als","ob"], a: 0 },
-  { level: "C2", q: "Nicht selten ___ sich Sprachwandel erst im Nachhinein als solcher erkennen.", opts: ["lässt","lasst","ließt"], a: 0 },
-  { level: "C2", q: "Kaum ein Experte hätte vorhersehen können, ___ rasant sich die Lage entwickeln würde.", opts: ["wie","dass","ob"], a: 0 },
-  { level: "C2", q: "Man ___ kaum umhin, die Komplexität des Sachverhalts anzuerkennen.", opts: ["kommt","geht","läuft"], a: 0 }
-];
-
-let placementAnswers = [];
-
-function openPlacementOverlay() {
-  const ov = document.getElementById("placementOverlay");
-  ov.classList.remove("hidden");
-  document.getElementById("placementIntro").classList.remove("hidden");
-  document.getElementById("placementRunner").classList.add("hidden");
-  document.getElementById("placementResult").classList.add("hidden");
-  document.body.style.overflow = "hidden";
-}
-
-function closePlacementOverlay() {
-  document.getElementById("placementOverlay").classList.add("hidden");
-  document.body.style.overflow = "";
-}
-
-function startPlacementTest() {
-  placementAnswers = [];
-  document.getElementById("placementIntro").classList.add("hidden");
-  document.getElementById("placementResult").classList.add("hidden");
-  const runner = document.getElementById("placementRunner");
-  runner.classList.remove("hidden");
-  renderPlacementQuestion(0);
-}
-
-function renderPlacementQuestion(index) {
-  const runner = document.getElementById("placementRunner");
-  if (index >= PLACEMENT_TEST.length) { finishPlacementTest(); return; }
-  const q = PLACEMENT_TEST[index];
-  const pct = Math.round((index / PLACEMENT_TEST.length) * 100);
-  runner.innerHTML = `
-    <div class="placement-meta">
-      <span>Pyetja ${index+1} / ${PLACEMENT_TEST.length}</span>
-      <span class="placement-level-tag">${q.level}</span>
-    </div>
-    <div class="placement-progress-track"><div class="placement-progress-fill" style="width:${pct}%"></div></div>
-    <div class="placement-question">${esc(q.q)}</div>
-    <div class="quiz-options" id="placementOptions"></div>
-  `;
-  const box = document.getElementById("placementOptions");
-  q.opts.forEach((opt, i) => {
-    const el = document.createElement("button");
-    el.className = "quiz-option";
-    el.textContent = opt;
-    el.addEventListener("click", () => {
-      box.querySelectorAll(".quiz-option").forEach(o => o.disabled = true);
-      const correct = i === q.a;
-      el.classList.add(correct ? "correct" : "wrong");
-      if (!correct) box.children[q.a].classList.add("correct");
-      correct ? feedbackCorrect() : feedbackWrong();
-      placementAnswers.push({ level: q.level, correct });
-      setTimeout(() => renderPlacementQuestion(index + 1), 700);
-    });
-    box.appendChild(el);
-  });
-  window.scrollTo(0,0);
-}
-
-function determineCefrLevel() {
-  // Stufenweise auswerten: pro Niveau 3 Fragen, mind. 2/3 richtig zum Bestehen.
-  // Höchstes bestandene Niveau gewinnt; sobald ein Niveau durchfällt, wird abgebrochen.
-  let reached = "A1";
-  for (const lvl of CEFR_ORDER) {
-    const forLevel = placementAnswers.filter(a => a.level === lvl);
-    if (!forLevel.length) break;
-    const correctCount = forLevel.filter(a => a.correct).length;
-    if (correctCount >= 2) reached = lvl;
-    else break;
-  }
-  return reached;
-}
-
-function playFanfare() {
-  playTone([[523,0.12,0.16],[659,0.12,0.17],[784,0.12,0.18],[1047,0.28,0.2]], "triangle");
-}
-
-async function finishPlacementTest() {
-  const level = determineCefrLevel();
-  cefrLevel = level;
-  selectedLevel = level;
-  placementTaken = true;
-  document.getElementById("placementRunner").classList.add("hidden");
-  const info = CEFR_INFO[level];
-
-  // Übersicht, welche Stufen bestanden wurden
-  const chips = CEFR_ORDER.map(lvl => {
-    const forLevel = placementAnswers.filter(a => a.level === lvl);
-    if (!forLevel.length) return "";
-    const okCount = forLevel.filter(a => a.correct).length;
-    const passed = okCount >= 2;
-    return `<span class="placement-score-chip ${passed ? "passed" : ""}">${lvl} ${okCount}/${forLevel.length}</span>`;
-  }).join("");
-
-  const box = document.getElementById("placementResult");
-  box.classList.remove("hidden");
-  box.innerHTML = `
-    <div class="placement-celebrate">
-      <div style="font-size:3rem;margin-bottom:6px;">🎉</div>
-      <div class="badge-big" style="color:${info.color};text-shadow:0 0 30px ${info.color}66;">${level}</div>
-      <div class="friendly" style="color:${info.color};">${esc(info.friendly)}</div>
-      <div class="sub-line">Urime! Ky është niveli yt aktual i vlerësuar.<br>Mund ta ndryshosh kurdo më vonë te "Llogaria".</div>
-      <div class="placement-score-row">${chips}</div>
-      <button class="btn btn-primary" id="btnClosePlacement" style="width:100%;padding:16px;font-size:1rem;">Fillo trajnimin →</button>
-    </div>
-  `;
-
-  // Feier: mehrfaches Konfetti + Fanfare + starke Vibration
-  spawnConfetti();
-  setTimeout(spawnConfetti, 300);
-  setTimeout(spawnConfetti, 620);
-  playFanfare();
-  vibrate([40, 60, 40, 60, 120]);
-
-  renderLevelCard();
-  await saveProgress();
-  document.getElementById("btnClosePlacement").addEventListener("click", () => {
-    closePlacementOverlay();
-    goToView("cards");
-  });
-  window.scrollTo(0,0);
-}
-
-function skipPlacementTest() {
-  placementTaken = true;
-  cefrLevel = null;
-  selectedLevel = null;
-  saveProgress();
-  renderLevelCard();
-  closePlacementOverlay();
-  goToView("cards");
-}
-
-document.getElementById("btnStartPlacement").addEventListener("click", startPlacementTest);
-document.getElementById("btnSkipPlacement").addEventListener("click", skipPlacementTest);
-
-/* --- Stufenauswahl: Nutzer entscheidet selbst, welches Niveau er üben will --- */
-function renderLevelPicker() {
-  const picker = document.getElementById("levelPicker");
-  if (!picker) return;
-  picker.innerHTML = CEFR_ORDER.map(lvl => {
-    const info = CEFR_INFO[lvl];
-    const isSelected = selectedLevel === lvl;
-    const isRecommended = cefrLevel === lvl;
-    return `<button class="level-chip ${isSelected ? "selected" : ""} ${isRecommended ? "recommended" : ""}" data-level="${lvl}">
-      ${lvl}<small>${esc(info.friendly.split(" ")[0])}</small>
-    </button>`;
-  }).join("");
-  picker.querySelectorAll(".level-chip").forEach(chip => {
-    chip.addEventListener("click", () => {
-      selectedLevel = chip.dataset.level;
-      renderLevelPicker();
-      renderCefrPill();
-      feedbackCorrect();
-      queueSave();
-    });
-  });
-}
-
-function renderCefrPill() {
-  const pill = document.getElementById("cefrPill");
-  const shown = selectedLevel || cefrLevel;
-  if (!shown) { pill.classList.add("hidden"); return; }
-  pill.classList.remove("hidden");
-  pill.textContent = shown;
-  const info = CEFR_INFO[shown];
-  if (info) {
-    pill.style.color = info.color;
-    pill.style.borderColor = info.color + "66";
-    pill.style.background = info.color + "22";
-  }
-}
-
-function renderLevelCard() {
-  const card = document.getElementById("levelCard");
-  if (!card) return;
-  card.classList.remove("hidden");
-  const info = CEFR_INFO[cefrLevel] || {};
-  const badge = document.getElementById("levelCefrBadge");
-  const sub = document.getElementById("levelCardSub");
-  if (cefrLevel) {
-    badge.textContent = cefrLevel;
-    badge.style.color = info.color || "var(--gold)";
-    document.getElementById("levelFriendlyName").textContent = info.friendly || "";
-    sub.textContent = "Bazuar në testin e vlerësimit fillestar.";
-  } else {
-    badge.textContent = "—";
-    document.getElementById("levelFriendlyName").textContent = "Testi u kapërcye";
-    sub.textContent = "Nuk e ke bërë testin — zgjidh vetë nivelin më poshtë.";
-  }
-  renderLevelPicker();
-  renderCefrPill();
-}
-
-document.getElementById("btnRetakePlacement").addEventListener("click", () => {
-  openPlacementOverlay();
-});
-
 /* ============ PUNKTE, LEVEL, STREAK, BADGES ============ */
 let totalPoints = 0;
 let streakDays = 0;
-let cefrLevel = null;
-let placementTaken = false;
-let selectedLevel = null;
 let lastActiveDate = null;
 
 const BADGES = [
@@ -1938,6 +1579,8 @@ function touchStreak() {
 
 function renderStreak() {
   document.getElementById("streakCount").textContent = streakDays;
+  const pill = document.getElementById("streakPill");
+  pill.style.display = streakDays > 0 ? "flex" : "none";
 }
 
 function animateNumber(el, from, to, duration) {
@@ -3148,7 +2791,6 @@ function showAuthView(loggedIn, email) {
   document.getElementById("authLoggedIn").classList.toggle("hidden", !loggedIn);
   document.getElementById("leaderboardCard").classList.toggle("hidden", !loggedIn);
   if (loggedIn) document.getElementById("authUserEmail").textContent = email;
-  else document.getElementById("levelCard").classList.add("hidden");
 }
 
 async function loadLeaderboard() {
@@ -3195,20 +2837,28 @@ document.getElementById("authToggleLink").addEventListener("click", () => {
   setAuthMsg("");
 });
 
+// Supabase braucht intern eine E-Mail-Adresse. Wir bauen sie unsichtbar
+// aus dem Benutzernamen, die Person sieht nur "Benutzername" im Formular.
+const USERNAME_DOMAIN = "@shqipdeutsch-app.local";
+function usernameToEmail(username) {
+  const clean = username.trim().toLowerCase().replace(/[^a-z0-9._-]/g, "");
+  return clean + USERNAME_DOMAIN;
+}
+
 document.getElementById("btnAuthSubmit").addEventListener("click", async () => {
   if (!sb) { setAuthMsg("Identifikimi nuk është i disponueshëm tani (mungon interneti?).", "err"); return; }
-  const email = document.getElementById("authEmail").value.trim();
+  const username = document.getElementById("authEmail").value.trim();
   const password = document.getElementById("authPassword").value;
-  if (!email || !email.includes("@")) { setAuthMsg("Ju lutem shkruaj një adresë email të vlefshme.", "err"); return; }
-  if (password.length < 6) { setAuthMsg("Fjalëkalimi duhet të ketë të paktën 6 shkronja.", "err"); return; }
+  if (!username || password.length < 3) { setAuthMsg("Ju lutem shkruaj emrin e përdoruesit dhe një fjalëkalim me të paktën 3 shkronja.", "err"); return; }
+  const email = usernameToEmail(username);
   setAuthMsg(isRegisterMode ? "Llogaria po krijohet…" : "Po identifikohesh…");
   try {
     let result;
     if (isRegisterMode) {
-      result = await sb.auth.signUp({ email, password });
+      result = await sb.auth.signUp({ email, password, options: { data: { username } } });
       if (result.error) throw result.error;
       if (!result.data.session) {
-        setAuthMsg("Llogaria u krijua! Kontrollo email-in tënd dhe konfirmo regjistrimin, pastaj identifikohu.", "ok");
+        setAuthMsg("Llogaria u krijua! Tani mund të identifikohesh.", "ok");
         return;
       }
     } else {
@@ -3218,9 +2868,7 @@ document.getElementById("btnAuthSubmit").addEventListener("click", async () => {
     setAuthMsg("");
   } catch (err) {
     const msg = (err.message || "").includes("Invalid login")
-      ? "Email ose fjalëkalim i gabuar."
-      : (err.message || "").includes("Email not confirmed")
-      ? "Ju lutem konfirmoni email-in tuaj para se të identifikoheni."
+      ? "Emri i përdoruesit ose fjalëkalimi është i gabuar."
       : (err.message || "Diçka shkoi keq.");
     setAuthMsg(msg, "err");
   }
@@ -3242,9 +2890,6 @@ async function loadProgress() {
       totalPoints = data.points || 0;
       streakDays = data.streak_days || 0;
       lastActiveDate = data.last_active || null;
-      cefrLevel = data.cefr_level || null;
-      placementTaken = !!data.placement_taken;
-      selectedLevel = data.selected_level || cefrLevel || null;
       const custom = Array.isArray(data.custom_vocab) ? data.custom_vocab : [];
       custom.forEach(w => {
         if (w.al && w.de && !vocab.some(v => v.al === w.al && v.de === w.de)) {
@@ -3254,13 +2899,11 @@ async function loadProgress() {
       renderPoints();
       fillCatSelects(); initCardOrder(); renderCard(); renderList();
       touchStreak();
-      renderLevelCard();
       document.getElementById("syncMsg").textContent = "Përparimi u ngarkua: " + totalPoints + " pikë, " + custom.length + " fjalë të shtuara vetë.";
     } else {
       document.getElementById("syncMsg").textContent = "Llogari e re — përparimi yt ruhet tani e tutje.";
       touchStreak();
       await saveProgress();
-      if (!placementTaken) openPlacementOverlay();
     }
   } catch (err) {
     document.getElementById("syncMsg").textContent = "Gabim gjatë ngarkimit: " + err.message;
@@ -3277,9 +2920,6 @@ async function saveProgress() {
       points: totalPoints,
       streak_days: streakDays,
       last_active: lastActiveDate,
-      cefr_level: cefrLevel,
-      placement_taken: placementTaken,
-      selected_level: selectedLevel,
       custom_vocab: custom,
       updated_at: new Date().toISOString()
     });
@@ -3316,9 +2956,9 @@ if (sb) {
     currentUser = session ? session.user : null;
     if (currentUser) {
       const displayName = (currentUser.user_metadata && currentUser.user_metadata.username)
-        || (currentUser.email ? currentUser.email.split("@")[0] : "Përdorues");
+        || currentUser.email.replace(USERNAME_DOMAIN, "");
       setAccountBar(true, displayName);
-      showAuthView(true, currentUser.email || displayName);
+      showAuthView(true, displayName);
       setAuthMsg("");
       loadProgress();
       loadLeaderboard();
