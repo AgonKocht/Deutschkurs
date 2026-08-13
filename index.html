@@ -525,6 +525,39 @@
     content: "★"; position: absolute; top: 4px; right: 6px; font-size: .6rem; color: var(--gold);
   }
 
+  /* ---- Maskotti: Shqiponja (Adler) ---- */
+  .mascot-fab {
+    position: fixed; right: 16px; bottom: calc(18px + env(safe-area-inset-bottom));
+    z-index: 850; width: 58px; height: 58px; border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%, #ffe08a, var(--gold));
+    border: 2px solid rgba(255,255,255,.25); font-size: 1.7rem;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: 0 8px 26px var(--gold-glow), 0 4px 14px rgba(0,0,0,.4);
+    animation: mascotFloat 3.2s ease-in-out infinite;
+    transition: transform .12s ease;
+  }
+  .mascot-fab:active { transform: scale(.9); }
+  @keyframes mascotFloat { 0%,100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-6px) rotate(4deg); } }
+  .mascot-bubble {
+    position: fixed; right: 16px; bottom: calc(84px + env(safe-area-inset-bottom));
+    z-index: 851; max-width: min(320px, calc(100vw - 32px));
+    background: var(--surface); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+    border: 1px solid var(--line-strong); border-radius: 20px 20px 4px 20px;
+    padding: 16px 18px; box-shadow: 0 16px 40px rgba(0,0,0,.5), 0 0 30px rgba(255,200,87,.15);
+    animation: bubbleIn .35s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes bubbleIn { from { opacity: 0; transform: translateY(12px) scale(.92); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .mascot-bubble-close {
+    position: absolute; top: 8px; right: 10px; background: none; border: none;
+    color: var(--muted); font-size: .85rem; cursor: pointer; padding: 4px;
+  }
+  .mascot-bubble-text { font-size: .88rem; font-weight: 700; line-height: 1.5; color: var(--ink); padding-right: 14px; }
+  .mascot-bubble-cta {
+    margin-top: 10px; width: 100%; padding: 10px; border-radius: 12px; border: none;
+    background: linear-gradient(135deg, var(--gold), #ffe08a); color: #241a03;
+    font-weight: 800; font-size: .84rem; cursor: pointer; font-family: var(--font);
+  }
+
   /* ---- iPad / größere Bildschirme ---- */
   @media (min-width: 700px) {
     body { padding-left: calc(28px + env(safe-area-inset-left)); padding-right: calc(28px + env(safe-area-inset-right)); }
@@ -547,6 +580,14 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
+
+<!-- MASKOTTI: SHQIPONJA -->
+<div class="mascot-bubble hidden" id="mascotBubble">
+  <button class="mascot-bubble-close" id="mascotBubbleClose">✕</button>
+  <div class="mascot-bubble-text" id="mascotBubbleText"></div>
+  <button class="mascot-bubble-cta hidden" id="mascotBubbleCta"></button>
+</div>
+<button class="mascot-fab" id="mascotFab" aria-label="Shqiponja">🦅</button>
 
 <header>
   <div class="header-row">
@@ -1696,28 +1737,28 @@ const CEFR_ORDER = ["A1","A2","B1","B2","C1","C2"];
 
 const PLACEMENT_TEST = [
   // ---------- A1 ----------
-  { level: "A1", type: "image", word: "der Apfel", wiki: "Apfel",
+  { level: "A1", type: "image", word: "der Apfel", wiki: ["Apfel","Kulturapfel"],
     q: "Çfarë është kjo?", opts: ["der Apfel","das Brot","der Käse"], a: 0 },
   { level: "A1", type: "vocab", q: "Si thuhet „ujë\" në gjermanisht?", opts: ["das Wasser","die Milch","der Wein"], a: 0 },
   { level: "A1", type: "grammar", q: "Ich ___ Uran.", opts: ["bin","bist","ist"], a: 0 },
   { level: "A1", type: "vocab", q: "Si thuhet „faleminderit\" në gjermanisht?", opts: ["bitte","danke","tschüss"], a: 1 },
 
   // ---------- A2 ----------
-  { level: "A2", type: "image", word: "der Bahnhof", wiki: "Bahnhof",
+  { level: "A2", type: "image", word: "der Bahnhof", wiki: ["Bahnhof","Hauptbahnhof"],
     q: "Çfarë është kjo?", opts: ["der Flughafen","der Bahnhof","das Krankenhaus"], a: 1 },
   { level: "A2", type: "grammar", q: "Ich habe gestern einen Film ___.", opts: ["sehe","gesehen","sah"], a: 1 },
   { level: "A2", type: "vocab", q: "Çfarë do të thotë „die Rechnung\"?", opts: ["fatura","dhoma","rruga"], a: 0 },
   { level: "A2", type: "grammar", q: "Können Sie mir bitte ___ Weg zum Bahnhof zeigen?", opts: ["der","den","dem"], a: 1 },
 
   // ---------- B1 ----------
-  { level: "B1", type: "image", word: "der Wasserfall", wiki: "Wasserfall",
+  { level: "B1", type: "image", word: "der Wasserfall", wiki: ["Wasserfall"],
     q: "Çfarë është kjo?", opts: ["der Fluss","der Wasserfall","der See"], a: 1 },
   { level: "B1", type: "grammar", q: "Ich lerne Deutsch, ___ ich in Deutschland arbeiten möchte.", opts: ["weil","aber","oder"], a: 0 },
   { level: "B1", type: "vocab", q: "Çfarë do të thotë „die Bewerbung\"?", opts: ["aplikimi për punë","pushimi vjetor","kontrata e qirasë"], a: 0 },
   { level: "B1", type: "grammar", q: "Der Brief, ___ ich gestern bekommen habe, war wichtig.", opts: ["der","den","dem"], a: 1 },
 
   // ---------- B2 ----------
-  { level: "B2", type: "image", word: "das Gerüst", wiki: "Gerüst",
+  { level: "B2", type: "image", word: "das Gerüst", wiki: ["Baugerüst","Gerüst"],
     q: "Çfarë është kjo?", opts: ["das Gerüst","der Zaun","die Leiter"], a: 0 },
   { level: "B2", type: "grammar", q: "Er tat so, als ___ er nichts davon gewusst.", opts: ["hat","habe","hätte"], a: 2 },
   { level: "B2", type: "vocab", q: "Çfarë do të thotë „die Voraussetzung\"?", opts: ["kushti paraprak","përfundimi","përjashtimi"], a: 0 },
@@ -1787,12 +1828,30 @@ function renderPlacementQuestion(index) {
   if (isImage) {
     const imgEl = document.getElementById("placementImg");
     const loadEl = document.getElementById("placementImgLoading");
-    fetchWikiImage(q.wiki).then(src => preloadImage(src).then(ok => {
-      if (!ok || !src) { loadEl.textContent = "(pa foto)"; return; }
-      imgEl.src = src;
-      imgEl.classList.remove("hidden");
-      loadEl.classList.add("hidden");
-    }));
+    const candidates = Array.isArray(q.wiki) ? q.wiki : [q.wiki];
+    const withTimeout = (p, ms) => Promise.race([p, new Promise(res => setTimeout(() => res(null), ms))]);
+
+    (async () => {
+      let found = null;
+      for (const title of candidates) {
+        const src = await withTimeout(fetchWikiImage(title), 5000);
+        if (src) {
+          const ok = await withTimeout(preloadImage(src), 5000);
+          if (ok) { found = src; break; }
+        }
+      }
+      if (!imgEl.isConnected) return; // Nutzer ist inzwischen weiter
+      if (found) {
+        imgEl.src = found;
+        imgEl.classList.remove("hidden");
+        loadEl.classList.add("hidden");
+      } else {
+        // Kein Foto verfügbar: Wort zeigen statt ewig zu laden
+        loadEl.textContent = q.word || "🖼️";
+        loadEl.style.fontSize = "1.3rem";
+        loadEl.style.fontWeight = "800";
+      }
+    })();
   }
 
   const box = document.getElementById("placementOptions");
@@ -1875,6 +1934,10 @@ async function finishPlacementTest() {
   document.getElementById("btnClosePlacement").addEventListener("click", () => {
     closePlacementOverlay();
     goToView("cards");
+    pickBonusActivity();
+    setTimeout(() => {
+      mascotSay(`Të lumtë! Fillojmë me nivelin ${level}. Bëj disa karta për t'u ngrohur — jam këtu nëse më duhesh!`, { duration: 6000 });
+    }, 900);
   });
   window.scrollTo(0,0);
 }
@@ -1891,6 +1954,89 @@ function skipPlacementTest() {
 
 document.getElementById("btnStartPlacement").addEventListener("click", startPlacementTest);
 document.getElementById("btnSkipPlacement").addEventListener("click", skipPlacementTest);
+
+/* ============ MASKOTTI: SHQIPONJA (Adler) ============ */
+let bonusActivity = null;
+let mascotBubbleTimer = null;
+let mascotGreeted = false;
+
+const MASCOT_ACTIVITY_LABEL = { quiz: "Kuizin", imagequiz: "Kuizin me foto", exam: "Provimin" };
+const MASCOT_ACTIVITY_TAB = { quiz: "quiz", imagequiz: "imagequiz", exam: "exam" };
+
+function pickBonusActivity() {
+  const options = ["quiz", "imagequiz", "exam"];
+  bonusActivity = options[Math.floor(Math.random() * options.length)];
+}
+
+function mascotSay(text, opts) {
+  opts = opts || {};
+  clearTimeout(mascotBubbleTimer);
+  const bubble = document.getElementById("mascotBubble");
+  const textEl = document.getElementById("mascotBubbleText");
+  const ctaEl = document.getElementById("mascotBubbleCta");
+  textEl.textContent = text;
+  if (opts.ctaLabel && opts.onCta) {
+    ctaEl.textContent = opts.ctaLabel;
+    ctaEl.classList.remove("hidden");
+    ctaEl.onclick = () => { opts.onCta(); bubble.classList.add("hidden"); };
+  } else {
+    ctaEl.classList.add("hidden");
+    ctaEl.onclick = null;
+  }
+  bubble.classList.remove("hidden");
+  const duration = opts.duration || 5000;
+  mascotBubbleTimer = setTimeout(() => bubble.classList.add("hidden"), duration);
+}
+
+document.getElementById("mascotBubbleClose").addEventListener("click", () => {
+  clearTimeout(mascotBubbleTimer);
+  document.getElementById("mascotBubble").classList.add("hidden");
+});
+
+const MASCOT_TIPS = [
+  "A e di? Nëse ushtron çdo ditë, seria jote e ditëve rritet dhe fiton më shumë pikë!",
+  "Provo kuizin me foto — të mësuarit me imazhe ngelet më gjatë në kujtesë.",
+  "5 përgjigje radhazi saktë = bonus pikësh. Vazhdo kështu!",
+  "Kalo herë pas here nëpër fjalët e vjetra te 'Karta', mos i harro.",
+  "Prapa çdo gabimi qëndron një hap më afër B1. Mos u dorëzo!",
+  "Nëse dëgjon fjalën me zë (🔊), e mëson shqiptimin shumë më shpejt."
+];
+
+function mascotRandomTip() {
+  const stats = ` (${totalPoints} pikë, seri ${streakDays} ditë)`;
+  const base = MASCOT_TIPS[Math.floor(Math.random() * MASCOT_TIPS.length)];
+  mascotSay(base + (Math.random() < 0.4 ? stats : ""), { duration: 5500 });
+}
+
+document.getElementById("mascotFab").addEventListener("click", () => {
+  const bubble = document.getElementById("mascotBubble");
+  if (!bubble.classList.contains("hidden")) { bubble.classList.add("hidden"); return; }
+  mascotRandomTip();
+});
+
+function mascotGreet() {
+  if (mascotGreeted) return;
+  mascotGreeted = true;
+  pickBonusActivity();
+  const hour = new Date().getHours();
+  const timeGreet = hour < 11 ? "Mirëmëngjes" : hour < 18 ? "Mirëdita" : "Mirëmbrëma";
+  const name = (currentUser && currentUser.email) ? currentUser.email.split("@")[0] : null;
+  const who = name ? ", " + name : "";
+
+  setTimeout(() => {
+    if (!placementTaken) return; // gjatë testit fillestar mos ndërhyj
+    let msg;
+    if (!cefrLevel && !selectedLevel) {
+      msg = `${timeGreet}${who}! Unë jam shqiponja jote — do të të ndihmoj gjatë mësimit. Fillo me Kartat për t'u njohur me fjalët e para!`;
+      mascotSay(msg, { duration: 7000, ctaLabel: "Shko te Kartat", onCta: () => goToView("cards") });
+    } else {
+      const lvlInfo = CEFR_INFO[cefrLevel || selectedLevel] || {};
+      const actLabel = MASCOT_ACTIVITY_LABEL[bonusActivity];
+      msg = `${timeGreet}${who}! Ke arritur nivelin ${cefrLevel || selectedLevel} (${lvlInfo.friendly || ""}). Sot të sugjeroj: bëj ${actLabel} — merr 2X pikë deri sa të mbyllësh faqen!`;
+      mascotSay(msg, { duration: 8000, ctaLabel: "Shko te " + actLabel, onCta: () => goToView(MASCOT_ACTIVITY_TAB[bonusActivity]) });
+    }
+  }, 1200);
+}
 
 /* --- Stufenauswahl: Nutzer entscheidet selbst, welches Niveau er üben will --- */
 function renderLevelPicker() {
@@ -2056,6 +2202,15 @@ function addPoints(n) {
   if (newLevel > prevLevel) showLevelUp(newLevel);
 }
 
+// Pikë me bonus: nëse aktiviteti aktual është "sugjerimi i shqiponjës",
+// pikët dyfishohen dhe shqiponja e feston shkurtimisht.
+function awardPoints(base, source) {
+  const isBonus = bonusActivity && source === bonusActivity;
+  const total = isBonus ? base * 2 : base;
+  addPoints(total);
+  if (isBonus) mascotSay("🔥 +" + total + " pikë bonus! Zgjodhe mirë.", { duration: 2200 });
+}
+
 function renderPoints(animateFrom) {
   const valEl = document.getElementById("pointsValue");
   if (typeof animateFrom === "number" && animateFrom !== totalPoints) {
@@ -2178,6 +2333,9 @@ function registerAnswer(isCorrect) {
       playMilestoneFanfare();
       spawnConfetti();
       showMilestoneToast(answerStreak, bonus);
+      if (answerStreak >= 20) {
+        setTimeout(() => mascotSay("😍 " + answerStreak + " radhazi?! Je në zjarr sot — vazhdo!", { duration: 4500 }), 900);
+      }
     }
   } else {
     answerStreak = 0;
@@ -2315,7 +2473,7 @@ function renderQuiz() {
       });
       if (opt[ansField] === correct[ansField]) {
         quizScore++;
-        addPoints(10);
+        awardPoints(10, "quiz");
         registerAnswer(true);
         document.getElementById("streakFlash").textContent = "+10";
       } else {
@@ -2819,7 +2977,7 @@ async function renderImageQuiz() {
       });
       if (opt.de === correct.de) {
         imgQuizScore++;
-        addPoints(10);
+        awardPoints(10, "imagequiz");
         registerAnswer(true);
         document.getElementById("imgQuizStreakFlash").textContent = "+10";
       } else {
@@ -2939,7 +3097,7 @@ function wireQuestions(container, onFinish, allQ) {
         });
         qEl.querySelector(".explain").classList.remove("hidden");
         answered++;
-        if (parseInt(btn.dataset.opt) === right) { correct++; addPoints(10); registerAnswer(true); } else { registerAnswer(false); }
+        if (parseInt(btn.dataset.opt) === right) { correct++; awardPoints(10, "exam"); registerAnswer(true); } else { registerAnswer(false); }
         if (answered === allQ) onFinish(correct, allQ);
       });
     });
@@ -3377,6 +3535,7 @@ if (sb) {
       setAuthMsg("");
       loadProgress();
       loadLeaderboard();
+      mascotGreet();
     } else {
       setAccountBar(false);
       showAuthView(false);
