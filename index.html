@@ -5305,20 +5305,25 @@ if (sb) {
 // 12 faza: nga fara deri te dielli. Niveli 1 = fara, niveli 40+ = dielli.
 const TREE_STAGES = [
   { min: 1,   name: "Fara",              msg: "Çdo pemë e madhe nis si farë. Ti sapo e mbolle." },
-  { min: 8,   name: "Filizi",            msg: "Filizi doli mbi tokë. Vazhdo ta ujitësh çdo ditë." },
-  { min: 14,  name: "Bimë e vogël",      msg: "Bima e vogël po forcohet çdo ditë pak e pak." },
-  { min: 21,  name: "Bimë e re",         msg: "Po rritesh vërtet. Rrënjët po forcohen." },
-  { min: 27,  name: "Trung i njomë",     msg: "Tani ke një trung. Erërat s'të rrëzojnë më lehtë." },
-  { min: 34,  name: "Trung i fortë",     msg: "Trungu u bë i fortë — baza jote është solide." },
-  { min: 41,  name: "Degët e para",      msg: "Degët po shtohen — ashtu si fjalët e tua." },
-  { min: 47,  name: "Degë të shumta",    msg: "Sa më shumë degë, aq më shumë rrugë drejt qiellit." },
-  { min: 54,  name: "Pemë e re",         msg: "Kjo tashmë është pemë e vërtetë. Bravo!" },
-  { min: 60,  name: "Gjethnaja e parë",  msg: "Gjethet e para dalin — pema fillon të marrë frymë." },
-  { min: 67,  name: "Gjethnaja e dendur",msg: "Gjethnaja u bë e dendur. Po bëhesh i sigurt." },
-  { min: 74,  name: "Pemë e fortë",      msg: "Pemë e fortë, me hije për të tjerët. Mbresëlënëse." },
-  { min: 80,  name: "Lulëzim",           msg: "Pema jote lulëzoi. Rezultatet po duken qartë." },
-  { min: 87,  name: "Frytet",            msg: "Tani jep fryte — puna jote po shpërblehet." },
-  { min: 93,  name: "Kurora",            msg: "Ke arritur kurorën e pemës. Diçka të pret aty lart — por s'ta them ende." },
+  { min: 5,   name: "Filizi",            msg: "Filizi doli mbi tokë. Vazhdo ta ujitësh çdo ditë." },
+  { min: 10,  name: "Bimë e vogël",      msg: "Bima e vogël po forcohet çdo ditë pak e pak." },
+  { min: 15,  name: "Bimë e re",         msg: "Dega e parë doli! Nuk je më vetëm një kërcell." },
+  { min: 20,  name: "Trung i njomë",     msg: "Edhe një degë — tani pema fillon të hapet vërtet." },
+  { min: 25,  name: "Trung i fortë",     msg: "Trungu u bë i fortë — baza jote është solide." },
+  { min: 30,  name: "Dega e parë",       msg: "Dega kryesore u hap gjerë. Degët po shtohen." },
+  { min: 35,  name: "Degë anësore",      msg: "Ana tjetër u përgjigj — pema po bëhet simetrike." },
+  { min: 40,  name: "Katër degë",        msg: "Katër degë tashmë — sa më shumë, aq më shumë rrugë drejt qiellit." },
+  { min: 45,  name: "Pemë e re",         msg: "Kjo tashmë është pemë e vërtetë. Bravo!" },
+  { min: 50,  name: "Gjethnaja e parë",  msg: "Gjethet e para dalin — pema fillon të marrë frymë." },
+  { min: 55,  name: "Gjethnaja e dendur",msg: "Gjethnaja u bë e dendur. Po bëhesh i sigurt." },
+  { min: 60,  name: "Pemë e fortë",      msg: "Pemë e fortë, me hije për të tjerët. Mbresëlënëse." },
+  { min: 65,  name: "Degë të forta",     msg: "Degët u trashën — asnjë erë s'i lëkund më lehtë." },
+  { min: 70,  name: "Lulëzim",           msg: "Pema jote lulëzoi. Rezultatet po duken qartë." },
+  { min: 75,  name: "Lulëzim i plotë",   msg: "Lulëzimi u përhap në çdo degë. Sa bukur." },
+  { min: 80,  name: "Frytet e para",     msg: "Tani jep fryte — puna jote po shpërblehet." },
+  { min: 85,  name: "Frytet e shumta",   msg: "Fryte kudo. Pak mbetën deri në majë." },
+  { min: 90,  name: "Kurora",            msg: "Ke arritur kurorën e pemës. Diçka të pret aty lart — por s'ta them ende." },
+  { min: 95,  name: "Kurora e plotë",    msg: "Kurora u bë e plotë dhe e trashë. Edhe një hap." },
   { min: 100, name: "Dielli ☀️",         msg: "" }
 ];
 
@@ -5328,18 +5333,23 @@ const TREE_RIDDLES = [
   null, // faza 0, s'ka aluzion — sapo mbolle farën
   "Diçka atje lart po të thërret, edhe pse s'e sheh ende.",
   "Disa gjëra i numëron me sy, të tjerat vetëm i ndjen mbi lëkurë.",
+  "Nën hijen e saj strehohen edhe ata që s'e njohin emrin.",
   "Çdo gjë e gjelbër kërkon një burim që vetë nuk e prek kurrë.",
   "Sa më lart shkon, aq më afër je diçkaje që s'të djeg — vetëm të ngroh.",
+  "Ajo largohet çdo mbrëmje, por premton gjithmonë të kthehet.",
   "Çdo hije që lë pema, e ka borxh diçkaje që s'e sheh kurrë prapa saj.",
   "Lind çdo mëngjes, fle çdo mbrëmje, por vetë nuk fle kurrë.",
   "Sa më shumë degë shtrin pema, aq më shumë kërkon të prekë atë që s'e prek askush.",
+  "Sa më shumë degë hap pema, aq më shumë krahë ka për të të mbajtur.",
   "Ajo nuk flet, por çdo gjë e gjallë e kupton gjuhën e saj.",
   "Gjethet kthehen gjithnjë nga e njëjta anë — nga ajo që u jep jetë pa fjalë.",
   "Është mbretëresha e qiellit, por s'ka kurorë — vetëm rreze.",
   "Sa më gjatë e pret dikush, aq më e ëmbël bëhet takimi.",
   "Lulet hapen kur ndjejnë afrimin e diçkaje që s'e shohin kurrë drejt e në sy.",
   "Fryti pjek vetëm kur diçka e padukshme e prek çdo ditë me duar të nxehta.",
+  "Kur je gati, edhe errësira fillon të ndriçohet nga pak.",
   "Edhe pak, dhe do jesh aq lart sa ajo do të njohë me emër.",
+  "Nuk ka derë, nuk ka çelës — vetëm një hap tjetër.",
   "Një hap i fundit… dhe fytyra e saj do jetë e para gjë që sheh."
 ];
 
@@ -5384,7 +5394,7 @@ function checkTreeStageAdvance() {
   }
 }
 
-/* ============ PEMA REALISTIKE ME RRËNJË, DEGË DHE GJETHE ============ */
+/* ============ PEMA REALISTIKE ME RRËNJË, DEGË TË TRASHA DHE GJETHE ============ */
 // Skeleti i plotë i pemës (forma finale). Çdo pjesë shfaqet gradualisht
 // sipas fazës — dega mbin, pastaj gjethet dalin mbi të.
 const TREE_ROOTS = [
@@ -5396,39 +5406,46 @@ const TREE_ROOTS = [
 ];
 
 const TREE_BRANCHES = {
-  trunk:  "M160 440 Q150 320 160 250 Q168 190 160 110",
-  forkL:  "M159 258 Q108 240 76 200 Q58 176 48 150",
-  forkR:  "M161 258 Q212 240 244 200 Q262 176 272 150",
-  subL1:  "M48 150 Q28 128 18 100",
-  subL2:  "M48 150 Q66 122 78 96",
-  subR1:  "M272 150 Q292 128 302 100",
-  subR2:  "M272 150 Q254 122 242 96",
-  twigL:  "M160 172 Q140 138 122 108",
-  twigR:  "M160 172 Q180 138 198 108",
-  crownL: "M160 118 Q142 96 130 74",
-  crownR: "M160 118 Q178 96 190 74",
-  extraL: "M160 118 Q118 100 96 66",
-  extraR: "M160 118 Q202 100 224 66"
+  trunk:    "M160 440 Q150 320 160 250 Q168 190 160 110",
+  lowL:     "M158 352 Q126 340 100 314",
+  lowR:     "M162 352 Q194 340 220 314",
+  forkL:    "M159 258 Q108 240 76 200 Q58 176 48 150",
+  forkR:    "M161 258 Q212 240 244 200 Q262 176 272 150",
+  subL1:    "M48 150 Q28 128 18 100",
+  subL2:    "M48 150 Q66 122 78 96",
+  subR1:    "M272 150 Q292 128 302 100",
+  subR2:    "M272 150 Q254 122 242 96",
+  twigL:    "M160 172 Q140 138 122 108",
+  twigR:    "M160 172 Q180 138 198 108",
+  crownL:   "M160 118 Q142 96 130 74",
+  crownR:   "M160 118 Q178 96 190 74",
+  extraL:   "M160 118 Q118 100 96 66",
+  extraR:   "M160 118 Q202 100 224 66"
 };
 
-// Pikat ku vendosen 16 checkpoint-et, në pika natyrale të pemës
+// Pikat ku vendosen 21 checkpoint-et, në pika natyrale të pemës — një për çdo 5 nivele
 const TREE_NODE_POS = [
-  { x: 160, y: 438 },  // 0  Fara — te rrënja
-  { x: 160, y: 392 },  // 1  Filizi — poshtë në trung
-  { x: 160, y: 360 },  // 2  Bimë e vogël — trungu ngjitet
-  { x: 160, y: 330 },  // 3  Bimë e re — mesi i trungut
-  { x: 160, y: 290 },  // 4  Trung i njomë — trungu i sipërm
-  { x: 160, y: 258 },  // 5  Trung i fortë — pika ku ndahen degët
-  { x: 48,  y: 150 },  // 6  Degët e para — maja e degës së majtë
-  { x: 272, y: 150 },  // 7  Degë të shumta — maja e degës së djathtë
-  { x: 18,  y: 100 },  // 8  Pemë e re — nëndegë majtas larg
-  { x: 302, y: 100 },  // 9  Gjethnaja e parë — nëndegë djathtas larg
-  { x: 78,  y: 96  },  // 10 Gjethnaja e dendur — nëndegë majtas
-  { x: 242, y: 96  },  // 11 Pemë e fortë — nëndegë djathtas
-  { x: 122, y: 108 },  // 12 Lulëzim — degëz e sipërme majtas
-  { x: 198, y: 108 },  // 13 Frytet — degëz e sipërme djathtas
-  { x: 160, y: 78  },  // 14 Kurora — maja e kurorës
-  { x: 160, y: 30  }   // 15 Dielli
+  { x: 160, y: 438 },  // 0  Fara (1) — te rrënja
+  { x: 160, y: 400 },  // 1  Filizi (5) — poshtë në trung
+  { x: 160, y: 365 },  // 2  Bimë e vogël (10) — trungu ngjitet
+  { x: 100, y: 314 },  // 3  Bimë e re (15) — dega e parë, majtas poshtë
+  { x: 220, y: 314 },  // 4  Trung i njomë (20) — dega e dytë, djathtas poshtë
+  { x: 160, y: 258 },  // 5  Trung i fortë (25) — pika ku ndahet dega kryesore
+  { x: 48,  y: 150 },  // 6  Dega e parë (30) — maja e degës kryesore majtas
+  { x: 272, y: 150 },  // 7  Degë anësore (35) — maja e degës kryesore djathtas
+  { x: 18,  y: 100 },  // 8  Katër degë (40) — nëndegë majtas larg
+  { x: 302, y: 100 },  // 9  Pemë e re (45) — nëndegë djathtas larg
+  { x: 78,  y: 96  },  // 10 Gjethnaja e parë (50) — nëndegë majtas
+  { x: 242, y: 96  },  // 11 Gjethnaja e dendur (55) — nëndegë djathtas
+  { x: 122, y: 108 },  // 12 Pemë e fortë (60) — degëz e sipërme majtas
+  { x: 198, y: 108 },  // 13 Degë të forta (65) — degëz e sipërme djathtas
+  { x: 130, y: 74  },  // 14 Lulëzim (70) — kurorë majtas
+  { x: 190, y: 74  },  // 15 Lulëzim i plotë (75) — kurorë djathtas
+  { x: 96,  y: 66  },  // 16 Frytet e para (80) — degë e gjerë majtas
+  { x: 224, y: 66  },  // 17 Frytet e shumta (85) — degë e gjerë djathtas
+  { x: 160, y: 78  },  // 18 Kurora (90) — qendra e kurorës
+  { x: 160, y: 55  },  // 19 Kurora e plotë (95) — maja e kurorës
+  { x: 160, y: 30  }   // 20 Dielli (100)
 ];
 
 function foliageCluster(cx, cy, scale, seedShift) {
@@ -5471,54 +5488,61 @@ function buildTreeSVG(level) {
 
   const rootCount = Math.min(idx + 2, TREE_ROOTS.length);
 
+  // Sa më lart shkon pema, aq më të trasha bëhen degët — dega e vjetër vazhdon të forcohet
+  const thickBonus = idx >= 19 ? 4 : idx >= 18 ? 3 : idx >= 16 ? 2 : idx >= 12 ? 1 : 0;
+
   let svg = "";
 
   // Rrënjët
   svg += TREE_ROOTS.slice(0, rootCount).map(d =>
     `<path d="${d}" class="bark-stroke root-stroke"/>`).join("");
 
-  // Trungu — rritet vetë hap pas hapi gjatë fazës së parë (nivelet 1-8)
+  // Trungu — trashë që në fillim, rritet vetë hap pas hapi (nivelet 1-5)
   if (idx >= 0) {
     const trunkGrowing = idx === 0;
     const trunkDash = trunkGrowing ? `pathLength="1" stroke-dasharray="1" stroke-dashoffset="${(1 - stageFrac).toFixed(3)}"` : "";
-    svg += `<path d="${B.trunk}" class="bark-stroke trunk-stroke" ${trunkDash}/>`;
+    svg += `<path d="${B.trunk}" class="bark-stroke trunk-stroke" stroke-width="${18 + thickBonus}" ${trunkDash}/>`;
     // teksturë lëvozhge
     svg += `<path d="M150 400 q6 -4 4 -14" class="bark-detail"/>
             <path d="M172 340 q-6 -4 -4 -14" class="bark-detail"/>
             <path d="M150 280 q6 -4 4 -14" class="bark-detail"/>`;
   }
 
-  // Sythe të vogla në trung — mbushin kohën midis fazave 1 dhe 5, që trungu
-  // të mos ngelet "bosh" gjatë gjithë asaj kohe pa degë të vërteta ende.
-  const budPts = [{x:150,y:400},{x:172,y:368},{x:148,y:334},{x:174,y:300},{x:150,y:268}];
+  // Sythe të vogla te trungu, para se të dalë dega e parë e vërtetë (niveli 10)
+  const budPts = [{x:172,y:378},{x:148,y:342}];
   const bud = (revealIdx, p) => {
     if (idx < revealIdx) return "";
     const o = idx === revealIdx ? stageFrac : 1;
-    return `<circle cx="${p.x}" cy="${p.y}" r="5" fill="#4caf7d" opacity="${o.toFixed(2)}"/>
-            <circle cx="${p.x+2}" cy="${p.y-2}" r="2.3" fill="#c8f2a0" opacity="${o.toFixed(2)}"/>`;
+    return `<circle cx="${p.x}" cy="${p.y}" r="5.5" fill="#4caf7d" opacity="${o.toFixed(2)}"/>
+            <circle cx="${p.x+2}" cy="${p.y-2}" r="2.5" fill="#c8f2a0" opacity="${o.toFixed(2)}"/>`;
   };
-  svg += bud(1, budPts[0]) + bud(2, budPts[1]) + bud(3, budPts[2]) + bud(4, budPts[3]) + bud(5, budPts[4]);
+  svg += bud(1, budPts[0]) + bud(2, budPts[1]);
 
   // Dega "më e re" zgjatet vazhdimisht me pikë brenda fazës aktuale, si degë që rritet me sy;
-  // degët e mëparshme mbeten gjithmonë plotësisht të rritura.
+  // degët e mëparshme mbeten gjithmonë plotësisht të rritura, dhe vazhdojnë të trashen.
   const branch = (revealIdx, d, w) => {
     if (idx < revealIdx) return "";
     const growing = idx === revealIdx;
     const dash = growing ? `pathLength="1" stroke-dasharray="1" stroke-dashoffset="${(1 - stageFrac).toFixed(3)}"` : "";
-    return `<path d="${d}" class="bark-stroke branch-stroke" stroke-width="${w}" ${dash}/>`;
+    const width = w + (growing ? 0 : thickBonus);
+    return `<path d="${d}" class="bark-stroke branch-stroke" stroke-width="${width}" ${dash}/>`;
   };
-  svg += branch(6, B.forkL, 7);
-  svg += branch(7, B.forkR, 7);
-  svg += branch(8, B.subL1, 5);
-  svg += branch(9, B.subR1, 5);
-  svg += branch(10, B.subL2, 5);
-  svg += branch(11, B.subR2, 5);
-  svg += branch(12, B.twigL, 4);
-  svg += branch(13, B.twigR, 4);
-  svg += branch(14, B.crownL, 3);
-  svg += branch(14, B.crownR, 3);
-  svg += branch(14, B.extraL, 2.6);
-  svg += branch(14, B.extraR, 2.6);
+  // Dy degët e para — dalin shpejt, që pema të "hapet" që herët, jo vetëm trung
+  svg += branch(3, B.lowL, 8);
+  svg += branch(4, B.lowR, 8);
+  // Dega kryesore, e trashë dhe e fortë
+  svg += branch(6, B.forkL, 12);
+  svg += branch(7, B.forkR, 12);
+  svg += branch(8, B.subL1, 9);
+  svg += branch(9, B.subR1, 9);
+  svg += branch(10, B.subL2, 9);
+  svg += branch(11, B.subR2, 9);
+  svg += branch(12, B.twigL, 7);
+  svg += branch(13, B.twigR, 7);
+  svg += branch(14, B.crownL, 6);
+  svg += branch(15, B.crownR, 6);
+  svg += branch(16, B.extraL, 5.5);
+  svg += branch(17, B.extraR, 5.5);
 
   // Gjethnaja e re shfaqet gradualisht (errësohet dhe shtohet me çdo pikë), jo befas
   const foliage = (revealIdx, cx, cy, scale, seed) => {
@@ -5527,19 +5551,23 @@ function buildTreeSVG(level) {
     const inner = foliageCluster(cx, cy, scale, seed);
     return growing ? `<g style="opacity:${stageFrac.toFixed(2)}">${inner}</g>` : inner;
   };
-  svg += foliage(6, 48, 150, .85, 0) + foliage(7, 272, 150, .85, 1);
-  svg += foliage(8, 18, 100, .6, 0) + foliage(9, 302, 100, .6, 1);
-  svg += foliage(10, 78, 96, .75, 0) + foliage(11, 242, 96, .75, 1);
-  svg += foliage(12, 122, 108, .65, 0) + foliage(13, 198, 108, .65, 1);
-  // Finalja: kurora e madhe me katër degë njëherësh, dukshëm më e trashë se më parë
-  svg += foliage(14, 160, 78, 1.15, 0) + foliage(14, 160, 55, .75, 1)
-       + foliage(14, 96, 66, .95, 0) + foliage(14, 224, 66, .95, 1)
-       + foliage(14, 130, 60, .7, 1) + foliage(14, 190, 60, .7, 0);
+  svg += foliage(3, 100, 314, .55, 0) + foliage(4, 220, 314, .55, 1);
+  svg += foliage(6, 48, 150, .9, 0) + foliage(7, 272, 150, .9, 1);
+  svg += foliage(8, 18, 100, .65, 0) + foliage(9, 302, 100, .65, 1);
+  svg += foliage(10, 78, 96, .8, 0) + foliage(11, 242, 96, .8, 1);
+  svg += foliage(12, 122, 108, .7, 0) + foliage(13, 198, 108, .7, 1);
+  svg += foliage(14, 130, 74, .65, 1) + foliage(15, 190, 74, .65, 0);
+  svg += foliage(16, 96, 66, .85, 0) + foliage(17, 224, 66, .85, 1);
+  // Finalja (nivelet 90-100): shpërthim i madh gjethesh mbi gjithë kurorën
+  svg += foliage(18, 160, 78, 1.2, 0);
+  svg += foliage(19, 160, 55, 1.0, 1);
 
   // Lule/fruta të vogla kur pema bëhet e pjekur
-  if (idx >= 10 && idx < 15) svg += fruitDots(78, 96, 3) + fruitDots(242, 96, 3);
+  if (idx >= 10 && idx < 18) svg += fruitDots(78, 96, 3) + fruitDots(242, 96, 3);
   if (idx >= 12) svg += fruitDots(122, 108, 2) + fruitDots(198, 108, 2);
-  if (idx >= 14) svg += fruitDots(96, 66, 4) + fruitDots(224, 66, 4) + fruitDots(160, 55, 3);
+  if (idx >= 16) svg += fruitDots(96, 66, 3) + fruitDots(224, 66, 3);
+  if (idx >= 18) svg += fruitDots(160, 78, 4) + fruitDots(130, 74, 2) + fruitDots(190, 74, 2);
+  if (idx >= 19) svg += fruitDots(160, 55, 4);
 
   // Checkpoint-et: pika të prekshme mbi skeletin
   let nodesHtml = "";
