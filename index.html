@@ -5192,17 +5192,17 @@ if (sb) {
 // 12 faza: nga fara deri te dielli. Niveli 1 = fara, niveli 40+ = dielli.
 const TREE_STAGES = [
   { min: 1,  name: "Fara",              msg: "Çdo pemë e madhe nis si farë. Ti sapo e mbolle." },
-  { min: 3,  name: "Filizi",            msg: "Filizi doli mbi tokë. Vazhdo ta ujitësh çdo ditë." },
-  { min: 5,  name: "Bimë e re",         msg: "Po rritesh vërtet. Rrënjët po forcohen." },
-  { min: 8,  name: "Trung i njomë",     msg: "Tani ke një trung. Erërat s'të rrëzojnë më lehtë." },
-  { min: 12, name: "Degët e para",      msg: "Degët po shtohen — ashtu si fjalët e tua." },
-  { min: 16, name: "Pemë e re",         msg: "Kjo tashmë është pemë e vërtetë. Bravo!" },
-  { min: 21, name: "Gjethnaja",         msg: "Gjethet mbulojnë degët. Po bëhesh i sigurt." },
-  { min: 26, name: "Pemë e fortë",      msg: "Pemë e fortë, me hije për të tjerët. Mbresëlënëse." },
-  { min: 31, name: "Lulëzim",           msg: "Pema jote lulëzoi. Rezultatet po duken qartë." },
-  { min: 36, name: "Frytet",            msg: "Tani jep fryte — puna jote po shpërblehet." },
-  { min: 42, name: "Kurora",            msg: "Ke arritur kurorën e pemës. Diçka të pret aty lart — por s'ta them ende." },
-  { min: 50, name: "Dielli ☀️",         msg: "" }
+  { min: 5,  name: "Filizi",            msg: "Filizi doli mbi tokë. Vazhdo ta ujitësh çdo ditë." },
+  { min: 10, name: "Bimë e re",         msg: "Po rritesh vërtet. Rrënjët po forcohen." },
+  { min: 15, name: "Trung i njomë",     msg: "Tani ke një trung. Erërat s'të rrëzojnë më lehtë." },
+  { min: 20, name: "Degët e para",      msg: "Degët po shtohen — ashtu si fjalët e tua." },
+  { min: 25, name: "Pemë e re",         msg: "Kjo tashmë është pemë e vërtetë. Bravo!" },
+  { min: 30, name: "Gjethnaja",         msg: "Gjethet mbulojnë degët. Po bëhesh i sigurt." },
+  { min: 35, name: "Pemë e fortë",      msg: "Pemë e fortë, me hije për të tjerët. Mbresëlënëse." },
+  { min: 40, name: "Lulëzim",           msg: "Pema jote lulëzoi. Rezultatet po duken qartë." },
+  { min: 45, name: "Frytet",            msg: "Tani jep fryte — puna jote po shpërblehet." },
+  { min: 50, name: "Kurora",            msg: "Ke arritur kurorën e pemës. Diçka të pret aty lart — por s'ta them ende." },
+  { min: 55, name: "Dielli ☀️",         msg: "" }
 ];
 
 // Aluzione të koduara — asnjëra nuk e thotë drejtpërdrejt fjalën "diell".
@@ -5285,7 +5285,9 @@ const TREE_BRANCHES = {
   twigL:  "M160 172 Q140 138 122 108",
   twigR:  "M160 172 Q180 138 198 108",
   crownL: "M160 118 Q142 96 130 74",
-  crownR: "M160 118 Q178 96 190 74"
+  crownR: "M160 118 Q178 96 190 74",
+  extraL: "M160 118 Q118 100 96 66",
+  extraR: "M160 118 Q202 100 224 66"
 };
 
 // Pikat ku vendosen 12 checkpoint-et, në pika natyrale të pemës
@@ -5355,29 +5357,30 @@ function buildTreeSVG(level) {
   }
 
   const branch = (cond, d, w) => cond ? `<path d="${d}" class="bark-stroke branch-stroke" stroke-width="${w}"/>` : "";
-  svg += branch(idx >= 3, B.forkL, 7);
-  svg += branch(idx >= 3, B.forkR, 7);
-  svg += branch(idx >= 6, B.subL1, 5);
-  svg += branch(idx >= 6, B.subL2, 5);
-  svg += branch(idx >= 6, B.subR1, 5);
-  svg += branch(idx >= 6, B.subR2, 5);
-  svg += branch(idx >= 8, B.twigL, 4);
-  svg += branch(idx >= 8, B.twigR, 4);
-  svg += branch(idx >= 10, B.crownL, 3);
-  svg += branch(idx >= 10, B.crownR, 3);
+  svg += branch(idx >= 1, B.forkL, 7);
+  svg += branch(idx >= 1, B.forkR, 7);
+  svg += branch(idx >= 3, B.subL1, 5);
+  svg += branch(idx >= 3, B.subL2, 5);
+  svg += branch(idx >= 3, B.subR1, 5);
+  svg += branch(idx >= 3, B.subR2, 5);
+  svg += branch(idx >= 5, B.twigL, 4);
+  svg += branch(idx >= 5, B.twigR, 4);
+  svg += branch(idx >= 7, B.crownL, 3);
+  svg += branch(idx >= 7, B.crownR, 3);
+  svg += branch(idx >= 9, B.extraL, 2.6);
+  svg += branch(idx >= 9, B.extraR, 2.6);
 
-  // Gjethnaja — mbin një fazë pas degës përkatëse
-  if (idx >= 4) svg += foliageCluster(48, 150, .85, 0);
-  if (idx >= 5) svg += foliageCluster(272, 150, .85, 1);
-  if (idx >= 6) svg += foliageCluster(78, 96, .7, 0);
-  if (idx >= 7) svg += foliageCluster(242, 96, .7, 1);
-  if (idx >= 8) svg += foliageCluster(122, 108, .6, 0);
-  if (idx >= 9) svg += foliageCluster(198, 108, .6, 1);
-  if (idx >= 10) svg += foliageCluster(160, 78, .9, 0) + foliageCluster(160, 60, .5, 1);
+  // Gjethnaja — mbin shpejt pas degës përkatëse, dhe bëhet gjithnjë e më e dendur
+  if (idx >= 2) svg += foliageCluster(48, 150, .85, 0) + foliageCluster(272, 150, .85, 1);
+  if (idx >= 4) svg += foliageCluster(78, 96, .75, 0) + foliageCluster(242, 96, .75, 1);
+  if (idx >= 6) svg += foliageCluster(122, 108, .65, 0) + foliageCluster(198, 108, .65, 1);
+  if (idx >= 8) svg += foliageCluster(160, 78, .95, 0) + foliageCluster(160, 60, .55, 1);
+  if (idx >= 10) svg += foliageCluster(96, 66, .8, 0) + foliageCluster(224, 66, .8, 1) + foliageCluster(160, 42, 1.05, 0);
 
   // Lule/fruta të vogla kur pema bëhet e pjekur
-  if (idx >= 8 && idx < 11) svg += fruitDots(122, 108, 3) + fruitDots(198, 108, 3);
-  if (idx >= 10) svg += fruitDots(78, 96, 2) + fruitDots(242, 96, 2);
+  if (idx >= 6 && idx < 11) svg += fruitDots(122, 108, 3) + fruitDots(198, 108, 3);
+  if (idx >= 8) svg += fruitDots(78, 96, 2) + fruitDots(242, 96, 2);
+  if (idx >= 10) svg += fruitDots(96, 66, 3) + fruitDots(224, 66, 3);
 
   // Checkpoint-et: pika të prekshme mbi skeletin
   let nodesHtml = "";
