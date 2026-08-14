@@ -5218,6 +5218,27 @@ function checkTreeStageAdvance() {
   }
 }
 
+// Pozicionet e 12 nyjeve, nga poshtë (fara) lart e lart deri te maja (dielli).
+const TREE_NODE_POS = [
+  { x: 150, y: 372 },  // 0 Fara
+  { x: 108, y: 340 },  // 1 Filizi
+  { x: 150, y: 322 },  // 2 Bimë e re
+  { x: 194, y: 292 },  // 3 Trung i njomë
+  { x: 150, y: 272 },  // 4 Degët e para
+  { x: 104, y: 240 },  // 5 Pemë e re
+  { x: 150, y: 218 },  // 6 Gjethnaja
+  { x: 198, y: 186 },  // 7 Pemë e fortë
+  { x: 150, y: 164 },  // 8 Lulëzim
+  { x: 106, y: 130 },  // 9 Frytet
+  { x: 150, y: 100 },  // 10 Kurora
+  { x: 150, y: 40  }   // 11 Dielli
+];
+
+function curvePath(a, b) {
+  const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2 + (a.x === b.x ? 0 : 6);
+  return `M${a.x} ${a.y} Q${mx} ${my} ${b.x} ${b.y}`;
+}
+
 function buildTreeSVG(level) {
   const { idx } = treeStageFor(level);
   const isSun = idx >= TREE_STAGES.length - 1;
