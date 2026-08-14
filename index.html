@@ -683,6 +683,18 @@
     border: 1px solid var(--line); background: var(--surface); color: var(--ink);
     font-family: var(--font); font-weight: 700; font-size: .76rem; cursor: pointer;
   }
+  .break-box { text-align: center; padding: 10px 4px; }
+  .break-icon { font-size: 3.2rem; margin-bottom: 8px; animation: floatGlow 2.4s ease-in-out infinite; }
+  .break-box h3 { margin: 0 0 8px; font-size: 1.25rem; font-weight: 800; }
+  .break-box p { margin: 0 0 16px; color: var(--muted); font-size: .87rem; line-height: 1.6; font-weight: 600; }
+  .break-timer {
+    font-size: 2.6rem; font-weight: 800; font-variant-numeric: tabular-nums;
+    color: var(--gold); text-shadow: 0 0 22px var(--gold-glow); margin-bottom: 12px;
+  }
+  .break-next {
+    font-size: .85rem; color: var(--ink); font-weight: 700; padding: 12px 14px;
+    background: rgba(91,140,255,.12); border: 1px solid rgba(91,140,255,.3); border-radius: var(--radius-md);
+  }
   .self-rate-btn.selected {
     background: linear-gradient(135deg, var(--blue), #6f97ff); color: #fff; border-color: transparent;
     box-shadow: 0 4px 14px var(--blue-glow);
@@ -2504,6 +2516,7 @@ let streakDays = 0;
 let cefrLevel = null;
 let placementTaken = false;
 let selectedLevel = null;
+let examRunCount = 0;
 let lastActiveDate = null;
 
 const BADGES = [
@@ -3577,7 +3590,7 @@ function startTimer(minutes, el) {
     const m = Math.floor(timerLeft/60), s = timerLeft%60;
     el.textContent = m + ":" + String(s).padStart(2,"0");
     el.classList.toggle("warn", timerLeft <= 60);
-    if (timerLeft <= 0) { stopTimer(); el.textContent = "Koha mbaroi!"; }
+    if (timerLeft <= 0) { stopTimer(); el.textContent = "Koha mbaroi!"; if (typeof onModuleTimeUp === "function") onModuleTimeUp(); }
     timerLeft--;
   };
   tick();
@@ -3658,18 +3671,342 @@ function startExam(kind) {
   if (kind === "sprechen") return runSprechen();
 }
 
-/* ============ PROVIMI I PLOTË B1 (4 module, 400 pikë) ============ */
+/* ===== POOL: TEKSTE PËR LEXIM (Lesen) ===== */
+const READING_POOL = [
+{ head: "E-Mail nga një shoqe", body: "Liebe Arta,\n\nendlich habe ich Zeit, dir zu schreiben. Seit drei Monaten wohne ich jetzt in München und langsam fühle ich mich hier zu Hause. Am Anfang war alles sehr schwierig: Ich musste zum Einwohnermeldeamt, ein Bankkonto eröffnen und eine Wohnung suchen. Besonders die Wohnungssuche hat mich viele Nerven gekostet, weil die Mieten in München sehr hoch sind. Zum Glück hat mir eine Kollegin geholfen, und jetzt wohne ich in einem kleinen Zimmer in Sendling.\n\nMein Deutschkurs läuft gut. Ich gehe viermal pro Woche abends zum Unterricht, weil ich tagsüber arbeite. Im Juli mache ich die B1-Prüfung. Ich habe ein bisschen Angst vor dem mündlichen Teil, aber meine Lehrerin sagt, ich soll einfach viel sprechen und keine Angst vor Fehlern haben.\n\nAm Wochenende gehe ich oft in den Englischen Garten oder ich treffe Freunde. Kommst du mich im Sommer besuchen? Dann zeige ich dir die Stadt.\n\nViele Grüße\nBesa",
+  questions: [
+    { q: "Wie lange wohnt Besa schon in München?", opts: ["Seit einem Jahr","Seit drei Monaten","Seit dem Sommer"], a: 1, ex: "„Seit drei Monaten wohne ich jetzt in München.“" },
+    { q: "Was war für Besa besonders schwierig?", opts: ["Eine Wohnung zu finden","Ein Bankkonto zu eröffnen","Freunde zu finden"], a: 0, ex: "„Besonders die Wohnungssuche hat mich viele Nerven gekostet.“" },
+    { q: "Warum geht Besa abends zum Deutschkurs?", opts: ["Weil der Kurs billiger ist","Weil sie tagsüber arbeitet","Weil sie morgens müde ist"], a: 1, ex: "„… weil ich tagsüber arbeite.“" },
+    { q: "Wovor hat Besa Angst?", opts: ["Vor dem schriftlichen Teil","Vor dem mündlichen Teil","Vor der Grammatik"], a: 1, ex: "„Ich habe ein bisschen Angst vor dem mündlichen Teil.“" }
+  ]},
+
+{ head: "Artikull gazete: Biçikletat", body: "Immer mehr Menschen in Deutschland fahren mit dem Fahrrad zur Arbeit. Eine neue Studie zeigt: In großen Städten wie München, Berlin und Hamburg ist die Zahl der Radfahrer in den letzten fünf Jahren um fast 30 Prozent gestiegen. Die Gründe dafür sind unterschiedlich. Viele Menschen wollen etwas für ihre Gesundheit tun. Andere sagen, dass sie mit dem Rad schneller sind als mit dem Auto, weil sie nicht im Stau stehen. Auch die hohen Benzinpreise spielen eine Rolle.\n\nAllerdings gibt es auch Probleme. Viele Radfahrer klagen über zu wenige und zu schmale Radwege. In manchen Stadtteilen fehlen sichere Wege völlig, deshalb fühlen sich besonders Familien mit Kindern unsicher. Die Stadt München plant deshalb, in den nächsten Jahren mehr Geld in den Ausbau der Radwege zu investieren.\n\nExperten sind sich einig: Wenn die Städte sicherer werden, steigen noch mehr Menschen auf das Fahrrad um.",
+  questions: [
+    { q: "Was zeigt die neue Studie?", opts: ["Weniger Menschen fahren Rad","Die Zahl der Radfahrer ist stark gestiegen","Autofahren ist beliebter geworden"], a: 1, ex: "Die Zahl stieg in fünf Jahren um fast 30 Prozent." },
+    { q: "Welcher Grund wird NICHT genannt?", opts: ["Gesundheit","Hohe Benzinpreise","Umweltschutz"], a: 2, ex: "Umweltschutz kommt im Text nicht vor." },
+    { q: "Worüber beschweren sich viele Radfahrer?", opts: ["Über zu wenige und schmale Radwege","Über zu viele Fahrräder","Über hohe Fahrradpreise"], a: 0, ex: "„… klagen über zu wenige und zu schmale Radwege.“" },
+    { q: "Was plant die Stadt München?", opts: ["Autos zu verbieten","Mehr Geld für Radwege","Die Fahrpreise zu senken"], a: 1, ex: "München will in den Ausbau der Radwege investieren." }
+  ]},
+
+{ head: "Njoftime: kurse gjuhe", body: "A) Sprachcafé München – Jeden Donnerstag 18–20 Uhr treffen sich Deutschlernende und Muttersprachler zum lockeren Gespräch. Kostenlos, ohne Anmeldung.\n\nB) Intensivkurs B1 – Montag bis Freitag, 9–13 Uhr, 8 Wochen. Mit Prüfungsvorbereitung. 690 Euro.\n\nC) Nachhilfe Deutsch – Erfahrene Lehrerin gibt Einzelunterricht bei Ihnen zu Hause. 25 Euro/Stunde, flexible Zeiten.\n\nD) Deutschkurs für Eltern – Vormittags, mit kostenloser Kinderbetreuung. Nur für Teilnehmerinnen mit Kindern unter 6 Jahren.",
+  questions: [
+    { q: "Ana arbeitet vormittags und möchte kostenlos sprechen üben. Welche Anzeige passt?", opts: ["A","B","C"], a: 0, ex: "Das Sprachcafé ist abends und kostenlos." },
+    { q: "Herr Krasniqi hat vormittags Zeit und will schnell die B1-Prüfung machen.", opts: ["A","B","D"], a: 1, ex: "Der Intensivkurs läuft vormittags mit Prüfungsvorbereitung." },
+    { q: "Frau Berisha hat ein dreijähriges Kind und kann es nicht allein lassen.", opts: ["B","C","D"], a: 2, ex: "Anzeige D bietet kostenlose Kinderbetreuung." },
+    { q: "Wer möchte zu Hause lernen, passt zu welcher Anzeige?", opts: ["A","C","D"], a: 1, ex: "Anzeige C: Einzelunterricht bei Ihnen zu Hause." }
+  ]},
+
+{ head: "Ftesë për ditëlindje", body: "Lieber Uran,\n\nich lade dich herzlich zu meiner Geburtstagsfeier ein! Sie findet am Samstag, dem 12. September, ab 18 Uhr bei mir zu Hause statt. Ich wohne jetzt in der Schwabinger Straße 14, ganz in der Nähe der U-Bahn-Station Münchner Freiheit.\n\nEs wird nicht nur Kuchen geben, sondern auch ein kleines Grillbuffet, also bring gerne Hunger mit! Falls du eine Diät machst oder etwas nicht essen darfst, sag mir bitte kurz Bescheid, dann kaufe ich extra etwas für dich ein.\n\nIch habe auch ein paar Freunde aus meinem Deutschkurs eingeladen, die du bestimmt noch nicht kennst. Es wird also eine gute Gelegenheit, neue Leute kennenzulernen und gemeinsam Deutsch zu üben.\n\nFalls du kommen möchtest, schreib mir bitte bis Mittwoch kurz zurück, damit ich weiß, wie viele Leute ich einplanen muss.\n\nLiebe Grüße\nSanije",
+  questions: [
+    { q: "Wann findet die Feier statt?", opts: ["Freitag 18 Uhr","Samstag 18 Uhr","Sonntag 20 Uhr"], a: 1, ex: "Samstag, 12. September, ab 18 Uhr." },
+    { q: "Was soll Uran tun, falls er eine Diät macht?", opts: ["Nichts essen","Sanije Bescheid geben","Selbst Essen mitbringen"], a: 1, ex: "Sie bittet um kurze Rückmeldung." },
+    { q: "Wer wird noch da sein?", opts: ["Nur Familie","Freunde aus dem Deutschkurs","Nachbarn"], a: 1, ex: "Freunde aus ihrem Deutschkurs." },
+    { q: "Bis wann soll Uran antworten?", opts: ["Bis Mittwoch","Bis Freitag","Bis Samstag"], a: 0, ex: "„… schreib mir bitte bis Mittwoch.“" }
+  ]},
+
+{ head: "Artikull: Puna nga shtëpia", body: "Seit einigen Jahren arbeiten immer mehr Menschen in Deutschland zumindest teilweise von zu Hause aus. Laut einer aktuellen Umfrage arbeitet inzwischen jeder vierte Beschäftigte regelmäßig im Homeoffice. Besonders in großen Städten wie München, Frankfurt und Berlin ist dieser Trend stark spürbar.\n\nDie Gründe dafür sind vielfältig. Viele Arbeitnehmer sparen durch das Homeoffice Zeit, weil sie nicht mehr täglich pendeln müssen. Andere schätzen die Möglichkeit, Beruf und Familie besser zu verbinden. Auch Unternehmen profitieren: Sie können kleinere Büros mieten und dadurch Kosten sparen.\n\nAllerdings gibt es auch Kritik. Manche Mitarbeiter fühlen sich im Homeoffice einsam, weil der direkte Kontakt zu Kollegen fehlt. Außerdem berichten einige, dass sie schwerer abschalten können und am Ende sogar mehr arbeiten als im Büro.\n\nExperten empfehlen deshalb ein Modell, bei dem Mitarbeiter einige Tage im Büro und andere Tage zu Hause arbeiten.",
+  questions: [
+    { q: "Wie viele Beschäftigte arbeiten regelmäßig im Homeoffice?", opts: ["Jeder zehnte","Jeder vierte","Jeder zweite"], a: 1, ex: "Laut Umfrage jeder vierte." },
+    { q: "Welcher Vorteil wird NICHT genannt?", opts: ["Zeitersparnis","Beruf und Familie","Höheres Gehalt"], a: 2, ex: "Höheres Gehalt steht nicht im Text." },
+    { q: "Was kritisieren manche Mitarbeiter?", opts: ["Zu viele Meetings","Gefühl der Einsamkeit","Zu kurze Arbeitszeit"], a: 1, ex: "Manche fühlen sich einsam." },
+    { q: "Was empfehlen Experten?", opts: ["Nur Büro","Mischung aus Büro und Homeoffice","Nur Homeoffice"], a: 1, ex: "Ein gemischtes Modell." }
+  ]},
+
+{ head: "Njoftime banimi", body: "A) WG-Zimmer Sendling – 18 m², möbliert, 480 € warm, ab sofort frei. Ruhige 3er-WG, Nähe U-Bahn.\n\nB) 2-Zimmer-Wohnung Neuhausen – 55 m², unmöbliert, 1.100 € kalt, ab 1. November. Balkon, Keller, kein Aufzug.\n\nC) Einzimmerwohnung Giesing – 32 m², möbliert, 750 € warm, für maximal 6 Monate, ideal für Sprachkursteilnehmer.\n\nD) 3-Zimmer-Wohnung Bogenhausen – 85 m², unmöbliert, 1.650 € kalt, ab sofort, Balkon, Aufzug, Stellplatz.",
+  questions: [
+    { q: "Herr Berisha macht einen 4-monatigen Sprachkurs und braucht möbliert.", opts: ["A","C","D"], a: 1, ex: "C ist möbliert, max. 6 Monate." },
+    { q: "Frau Krasniqi sucht unmöbliert, 2 Zimmer, mit Balkon.", opts: ["B","C","D"], a: 0, ex: "B ist unmöbliert mit Balkon." },
+    { q: "Welche Wohnung hat einen Stellplatz?", opts: ["A","B","D"], a: 2, ex: "D bietet einen Stellplatz." },
+    { q: "Wer sofort einziehen will und wenig zahlen kann, nimmt:", opts: ["A","B","D"], a: 0, ex: "A ist ab sofort frei und am günstigsten." }
+  ]},
+
+{ head: "Blog: Jeta pa makinë", body: "Vor einem Jahr habe ich mein Auto verkauft. Damals hielten mich viele Freunde für verrückt. „Wie willst du denn zur Arbeit kommen?“, fragten sie. Heute kann ich sagen: Es war eine der besten Entscheidungen meines Lebens.\n\nZuerst war die Umstellung schwierig. Ich musste meinen Tagesablauf komplett neu planen und früher aufstehen. Manchmal, besonders bei Regen, habe ich das Auto vermisst. Aber nach etwa zwei Monaten hatte ich mich daran gewöhnt.\n\nHeute fahre ich mit dem Rad oder mit der Straßenbahn. Ich spare im Monat fast 300 Euro — Versicherung, Benzin, Parkplatz und Reparaturen fallen alle weg. Außerdem bewege ich mich viel mehr als früher und fühle mich gesünder.\n\nNatürlich gibt es Situationen, in denen ein Auto praktisch wäre, zum Beispiel beim Großeinkauf oder bei Ausflügen aufs Land. Dafür nutze ich dann Carsharing. Das kostet mich vielleicht 30 Euro im Monat — deutlich weniger als ein eigenes Auto.",
+  questions: [
+    { q: "Wie reagierten die Freunde auf den Verkauf?", opts: ["Sie fanden es verrückt","Sie machten es auch","Sie fanden es logisch"], a: 0, ex: "„… hielten mich viele Freunde für verrückt.“" },
+    { q: "Wie lange dauerte die Umstellung?", opts: ["Etwa zwei Wochen","Etwa zwei Monate","Ein ganzes Jahr"], a: 1, ex: "„… nach etwa zwei Monaten hatte ich mich daran gewöhnt.“" },
+    { q: "Wie viel spart der Autor monatlich?", opts: ["Fast 100 Euro","Fast 300 Euro","Fast 500 Euro"], a: 1, ex: "„Ich spare im Monat fast 300 Euro.“" },
+    { q: "Was macht er beim Großeinkauf?", opts: ["Er nutzt Carsharing","Er leiht das Auto der Eltern","Er nimmt ein Taxi"], a: 0, ex: "„Dafür nutze ich dann Carsharing.“" }
+  ]},
+
+{ head: "Udhëzime: Makina larëse", body: "Bedienungsanleitung — Waschmaschine Modell WA-3000\n\nVor dem ersten Gebrauch: Entfernen Sie alle Transportsicherungen an der Rückseite. Ohne diesen Schritt kann die Maschine beim Waschen beschädigt werden.\n\nWäsche einfüllen: Öffnen Sie die Tür und legen Sie die Wäsche locker hinein. Füllen Sie die Trommel höchstens zu drei Vierteln. Bei zu voller Trommel wird die Wäsche nicht richtig sauber.\n\nWaschmittel: Das Fach links ist für die Vorwäsche, das mittlere Fach für die Hauptwäsche und das rechte Fach für den Weichspüler. Verwenden Sie nicht mehr Waschmittel als angegeben — zu viel Schaum kann die Pumpe beschädigen.\n\nProgramm wählen: Drehen Sie den Schalter auf das gewünschte Programm. Für Baumwolle empfehlen wir 40 Grad, für empfindliche Stoffe 30 Grad.\n\nNach dem Waschen: Lassen Sie die Tür einige Stunden offen, damit keine unangenehmen Gerüche entstehen.",
+  questions: [
+    { q: "Was muss vor dem ersten Gebrauch passieren?", opts: ["Wasser einfüllen","Transportsicherungen entfernen","Die Maschine reinigen"], a: 1, ex: "„Entfernen Sie alle Transportsicherungen.“" },
+    { q: "Wie voll darf die Trommel sein?", opts: ["Höchstens halb","Höchstens drei Viertel","Ganz voll"], a: 1, ex: "„… höchstens zu drei Vierteln.“" },
+    { q: "Wofür ist das rechte Fach?", opts: ["Vorwäsche","Hauptwäsche","Weichspüler"], a: 2, ex: "„… das rechte Fach für den Weichspüler.“" },
+    { q: "Warum soll man die Tür offen lassen?", opts: ["Damit sie trocknet","Gegen unangenehme Gerüche","Damit die Wäsche kühlt"], a: 1, ex: "„… damit keine unangenehmen Gerüche entstehen.“" }
+  ]},
+
+{ head: "E-Mail zyrtare: Ankesë", body: "Sehr geehrte Damen und Herren,\n\nam 14. März habe ich in Ihrem Onlineshop einen Schreibtisch bestellt (Bestellnummer 45-2291). Die Lieferung sollte laut Bestätigung innerhalb von zehn Werktagen erfolgen.\n\nDer Tisch wurde jedoch erst am 8. April geliefert, also mit erheblicher Verspätung. Noch ärgerlicher war, dass die Tischplatte an einer Ecke deutlich beschädigt war. Vermutlich ist das beim Transport passiert, denn auch der Karton war eingerissen.\n\nIch habe daraufhin dreimal bei Ihrer Servicenummer angerufen. Zweimal wurde ich nach langer Wartezeit weiterverbunden, ohne dass mir jemand helfen konnte. Beim dritten Anruf wurde mir zugesagt, dass sich jemand innerhalb von 48 Stunden meldet. Das ist nun zwei Wochen her.\n\nIch bitte Sie daher, mir entweder eine neue Tischplatte zu schicken oder den Kaufpreis zurückzuerstatten. Bitte antworten Sie mir bis zum 30. April.\n\nMit freundlichen Grüßen\nA. Hoxha",
+  questions: [
+    { q: "Wann wurde der Tisch geliefert?", opts: ["Am 14. März","Am 8. April","Am 30. April"], a: 1, ex: "„… erst am 8. April geliefert.“" },
+    { q: "Was war das zweite Problem?", opts: ["Falsche Farbe","Beschädigte Tischplatte","Falsches Modell"], a: 1, ex: "Die Tischplatte war an einer Ecke beschädigt." },
+    { q: "Wie oft hat der Kunde angerufen?", opts: ["Einmal","Zweimal","Dreimal"], a: 2, ex: "„Ich habe dreimal … angerufen.“" },
+    { q: "Was verlangt der Kunde?", opts: ["Neue Platte oder Geld zurück","Einen Gutschein","Eine Entschuldigung"], a: 0, ex: "„… neue Tischplatte … oder den Kaufpreis zurückzuerstatten.“" }
+  ]},
+
+{ head: "Artikull: Ushqimi i shëndetshëm", body: "Was gehört eigentlich zu einer gesunden Ernährung? Diese Frage beschäftigt viele Menschen — und die Antworten ändern sich immer wieder. Noch vor zwanzig Jahren galt Fett als Hauptproblem. Heute wissen Forscher: Nicht alle Fette sind schlecht. Entscheidend ist die Art des Fettes.\n\nWas sich dagegen kaum geändert hat, ist die Empfehlung für Obst und Gemüse. Fachleute raten weiterhin zu mindestens fünf Portionen täglich. Eine Portion entspricht ungefähr einer Handvoll.\n\nBesonders kritisch sehen Ernährungsberater heute den Zucker in Fertigprodukten. Viele Menschen essen deutlich mehr Zucker, als sie denken, weil er auch in Produkten steckt, die gar nicht süß schmecken — zum Beispiel in Brot, Wurst oder Fertigsoßen.\n\nEin weiterer Punkt wird oft vergessen: Wie man isst, ist fast so wichtig wie was man isst. Wer langsam isst und dabei nicht auf das Handy schaut, merkt schneller, wann er satt ist.",
+  questions: [
+    { q: "Was galt vor zwanzig Jahren als Hauptproblem?", opts: ["Zucker","Fett","Salz"], a: 1, ex: "„Noch vor zwanzig Jahren galt Fett als Hauptproblem.“" },
+    { q: "Wie viele Portionen Obst und Gemüse werden empfohlen?", opts: ["Mindestens drei","Mindestens fünf","Mindestens acht"], a: 1, ex: "„… mindestens fünf Portionen täglich.“" },
+    { q: "Warum ist Zucker ein Problem?", opts: ["Er ist teuer","Er steckt auch in nicht süßen Produkten","Er macht müde"], a: 1, ex: "Zucker steckt auch in Brot, Wurst oder Soßen." },
+    { q: "Welcher Rat wird zum Essverhalten gegeben?", opts: ["Langsam essen ohne Handy","Nur zu festen Zeiten essen","Immer im Stehen essen"], a: 0, ex: "„Wer langsam isst und dabei nicht auf das Handy schaut …“" }
+  ]},
+
+{ head: "Njoftime: Aktivitete në fundjavë", body: "A) Stadtführung Altstadt – Jeden Samstag 10 Uhr, Treffpunkt Marienplatz. 12 € pro Person, Dauer 2 Stunden. Auch bei Regen.\n\nB) Wanderung Isartal – Sonntags 9 Uhr ab Hauptbahnhof. Kostenlos, ca. 5 Stunden, festes Schuhwerk nötig. Nur bei gutem Wetter.\n\nC) Kochkurs Bayerische Küche – Freitag 18 Uhr, 45 € inklusive Zutaten. Maximal 8 Teilnehmer, Anmeldung erforderlich.\n\nD) Familienflohmarkt – Samstag 8–14 Uhr im Stadtpark. Eintritt frei, Stand mieten 15 €. Kinder unter 12 nur mit Begleitung.",
+  questions: [
+    { q: "Herr Dedaj will kostenlos etwas draußen machen, hat sonntags frei.", opts: ["A","B","D"], a: 1, ex: "B ist sonntags und kostenlos." },
+    { q: "Frau Gashi möchte kochen lernen, hat aber nur freitags Zeit.", opts: ["A","C","D"], a: 1, ex: "C ist freitags um 18 Uhr." },
+    { q: "Welche Aktivität findet auch bei schlechtem Wetter statt?", opts: ["A","B","D"], a: 0, ex: "A: „Auch bei Regen.“" },
+    { q: "Wer etwas verkaufen möchte, geht zu:", opts: ["A","C","D"], a: 2, ex: "Bei D kann man einen Stand mieten." }
+  ]},
+
+{ head: "E-Mail: Kërkesë për informacion", body: "Sehr geehrte Frau Wagner,\n\nich habe Ihre Anzeige über den Yogakurs für Anfänger im Stadtteilzentrum gelesen und interessiere mich sehr dafür. Bevor ich mich anmelde, hätte ich jedoch einige Fragen.\n\nErstens: In der Anzeige steht, dass der Kurs dienstags stattfindet. Gibt es eventuell auch einen Kurs am Wochenende? Ich arbeite unter der Woche oft bis 19 Uhr und könnte den Dienstagstermin nur schwer erreichen.\n\nZweitens: Muss man eigene Matten und Decken mitbringen, oder wird das gestellt? Ich habe bisher noch nie Yoga gemacht und besitze keine Ausrüstung.\n\nDrittens: Sie schreiben, dass der Kurs zehn Termine umfasst. Was passiert, wenn ich einen Termin verpasse, zum Beispiel wegen Krankheit? Kann ich ihn in einem anderen Kurs nachholen?\n\nÜber eine kurze Rückmeldung würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\nL. Shala",
+  questions: [
+    { q: "Warum ist der Dienstagstermin schwierig?", opts: ["Der Weg ist zu weit","Sie arbeitet oft bis 19 Uhr","Sie hat dienstags einen anderen Kurs"], a: 1, ex: "„Ich arbeite unter der Woche oft bis 19 Uhr.“" },
+    { q: "Was fragt sie zur Ausrüstung?", opts: ["Ob man Matten mitbringen muss","Wo man Matten kaufen kann","Welche Kleidung nötig ist"], a: 0, ex: "„Muss man eigene Matten und Decken mitbringen …?“" },
+    { q: "Wie viele Termine hat der Kurs?", opts: ["Fünf","Zehn","Zwanzig"], a: 1, ex: "„… dass der Kurs zehn Termine umfasst.“" },
+    { q: "Was möchte sie über verpasste Termine wissen?", opts: ["Ob sie Geld zurückbekommt","Ob sie nachholen kann","Ob sie jemanden schicken kann"], a: 1, ex: "„Kann ich ihn in einem anderen Kurs nachholen?“" }
+  ]}
+];
+
+/* ===== POOL: TEKSTE PËR DËGJIM (Hören) ===== */
+const LISTENING_POOL = [
+{ title: "Njoftim në stacion treni", script: "Achtung, eine Durchsage für die Reisenden nach Nürnberg. Der Regionalzug um vierzehn Uhr zwanzig fällt heute leider aus. Wir bitten Sie, den Zug um fünfzehn Uhr zehn von Gleis sieben zu nehmen. Der Zug hält in Ingolstadt und Nürnberg. Fahrgäste mit einem Ticket für den ausgefallenen Zug können ohne Aufpreis mitfahren. Wir entschuldigen uns für die Unannehmlichkeiten.",
+  questions: [
+    { q: "Was ist das Problem?", opts: ["Der Zug hat Verspätung","Der Zug fällt aus","Das Gleis wurde geändert"], a: 1, ex: "Der Zug um 14:20 fällt aus." },
+    { q: "Wann fährt der nächste Zug?", opts: ["Um 14:20","Um 15:10","Um 17:00"], a: 1, ex: "Um fünfzehn Uhr zehn." },
+    { q: "Von welchem Gleis?", opts: ["Gleis 5","Gleis 7","Gleis 10"], a: 1, ex: "Von Gleis sieben." }
+  ]},
+
+{ title: "Mesazh nga shkolla e gjuhëve", script: "Hallo Besa, hier ist Frau Weber von der Sprachschule. Ich rufe wegen deiner Anmeldung für den B1-Kurs an. Der Kurs beginnt am Montag, dem sechsten Oktober, und findet immer montags, mittwochs und freitags von achtzehn bis zwanzig Uhr statt. Bitte bring am ersten Tag deinen Personalausweis und die Kursgebühr mit. Wenn du noch Fragen hast, ruf mich bitte bis Donnerstag zurück. Bis bald!",
+  questions: [
+    { q: "Warum ruft Frau Weber an?", opts: ["Wegen einer Rechnung","Wegen der Kursanmeldung","Wegen einer Prüfung"], a: 1, ex: "Wegen der Anmeldung für den B1-Kurs." },
+    { q: "An welchen Tagen findet der Kurs statt?", opts: ["Montag, Mittwoch, Freitag","Dienstag und Donnerstag","Jeden Tag"], a: 0, ex: "Montags, mittwochs, freitags." },
+    { q: "Was soll Besa mitbringen?", opts: ["Foto und Stift","Personalausweis und Kursgebühr","Nur ein Heft"], a: 1, ex: "Personalausweis und Kursgebühr." }
+  ]},
+
+{ title: "Bisedë në zyrë për pushimet", script: "Frau Meier: Herr Krasniqi, haben Sie kurz Zeit? Es geht um den Urlaubsplan. Herr Krasniqi: Ja, natürlich. Ich wollte eigentlich im August zwei Wochen freinehmen. Frau Meier: Das ist leider schwierig, weil im August schon zwei Kollegen im Urlaub sind. Wäre September auch möglich? Herr Krasniqi: Hmm, im September habe ich einen Deutschkurs am Abend, aber der ist nur dreimal pro Woche. Ich könnte in der zweiten Septemberhälfte fahren. Frau Meier: Sehr gut. Dann tragen wir Sie vom fünfzehnten bis zum neunundzwanzigsten September ein. Bitte geben Sie mir den Antrag noch diese Woche.",
+  questions: [
+    { q: "Wann wollte er ursprünglich Urlaub machen?", opts: ["Im Juli","Im August","Im September"], a: 1, ex: "Er wollte im August frei." },
+    { q: "Warum geht der August nicht?", opts: ["Er hat einen Kurs","Zwei Kollegen sind im Urlaub","Die Firma ist zu"], a: 1, ex: "Zwei Kollegen sind schon im Urlaub." },
+    { q: "Was soll er noch tun?", opts: ["Den Antrag abgeben","Frau Meier anrufen","Den Kurs absagen"], a: 0, ex: "Den Antrag noch diese Woche abgeben." }
+  ]},
+
+{ title: "Njoftim në qendër tregtare", script: "Liebe Kundinnen und Kunden, herzlich willkommen im Kaufhaus Stadtmitte. Wir möchten Sie darauf hinweisen, dass unser Geschäft heute wegen einer Inventur bereits um achtzehn Uhr schließt, eine Stunde früher als gewöhnlich. Bitte bringen Sie Ihre Einkäufe rechtzeitig zur Kasse im Erdgeschoss. Ab morgen finden Sie in der dritten Etage außerdem einen neuen Bereich für Kinderkleidung mit besonders günstigen Preisen. Vielen Dank für Ihren Besuch.",
+  questions: [
+    { q: "Warum schließt das Kaufhaus früher?", opts: ["Wegen eines Feiertags","Wegen einer Inventur","Wegen Stromausfall"], a: 1, ex: "Wegen einer Inventur." },
+    { q: "Um wie viel Uhr schließt es heute?", opts: ["17 Uhr","18 Uhr","19 Uhr"], a: 1, ex: "Um achtzehn Uhr." },
+    { q: "Was gibt es ab morgen Neues?", opts: ["Kinderkleidung in der 3. Etage","Eine neue Kasse","Längere Öffnungszeiten"], a: 0, ex: "Neuer Bereich für Kinderkleidung." }
+  ]},
+
+{ title: "Mesazh nga klinika mjekësore", script: "Guten Tag, hier spricht die Praxis Dr. Hoffmann. Wir rufen an, um Ihren Termin am kommenden Dienstag zu bestätigen. Der Termin ist um halb zehn Uhr morgens. Bitte bringen Sie Ihre Versicherungskarte und, falls vorhanden, Ihre letzten Blutwerte mit. Sollten Sie den Termin nicht wahrnehmen können, bitten wir Sie, spätestens einen Tag vorher abzusagen, da wir sonst eine Gebühr berechnen müssen. Auf Wiederhören.",
+  questions: [
+    { q: "Worum geht es?", opts: ["Um eine Terminbestätigung","Um eine Rechnung","Um ein Testergebnis"], a: 0, ex: "Um die Bestätigung des Termins." },
+    { q: "Was soll man mitbringen?", opts: ["Nur den Ausweis","Versicherungskarte und Blutwerte","Eine Überweisung"], a: 1, ex: "Versicherungskarte und Blutwerte." },
+    { q: "Was passiert bei zu später Absage?", opts: ["Nichts","Eine Gebühr","Kein neuer Termin"], a: 1, ex: "Es wird eine Gebühr berechnet." }
+  ]},
+
+{ title: "Bisedë për një udhëtim pune", script: "Herr Deda: Frau Sela, haben Sie schon die Unterlagen für die Dienstreise nach Hamburg vorbereitet? Frau Sela: Fast fertig. Der Zug fährt am Montag um sieben Uhr morgens vom Hauptbahnhof, und ich habe bereits ein Hotel in der Nähe des Kundenbüros gebucht. Herr Deda: Sehr gut. Und das Meeting mit dem Kunden, wann genau ist das? Frau Sela: Um vierzehn Uhr am Montagnachmittag. Ich schlage vor, dass wir vorher noch gemeinsam die Präsentation durchgehen, vielleicht am Sonntagabend per Videoanruf. Herr Deda: Das passt mir gut. Schicken Sie mir bitte noch die Rechnungsbelege.",
+  questions: [
+    { q: "Wann fährt der Zug?", opts: ["Montag 7 Uhr","Sonntag 14 Uhr","Montag 14 Uhr"], a: 0, ex: "Montag um sieben Uhr morgens." },
+    { q: "Wann ist das Meeting?", opts: ["Sonntagabend","Montag 14 Uhr","Dienstagmorgen"], a: 1, ex: "Um vierzehn Uhr am Montag." },
+    { q: "Was schlägt Frau Sela vor?", opts: ["Präsentation Sonntagabend durchgehen","Meeting verschieben","Anderes Hotel buchen"], a: 0, ex: "Präsentation per Videoanruf durchgehen." }
+  ]},
+
+{ title: "Njoftim në aeroport", script: "Sehr geehrte Fluggäste des Fluges LH vier acht zwei nach Wien. Aufgrund des starken Nebels verzögert sich der Abflug um voraussichtlich fünfzig Minuten. Der neue Abflug ist für elf Uhr fünfundzwanzig geplant. Das Boarding beginnt am Gate B zwölf, nicht wie ursprünglich angegeben am Gate B acht. Passagiere mit Anschlussflügen wenden Sie sich bitte an den Serviceschalter in der Ankunftshalle. Wir danken für Ihr Verständnis.",
+  questions: [
+    { q: "Warum verzögert sich der Flug?", opts: ["Wegen Nebel","Wegen Schnee","Wegen eines technischen Problems"], a: 0, ex: "Aufgrund des starken Nebels." },
+    { q: "Wann ist der neue Abflug?", opts: ["Um 10:25","Um 11:25","Um 12:25"], a: 1, ex: "Um elf Uhr fünfundzwanzig." },
+    { q: "Welches Gate gilt jetzt?", opts: ["B 8","B 12","B 20"], a: 1, ex: "Gate B zwölf statt B acht." }
+  ]},
+
+{ title: "Radio: parashikimi i motit", script: "Und nun das Wetter für morgen. Am Vormittag bleibt es im Süden Bayerns noch überwiegend trocken bei Temperaturen um zwölf Grad. Ab dem frühen Nachmittag ziehen von Westen dichte Wolken auf, und es kommt zu kräftigen Regenschauern. Vereinzelt sind auch Gewitter möglich. Der Wind frischt am Abend deutlich auf. In der Nacht sinken die Temperaturen auf sechs Grad. Autofahrer sollten besonders am Abend vorsichtig fahren.",
+  questions: [
+    { q: "Wie ist das Wetter am Vormittag?", opts: ["Überwiegend trocken","Starker Regen","Schnee"], a: 0, ex: "Am Vormittag bleibt es überwiegend trocken." },
+    { q: "Was passiert ab dem frühen Nachmittag?", opts: ["Es wird sonnig","Es kommt zu Regenschauern","Es wird neblig"], a: 1, ex: "Kräftige Regenschauer ziehen auf." },
+    { q: "Auf wie viel Grad sinkt es nachts?", opts: ["Auf zwölf Grad","Auf sechs Grad","Auf null Grad"], a: 1, ex: "In der Nacht auf sechs Grad." }
+  ]},
+
+{ title: "Bisedë te mjeku", script: "Ärztin: Guten Tag, Frau Hoxha. Was führt Sie zu mir? Patientin: Guten Tag. Ich habe seit etwa einer Woche starke Kopfschmerzen, besonders am Nachmittag. Ärztin: Nehmen Sie im Moment Medikamente? Patientin: Nur eine Tablette gegen Kopfschmerzen, aber sie hilft kaum. Ärztin: Wie viel schlafen Sie denn? Patientin: In letzter Zeit nur ungefähr fünf Stunden, ich habe viel Stress bei der Arbeit. Ärztin: Das könnte der Grund sein. Ich verschreibe Ihnen nichts Neues, sondern empfehle Ihnen zuerst mehr Schlaf und regelmäßige Pausen. Kommen Sie in zwei Wochen wieder, wenn es nicht besser wird.",
+  questions: [
+    { q: "Seit wann hat sie Kopfschmerzen?", opts: ["Seit einem Tag","Seit etwa einer Woche","Seit einem Monat"], a: 1, ex: "Seit etwa einer Woche." },
+    { q: "Wie viel schläft sie?", opts: ["Etwa fünf Stunden","Etwa acht Stunden","Etwa zehn Stunden"], a: 0, ex: "Nur ungefähr fünf Stunden." },
+    { q: "Was empfiehlt die Ärztin?", opts: ["Ein neues Medikament","Mehr Schlaf und Pausen","Sofort ins Krankenhaus"], a: 1, ex: "Zuerst mehr Schlaf und regelmäßige Pausen." }
+  ]},
+
+{ title: "Mesazh nga fqinji", script: "Hallo Herr Berisha, hier ist Müller von nebenan. Ich wollte Ihnen kurz Bescheid sagen: Am Samstag kommen Handwerker zu mir, die das Bad renovieren. Es wird also leider ziemlich laut, vor allem zwischen neun und dreizehn Uhr. Das Ganze dauert voraussichtlich zwei Tage. Es tut mir leid für den Lärm. Falls Sie am Wochenende Ruhe brauchen, sagen Sie mir Bescheid, dann verschiebe ich es. Ach, und könnten Sie eventuell ein Paket für mich annehmen? Ich bin am Freitag nicht da. Danke!",
+  questions: [
+    { q: "Warum ruft der Nachbar an?", opts: ["Wegen Lärm durch Renovierung","Wegen einer Party","Wegen eines Wasserschadens"], a: 0, ex: "Handwerker renovieren sein Bad." },
+    { q: "Wann wird es besonders laut?", opts: ["Zwischen 9 und 13 Uhr","Am Abend","Die ganze Nacht"], a: 0, ex: "Vor allem zwischen neun und dreizehn Uhr." },
+    { q: "Worum bittet er außerdem?", opts: ["Um Werkzeug","Ein Paket anzunehmen","Um einen Parkplatz"], a: 1, ex: "Er fragt, ob ein Paket angenommen werden kann." }
+  ]},
+
+{ title: "Njoftim në universitet", script: "Liebe Studierende, eine wichtige Information zur Vorlesung Wirtschaftsmathematik. Die Veranstaltung am Donnerstag muss leider entfallen, da Professor Lange erkrankt ist. Der Termin wird nicht nachgeholt, stattdessen stellen wir die Folien und eine Aufzeichnung online zur Verfügung. Die Klausuranmeldung bleibt davon unberührt und endet weiterhin am fünfzehnten Januar. Bitte denken Sie daran, sich rechtzeitig anzumelden, eine spätere Anmeldung ist nicht möglich.",
+  questions: [
+    { q: "Warum fällt die Vorlesung aus?", opts: ["Der Professor ist krank","Der Raum ist besetzt","Zu wenige Studierende"], a: 0, ex: "Professor Lange ist erkrankt." },
+    { q: "Was passiert stattdessen?", opts: ["Ein Nachholtermin","Folien und Aufzeichnung online","Eine Extra-Übung"], a: 1, ex: "Folien und Aufzeichnung kommen online." },
+    { q: "Wann endet die Klausuranmeldung?", opts: ["Am 5. Januar","Am 15. Januar","Am 25. Januar"], a: 1, ex: "Am fünfzehnten Januar." }
+  ]},
+
+{ title: "Bisedë në restorant", script: "Kellner: Guten Abend, haben Sie schon gewählt? Gast: Ja, ich hätte gern das Schnitzel mit Kartoffelsalat. Kellner: Sehr gern. Und zum Trinken? Gast: Ein großes Mineralwasser bitte. Sagen Sie, ist im Kartoffelsalat Mayonnaise? Ich vertrage keine Eier. Kellner: Nein, unserer ist mit Essig und Öl, ganz ohne Ei. Aber ich sage der Küche trotzdem Bescheid. Gast: Danke, das ist nett. Wie lange dauert es ungefähr? Kellner: Etwa zwanzig Minuten, heute ist viel los.",
+  questions: [
+    { q: "Was bestellt der Gast zu essen?", opts: ["Schnitzel mit Kartoffelsalat","Suppe","Nur einen Salat"], a: 0, ex: "Schnitzel mit Kartoffelsalat." },
+    { q: "Warum fragt er nach dem Salat?", opts: ["Er verträgt keine Eier","Er ist Vegetarier","Er mag keinen Essig"], a: 0, ex: "„Ich vertrage keine Eier.“" },
+    { q: "Wie lange dauert es?", opts: ["Etwa 10 Minuten","Etwa 20 Minuten","Etwa 40 Minuten"], a: 1, ex: "Etwa zwanzig Minuten." }
+  ]}
+];
+
+/* ===== POOL: DETYRA SHKRIMI (Schreiben) ===== */
+const WRITING_POOL = [
+{ title: "Email për një mik — sëmundje", prompt: "Du warst letzte Woche krank und konntest nicht zum Deutschkurs kommen. Schreib eine E-Mail an deinen Kursfreund Andi.",
+  points: ["Erkläre, warum du gefehlt hast.","Frage, was ihr im Unterricht gemacht habt.","Bitte ihn um die Hausaufgaben.","Schlage ein Treffen vor."],
+  phrases: "Lieber Andi, … / Leider konnte ich … / Könntest du mir bitte …? / Hättest du am Samstag Zeit? / Viele Grüße, …" },
+{ title: "Email zyrtare — anulim kursi", prompt: "Du hast einen Deutschkurs gebucht, kannst aber aus beruflichen Gründen nicht teilnehmen. Schreib eine formelle E-Mail an die Sprachschule.",
+  points: ["Nenne deinen Kurs und das Startdatum.","Erkläre höflich, warum du absagen musst.","Frage nach einem späteren Kurs.","Bitte um eine Antwort."],
+  phrases: "Sehr geehrte Damen und Herren, … / hiermit möchte ich … / Leider muss ich Ihnen mitteilen, dass … / Mit freundlichen Grüßen" },
+{ title: "Postim në forum — gjuhë në kopsht", prompt: "In einem Internetforum wird diskutiert: „Sollten Kinder schon im Kindergarten eine Fremdsprache lernen?“ Schreib deine Meinung.",
+  points: ["Nenne deine Meinung.","Gib zwei Gründe oder Beispiele.","Nenne einen möglichen Nachteil.","Schreib einen Schluss."],
+  phrases: "Meiner Meinung nach … / Einerseits …, andererseits … / Ein Vorteil ist, dass … / Zusammenfassend …" },
+{ title: "Refuzim ftese", prompt: "Ein Freund hat dich zu seiner Geburtstagsfeier eingeladen, aber du kannst nicht kommen. Schreib ihm eine E-Mail.",
+  points: ["Bedanke dich für die Einladung.","Erkläre, warum du nicht kommen kannst.","Wünsche ihm alles Gute.","Schlage ein anderes Treffen vor."],
+  phrases: "Vielen Dank für deine Einladung! / Leider kann ich nicht kommen, weil … / Ich wünsche dir alles Gute! / Wie wäre es, wenn …?" },
+{ title: "Ankesë te dyqani online", prompt: "Du hast online eine Jacke bestellt, aber sie kam beschädigt an. Schreib eine formelle E-Mail an den Online-Shop.",
+  points: ["Beschreibe, was du bestellt hast.","Erkläre das Problem genau.","Sag, was du erwartest.","Bitte um schnelle Antwort."],
+  phrases: "Sehr geehrte Damen und Herren, / ich habe am … bestellt. / Leider musste ich feststellen, dass … / Ich bitte Sie um …" },
+{ title: "Këshillë për një shoqe", prompt: "Eine Freundin schreibt dir, dass sie sich in München einsam fühlt. Antworte ihr mit Ratschlägen.",
+  points: ["Zeige Verständnis.","Gib zwei konkrete Vorschläge.","Erzähle von deiner Erfahrung.","Biete deine Hilfe an."],
+  phrases: "Das kann ich gut verstehen. / Du könntest zum Beispiel … / Als ich neu war, habe ich … / Ich helfe dir gerne." },
+{ title: "Email te qiradhënësi", prompt: "In deiner Wohnung ist die Heizung seit drei Tagen kaputt. Schreib eine E-Mail an deinen Vermieter.",
+  points: ["Beschreibe das Problem.","Sag, seit wann es besteht.","Bitte um schnelle Reparatur.","Nenne Zeiten, wann du zu Hause bist."],
+  phrases: "Sehr geehrter Herr …, / seit drei Tagen funktioniert … / Ich bitte Sie, … / Ich bin täglich ab … zu Hause." },
+{ title: "Postim në forum — rrjetet sociale", prompt: "Im Forum wird diskutiert: „Sind soziale Medien gut oder schlecht für junge Menschen?“ Schreib deine Meinung.",
+  points: ["Nenne deine Meinung.","Nenne einen Vorteil.","Nenne einen Nachteil.","Schreib eine Schlussfolgerung."],
+  phrases: "Ich bin der Meinung, dass … / Ein großer Vorteil ist … / Allerdings … / Alles in allem …" },
+{ title: "Kërkesë për vërtetim në punë", prompt: "Du brauchst von deinem Arbeitgeber eine Arbeitsbescheinigung für die Ausländerbehörde. Schreib eine E-Mail an die Personalabteilung.",
+  points: ["Erkläre, was du brauchst.","Sag, wofür du es brauchst.","Nenne die Frist.","Bedanke dich höflich."],
+  phrases: "Sehr geehrte Damen und Herren, / ich benötige eine Bescheinigung über … / Die Behörde verlangt sie bis … / Vielen Dank im Voraus." },
+{ title: "Email — organizim udhëtimi", prompt: "Du planst mit Freunden ein Wochenende an einem See. Schreib eine E-Mail an die Gruppe.",
+  points: ["Schlage ein Datum vor.","Sag, wie ihr hinfahrt.","Frage, wer was mitbringt.","Bitte um Rückmeldung."],
+  phrases: "Hallo zusammen, / wie wäre es, wenn wir …? / Ich schlage vor, dass … / Sagt mir bitte bis … Bescheid." },
+{ title: "Falënderim pas ndihmës", prompt: "Eine Nachbarin hat dir beim Umzug geholfen. Schreib ihr eine kurze Dankes-E-Mail.",
+  points: ["Bedanke dich herzlich.","Sag, was besonders geholfen hat.","Biete eine Gegenleistung an.","Schlage ein gemeinsames Essen vor."],
+  phrases: "Liebe Frau …, / ich möchte mich herzlich bedanken für … / Ohne Sie hätte ich … / Wenn Sie einmal Hilfe brauchen, …" },
+{ title: "Postim në forum — makina në qytet", prompt: "Im Forum wird diskutiert: „Sollten Autos in Stadtzentren verboten werden?“ Schreib deine Meinung.",
+  points: ["Nenne deine Position.","Gib zwei Argumente.","Nenne ein Gegenargument.","Fasse zusammen."],
+  phrases: "Aus meiner Sicht … / Erstens … Zweitens … / Natürlich könnte man einwenden, dass … / Deshalb bin ich der Meinung, dass …" },
+{ title: "Email te mësuesi", prompt: "Du kannst an der geplanten Klassenfahrt nicht teilnehmen. Schreib eine E-Mail an deine Lehrerin.",
+  points: ["Sag höflich ab.","Nenne den Grund.","Frage nach dem Geld.","Frage, was du nacharbeiten sollst."],
+  phrases: "Sehr geehrte Frau …, / leider kann ich … / Der Grund dafür ist, dass … / Könnten Sie mir sagen, ob …?" },
+{ title: "Kërkesë informacioni për kurs noti", prompt: "Du interessierst dich für einen Schwimmkurs. Schreib eine E-Mail an das Schwimmbad.",
+  points: ["Sag, wofür du dich interessierst.","Frage nach Zeiten.","Frage nach dem Preis.","Frage, ob es Anfängerkurse gibt."],
+  phrases: "Sehr geehrte Damen und Herren, / ich interessiere mich für … / Könnten Sie mir mitteilen, … / Über eine Antwort würde ich mich freuen." },
+{ title: "Postim në forum — sport në shkollë", prompt: "Im Forum wird diskutiert: „Sollte Sport in der Schule ein Pflichtfach bleiben?“ Schreib deine Meinung.",
+  points: ["Nenne deine Meinung.","Gib zwei Gründe.","Nenne ein Problem.","Schreib einen Schluss."],
+  phrases: "Ich finde, dass … / Zum einen … zum anderen … / Ein Problem dabei ist … / Abschließend würde ich sagen, …" },
+{ title: "Email — shtyrje takimi", prompt: "Du hast einen Termin beim Zahnarzt, kannst aber nicht kommen. Schreib eine E-Mail an die Praxis.",
+  points: ["Nenne deinen Termin.","Sag höflich ab.","Erkläre kurz den Grund.","Bitte um einen neuen Termin."],
+  phrases: "Sehr geehrte Damen und Herren, / ich habe am … einen Termin. / Leider muss ich diesen absagen, da … / Wäre ein Termin in der Woche vom … möglich?" },
+{ title: "Email për praktikë", prompt: "Du möchtest ein Praktikum in einem Büro machen. Schreib eine kurze Bewerbungs-E-Mail.",
+  points: ["Sag, wer du bist.","Erkläre, warum du dich interessierst.","Nenne deine Stärken.","Frage nach dem nächsten Schritt."],
+  phrases: "Sehr geehrte Damen und Herren, / mein Name ist … / Ich interessiere mich für … weil … / Ich freue mich auf Ihre Rückmeldung." },
+{ title: "Postim në forum — të jetosh me prindërit", prompt: "Im Forum wird diskutiert: „Bis wann sollten junge Erwachsene bei den Eltern wohnen?“ Schreib deine Meinung.",
+  points: ["Nenne deine Meinung.","Gib zwei Gründe.","Beschreibe die Situation in deinem Land.","Schreib einen Schluss."],
+  phrases: "Meiner Meinung nach … / In meinem Heimatland ist es üblich, dass … / Einerseits … andererseits … / Zusammenfassend …" },
+{ title: "Email — humbje e sendit", prompt: "Du hast im Bus deine Tasche vergessen. Schreib eine E-Mail an das Fundbüro.",
+  points: ["Beschreibe, was du verloren hast.","Sag wann und wo.","Beschreibe den Inhalt.","Frage nach dem weiteren Vorgehen."],
+  phrases: "Sehr geehrte Damen und Herren, / am … habe ich in der Linie … / Die Tasche ist … / Bitte teilen Sie mir mit, ob …" },
+{ title: "Postim në forum — mësimi online", prompt: "Im Forum wird diskutiert: „Ist Online-Unterricht so gut wie Präsenzunterricht?“ Schreib deine Meinung.",
+  points: ["Nenne deine Meinung.","Nenne einen Vorteil des Online-Unterrichts.","Nenne einen Nachteil.","Schreib eine Empfehlung."],
+  phrases: "Ich bin überzeugt, dass … / Ein Vorteil ist sicherlich … / Auf der anderen Seite … / Ich würde empfehlen, dass …" }
+];
+
+const WRITING_CHECKLIST = [
+  "I trajtova të katër pikat.",
+  "Teksti im ka një përshëndetje fillestare dhe një përmbyllëse.",
+  "Kam shkruar të paktën 80 fjalë.",
+  "Kam përdorur lidhëza (weil, deshalb, obwohl, trotzdem).",
+  "Folja në fjalinë e nënrenditur qëndron në fund.",
+  "Emrat janë me shkronjë të madhe.",
+  "Kam zgjedhur formën e drejtë (du apo Sie)."
+];
+
+/* ===== POOL: DETYRA TË FOLURI (Sprechen) ===== */
+const SPEAKING_PLAN_POOL = [
+  { title: "Planifikoni një festë", prompt: "Ihr wollt gemeinsam eine Geburtstagsfeier für einen Freund organisieren. Plant zusammen.",
+    points: ["Wann und wo feiert ihr?","Wen ladet ihr ein?","Was gibt es zu essen und trinken?","Wer kauft was ein?","Welches Geschenk kauft ihr?"],
+    phrases: "Ich schlage vor, dass wir … / Wollen wir vielleicht …? / Das finde ich gut. / Lieber nicht, weil … / Einverstanden!" },
+  { title: "Planifikoni një vizitë", prompt: "Ein Freund aus Albanien besucht euch in München. Plant gemeinsam das Wochenendprogramm.",
+    points: ["Wann holt ihr ihn ab?","Was zeigt ihr ihm?","Wo esst ihr?","Wie fahrt ihr?","Was macht ihr am Abend?"],
+    phrases: "Wie wäre es, wenn wir …? / Ich würde vorschlagen … / Das ist eine gute Idee. / Vielleicht besser …" },
+  { title: "Planifikoni një udhëtim", prompt: "Ihr wollt gemeinsam einen Tagesausflug an einen See machen. Plant zusammen.",
+    points: ["Wann fahrt ihr los?","Wie kommt ihr hin?","Was nehmt ihr mit?","Was macht ihr dort?","Wann fahrt ihr zurück?"],
+    phrases: "Sollen wir …? / Ich denke, es wäre besser … / Da bin ich anderer Meinung, weil … / Also abgemacht." },
+  { title: "Planifikoni një dhuratë", prompt: "Eure Deutschlehrerin geht in Rente. Plant gemeinsam ein Abschiedsgeschenk.",
+    points: ["Was schenkt ihr?","Wie viel Geld sammelt ihr?","Wer fragt die anderen?","Wann übergebt ihr es?","Wer hält eine kurze Rede?"],
+    phrases: "Was hältst du davon, wenn …? / Meinst du nicht, dass …? / Ja, genau. / Ich bin nicht sicher, ob …" },
+  { title: "Planifikoni ndihmë për zhvendosje", prompt: "Ein Kursfreund zieht um und braucht Hilfe. Plant gemeinsam, wie ihr helft.",
+    points: ["Wann helft ihr?","Wer bringt was mit?","Braucht ihr ein Auto?","Wie viele Personen braucht ihr?","Was macht ihr danach zusammen?"],
+    phrases: "Ich könnte … / Kannst du vielleicht …? / Das wäre super. / Dann machen wir es so." },
+  { title: "Planifikoni një darkë ndërkombëtare", prompt: "Euer Deutschkurs möchte ein internationales Abendessen organisieren. Plant zusammen.",
+    points: ["Wann und wo?","Wer kocht was?","Wie teilt ihr die Kosten?","Wie informiert ihr die anderen?","Was braucht ihr an Geschirr?"],
+    phrases: "Ich schlage vor … / Wie sieht es mit … aus? / Damit bin ich einverstanden. / Vielleicht sollten wir lieber …" }
+];
+
+const SPEAKING_PRESENT_POOL = [
+  { title: "Prezantim: Jeta në qytet të madh", prompt: "Halte eine kurze Präsentation zum Thema „Leben in einer Großstadt“.",
+    points: ["Beschreibe deine persönliche Erfahrung.","Wie ist die Situation in deinem Heimatland?","Nenne Vorteile und Nachteile.","Sag deine Meinung.","Beende die Präsentation."],
+    phrases: "Ich möchte heute über … sprechen. / In meinem Heimatland ist es so, dass … / Ein großer Vorteil ist … / Vielen Dank für eure Aufmerksamkeit." },
+  { title: "Prezantim: Mësimi i gjuhëve", prompt: "Halte eine kurze Präsentation zum Thema „Fremdsprachen lernen“.",
+    points: ["Warum lernst du Deutsch?","Wie lernst du am besten?","Was ist schwierig?","Was empfiehlst du anderen?","Beende die Präsentation."],
+    phrases: "Mein Thema heute ist … / Für mich persönlich … / Besonders schwierig finde ich … / Ich empfehle …" },
+  { title: "Prezantim: Ushqimi i shëndetshëm", prompt: "Halte eine kurze Präsentation zum Thema „Gesunde Ernährung“.",
+    points: ["Was isst du normalerweise?","Wie ist die Esskultur in deinem Land?","Was ist gesund, was nicht?","Deine Meinung dazu.","Schluss."],
+    phrases: "Heute spreche ich über … / Bei uns zu Hause … / Meiner Meinung nach … / Zum Schluss möchte ich sagen …" },
+  { title: "Prezantim: Media sociale", prompt: "Halte eine kurze Präsentation zum Thema „Soziale Medien im Alltag“.",
+    points: ["Wie nutzt du soziale Medien?","Wie war es früher?","Vorteile und Nachteile.","Deine Meinung.","Schluss."],
+    phrases: "Ich möchte über … sprechen. / Früher war es so, dass … / Einerseits … andererseits … / Danke fürs Zuhören." },
+  { title: "Prezantim: Puna dhe koha e lirë", prompt: "Halte eine kurze Präsentation zum Thema „Arbeit und Freizeit“.",
+    points: ["Wie sieht dein Alltag aus?","Wie viel Freizeit hast du?","Wie ist es in deinem Heimatland?","Was ist wichtig für dich?","Schluss."],
+    phrases: "Mein Thema ist … / Ein normaler Tag bei mir … / Im Vergleich dazu … / Abschließend …" },
+  { title: "Prezantim: Mjedisi", prompt: "Halte eine kurze Präsentation zum Thema „Umweltschutz im Alltag“.",
+    points: ["Was tust du persönlich?","Was machen die Menschen in deinem Land?","Was ist schwierig?","Was sollte sich ändern?","Schluss."],
+    phrases: "Ich spreche heute über … / Persönlich versuche ich … / Schwierig ist dabei … / Meiner Meinung nach sollte …" }
+];
+
+/* ===== 20 SETE PROVIMESH: rotacion pa përsëritje ===== */
+// Çdo provim merr 3 tekste leximi, 3 tekste dëgjimi, 1 detyrë shkrimi,
+// 1 detyrë planifikimi dhe 1 prezantim. Kombinimet janë të fiksuara që
+// asnjë provim të mos jetë i njëjtë me tjetrin.
+const EXAM_SET_COUNT = 20;
+
+function examSetFor(n) {
+  const i = ((n % EXAM_SET_COUNT) + EXAM_SET_COUNT) % EXAM_SET_COUNT;
+  const R = READING_POOL.length, L = LISTENING_POOL.length;
+  return {
+    index: i,
+    reading:  [ READING_POOL[i % R], READING_POOL[(i + 4) % R], READING_POOL[(i + 8) % R] ],
+    listening:[ LISTENING_POOL[(i + 1) % L], LISTENING_POOL[(i + 5) % L], LISTENING_POOL[(i + 9) % L] ],
+    writing:  WRITING_POOL[i % WRITING_POOL.length],
+    plan:     SPEAKING_PLAN_POOL[i % SPEAKING_PLAN_POOL.length],
+    present:  SPEAKING_PRESENT_POOL[(i + 2) % SPEAKING_PRESENT_POOL.length]
+  };
+}
+
+/* ===== PROVIMI I PLOTË: struktura reale ===== */
 const FULL_MODULES = [
-  { id: "lesen",     name: "Lesen",     alb: "Lexim",       icon: "📖", minutes: 65 },
-  { id: "hoeren",    name: "Hören",     alb: "Dëgjim",      icon: "🎧", minutes: 40 },
-  { id: "schreiben", name: "Schreiben", alb: "Shkrim",      icon: "✍️", minutes: 60 },
-  { id: "sprechen",  name: "Sprechen",  alb: "Të folurit",  icon: "🗣️", minutes: 15 }
+  { id: "lesen",     name: "Lesen",     alb: "Lexim",      icon: "📖", minutes: 65 },
+  { id: "hoeren",    name: "Hören",     alb: "Dëgjim",     icon: "🎧", minutes: 40 },
+  { id: "schreiben", name: "Schreiben", alb: "Shkrim",     icon: "✍️", minutes: 60 },
+  { id: "sprechen",  name: "Sprechen",  alb: "Të folurit", icon: "🗣️", minutes: 15 }
 ];
 const PASS_MARK = 60;
+const BREAK_MINUTES = 15;
 
 let fullExamActive = false;
 let fullModuleIndex = 0;
-let fullScores = {};   // { lesen: 0-100, ... }
+let fullScores = {};
+let currentExamSet = null;
 
 function gradeFor(score) {
   if (score >= 90) return { label: "shumë mirë", cls: "grade-vg" };
@@ -3683,26 +4020,28 @@ function startFullExam() {
   fullExamActive = true;
   fullModuleIndex = 0;
   fullScores = {};
+  currentExamSet = examSetFor(examRunCount);
   showFullExamIntro();
 }
 
 function showFullExamIntro() {
   const rows = FULL_MODULES.map(m =>
-    `<tr><td>${m.icon} ${m.name} <span class="mod-alb">(${m.alb})</span></td><td>100</td><td>${PASS_MARK}</td></tr>`
+    `<tr><td>${m.icon} ${m.name} <span class="mod-alb">(${m.alb})</span></td><td>${m.minutes} min</td><td>100</td><td>${PASS_MARK}</td></tr>`
   ).join("");
   examShell("Provimi i plotë B1", 0, `
     <div class="full-intro">
-      <h3>🎓 Provimi i plotë B1</h3>
-      <p>Do të kalosh nëpër të katër modulet me radhë, si në provimin e vërtetë të Goethe-Institut.</p>
+      <h3>🎓 Provimi i plotë B1 — seti nr. ${currentExamSet.index + 1}</h3>
+      <p>Do të kalosh nëpër të katër modulet me radhë, si në provimin e vërtetë të Goethe-Institut. Midis moduleve ka pushim prej ${BREAK_MINUTES} minutash.</p>
       <table class="full-table">
-        <thead><tr><th>Moduli</th><th>Maksimumi</th><th>Për të kaluar</th></tr></thead>
+        <thead><tr><th>Moduli</th><th>Kohë</th><th>Maks.</th><th>Kalon me</th></tr></thead>
         <tbody>${rows}
-          <tr class="total-row"><td><strong>Gjithsej</strong></td><td><strong>400</strong></td><td><strong>240</strong></td></tr>
+          <tr class="total-row"><td><strong>Gjithsej</strong></td><td><strong>180 min</strong></td><td><strong>400</strong></td><td><strong>240</strong></td></tr>
         </tbody>
       </table>
       <div class="full-warning">
         ⚠️ <strong>E rëndësishme:</strong> 240 pikë gjithsej nuk mjaftojnë.
         Duhet të arrish të paktën <strong>60 pikë në çdo modul veç e veç</strong>.
+        Kur koha e një moduli mbaron, moduli mbyllet automatikisht — si në provimin e vërtetë.
       </div>
       <button class="btn btn-primary" id="btnBeginFullExam" style="width:100%;padding:16px;font-size:1rem;margin-top:16px;">Fillo provimin →</button>
     </div>
@@ -3727,12 +4066,25 @@ function runFullModule(index) {
   else if (mod.id === "sprechen") runFullSprechen(mod);
 }
 
+// Koha mbaroi → moduli mbyllet me pikët e mbledhura deri atëherë
+function onModuleTimeUp() {
+  if (!fullExamActive) return;
+  const gathered = window.__currentModuleProgress;
+  if (typeof gathered === "function") {
+    const { correct, total } = gathered();
+    alert("Koha mbaroi! Moduli mbyllet automatikisht, si në provimin e vërtetë.");
+    finishModule(total ? (correct / total) * 100 : 0);
+  }
+}
+
 function finishModule(score) {
   const mod = FULL_MODULES[fullModuleIndex];
   fullScores[mod.id] = Math.max(0, Math.min(100, Math.round(score)));
+  window.__currentModuleProgress = null;
   const g = gradeFor(fullScores[mod.id]);
   const passed = fullScores[mod.id] >= PASS_MARK;
   stopTimer();
+  const isLast = fullModuleIndex + 1 >= FULL_MODULES.length;
   examShell(`${mod.icon} ${mod.name} — përfundoi`, 0, `
     ${fullProgressBar()}
     <div class="result-box">
@@ -3742,41 +4094,71 @@ function finishModule(score) {
         ${passed ? "✓ Ky modul u kalua" : "✗ Nën 60 pikë — ky modul nuk u kalua"}
       </div>
       <button class="btn btn-primary" id="btnNextModule" style="width:100%;padding:15px;margin-top:18px;">
-        ${fullModuleIndex + 1 < FULL_MODULES.length ? "Moduli tjetër →" : "Shiko rezultatin final →"}
+        ${isLast ? "Shiko rezultatin final →" : "Vazhdo →"}
       </button>
     </div>
   `);
   if (passed) { spawnConfetti(); playMilestoneFanfare(); }
-  document.getElementById("btnNextModule").addEventListener("click", () => runFullModule(fullModuleIndex + 1));
+  document.getElementById("btnNextModule").addEventListener("click", () => {
+    if (isLast) runFullModule(fullModuleIndex + 1);
+    else showBreak(fullModuleIndex + 1);
+  });
 }
 
-/* --- Moduli 1: Lesen --- */
+/* --- Pushimi midis moduleve --- */
+function showBreak(nextIndex) {
+  const next = FULL_MODULES[nextIndex];
+  let left = BREAK_MINUTES * 60;
+  examShell("Pushim", 0, `
+    ${fullProgressBar()}
+    <div class="break-box">
+      <div class="break-icon">☕</div>
+      <h3>Pushim ${BREAK_MINUTES} minuta</h3>
+      <p>Në provimin e vërtetë ka të paktën ${BREAK_MINUTES} minuta pushim midis moduleve. Shfrytëzoje: pi ujë, shko në tualet, shpëlodh sytë.</p>
+      <div class="break-timer" id="breakTimer">${BREAK_MINUTES}:00</div>
+      <div class="break-next">Moduli tjetër: ${next.icon} <strong>${next.name}</strong> (${next.alb}) — ${next.minutes} minuta</div>
+      <button class="btn btn-primary" id="btnSkipBreak" style="width:100%;padding:15px;margin-top:16px;">Vazhdo tani →</button>
+    </div>
+  `);
+  const el = document.getElementById("breakTimer");
+  const tick = () => {
+    const m = Math.floor(left / 60), s = left % 60;
+    if (el) el.textContent = m + ":" + String(s).padStart(2, "0");
+    if (left <= 0) { clearInterval(breakInt); runFullModule(nextIndex); }
+    left--;
+  };
+  tick();
+  const breakInt = setInterval(tick, 1000);
+  document.getElementById("btnSkipBreak").addEventListener("click", () => {
+    clearInterval(breakInt);
+    runFullModule(nextIndex);
+  });
+}
+
+/* --- Moduli 1: Lesen (65 min) --- */
 function runFullLesen(mod) {
-  const e = EXAMS.lesen;
-  const { item: parts } = pickVariant(e.variants, -1);
+  const parts = currentExamSet.reading;
   let html = fullProgressBar() +
-    `<div class="note" style="text-align:left;margin:0 0 12px;">${esc(e.intro)}</div>`;
+    `<div class="note" style="text-align:left;margin:0 0 12px;">Lexo tekstet dhe përgjigju pyetjeve. Ke ${mod.minutes} minuta — planifiko rreth 5 minuta për kontrollin final.</div>`;
   let n = 0;
   parts.forEach(part => {
-    html += `<div class="reading-text"><h4>${esc(part.text.head)}</h4>${esc(part.text.body).replace(/\n/g,"<br>")}</div>`;
+    html += `<div class="reading-text"><h4>${esc(part.head)}</h4>${esc(part.body).replace(/\n/g,"<br>")}</div>`;
     part.questions.forEach(q => { html += buildQuestionHtml(q, n); n++; });
   });
   examShell(`${mod.icon} Moduli 1/4 — ${mod.name}`, mod.minutes, html);
-  wireQuestions(document.getElementById("examBody"),
-    (correct, total) => finishModule((correct / total) * 100), n);
+  wireModuleQuestions(document.getElementById("examBody"), n);
 }
 
-/* --- Moduli 2: Hören --- */
+/* --- Moduli 2: Hören (40 min, çdo tekst maks. 2 herë) --- */
 function runFullHoeren(mod) {
-  const e = EXAMS.hoeren;
-  const { item: parts } = pickVariant(e.variants, -1);
+  const parts = currentExamSet.listening;
   let html = fullProgressBar() +
-    `<div class="note" style="text-align:left;margin:0 0 12px;">${esc(e.intro)}</div>`;
+    `<div class="note" style="text-align:left;margin:0 0 12px;">Çdo tekst mund ta dëgjosh <strong>maksimum dy herë</strong>, si në provimin e vërtetë. Pastaj përgjigju pyetjeve.</div>`;
   let n = 0;
   parts.forEach((part, pi) => {
     html += `<div class="reading-text"><h4>${esc(part.title)}</h4>
       <div class="audio-controls">
-        <button class="btn btn-blue" data-play="${pi}">🔊 Dëgjo tekstin</button>
+        <button class="btn btn-blue" data-play="${pi}">🔊 Dëgjo (mbeten 2)</button>
         <button class="btn btn-secondary" data-stop="1">⏹ Ndalo</button>
       </div>
     </div>`;
@@ -3784,17 +4166,53 @@ function runFullHoeren(mod) {
   });
   examShell(`${mod.icon} Moduli 2/4 — ${mod.name}`, mod.minutes, html);
   const body = document.getElementById("examBody");
-  body.querySelectorAll("[data-play]").forEach(b =>
-    b.addEventListener("click", () => speak(parts[parseInt(b.dataset.play)].script)));
+  const plays = {};
+  body.querySelectorAll("[data-play]").forEach(b => {
+    const pi = parseInt(b.dataset.play);
+    plays[pi] = 0;
+    b.addEventListener("click", () => {
+      if (plays[pi] >= 2) return;
+      plays[pi]++;
+      speak(parts[pi].script);
+      const left = 2 - plays[pi];
+      b.textContent = left > 0 ? `🔊 Dëgjo (mbetet ${left})` : "🔊 U dëgjua 2 herë";
+      if (left === 0) { b.disabled = true; b.style.opacity = ".5"; }
+    });
+  });
   body.querySelectorAll("[data-stop]").forEach(b =>
     b.addEventListener("click", () => window.speechSynthesis && window.speechSynthesis.cancel()));
-  wireQuestions(body, (correct, total) => finishModule((correct / total) * 100), n);
+  wireModuleQuestions(body, n);
 }
 
-/* --- Moduli 3: Schreiben --- */
+// Lidh pyetjet e një moduli dhe mban gjurmët e progresit për rastin kur mbaron koha
+function wireModuleQuestions(container, allQ) {
+  let answered = 0, correct = 0;
+  window.__currentModuleProgress = () => ({ correct, total: allQ });
+  container.querySelectorAll(".exam-q").forEach(qEl => {
+    qEl.querySelectorAll(".opt").forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (qEl.dataset.done) return;
+        qEl.dataset.done = "1";
+        const right = parseInt(qEl.dataset.answer);
+        qEl.querySelectorAll(".opt").forEach((o, i) => {
+          if (i === right) o.classList.add("correct");
+          else if (o === btn) o.classList.add("wrong");
+        });
+        const ex = qEl.querySelector(".explain");
+        if (ex) ex.classList.remove("hidden");
+        answered++;
+        if (parseInt(btn.dataset.opt) === right) { correct++; awardPoints(10, "exam"); registerAnswer(true); }
+        else registerAnswer(false);
+        if (answered === allQ) finishModule((correct / allQ) * 100);
+      });
+    });
+  });
+}
+
+/* --- Moduli 3: Schreiben (60 min) --- */
 function runFullSchreiben(mod) {
-  const e = EXAMS.schreiben;
-  const task = e.tasks[Math.floor(Math.random() * e.tasks.length)];
+  const task = currentExamSet.writing;
+  window.__currentModuleProgress = () => ({ correct: 0, total: 0 });
   examShell(`${mod.icon} Moduli 3/4 — ${mod.name}`, mod.minutes, `
     ${fullProgressBar()}
     <div class="speak-card">
@@ -3807,50 +4225,82 @@ function runFullSchreiben(mod) {
     <div class="word-counter" id="fullWordCount">0 fjalë (min. 80)</div>
     <div class="checklist">
       <div style="font-weight:600;margin-bottom:10px;font-size:.9rem;">Vetëkontroll — shëno çfarë ke bërë</div>
-      ${e.checklist.map((c, i) => `<label><input type="checkbox" class="fchk" data-i="${i}"><span>${esc(c)}</span></label>`).join("")}
+      ${WRITING_CHECKLIST.map((c, i) => `<label><input type="checkbox" class="fchk" data-i="${i}"><span>${esc(c)}</span></label>`).join("")}
     </div>
     <button class="btn btn-primary" id="btnFinishFullWrite" style="width:100%;padding:15px;margin-top:14px;">Dorëzo tekstin →</button>
   `);
   const area = document.getElementById("fullWriteArea");
   const counter = document.getElementById("fullWordCount");
   const countWords = () => area.value.trim().split(/\s+/).filter(Boolean).length;
+  const scoreNow = () => {
+    const w = countWords();
+    const checked = document.querySelectorAll(".fchk:checked").length;
+    const lengthScore = w >= 80 ? 50 : Math.round((w / 80) * 50);
+    const checkScore = Math.round((checked / WRITING_CHECKLIST.length) * 50);
+    return lengthScore + checkScore;
+  };
+  window.__currentModuleProgress = () => ({ correct: scoreNow(), total: 100 });
   area.addEventListener("input", () => {
     const w = countWords();
     counter.textContent = w + " fjalë" + (w >= 80 ? " ✓" : " (min. 80)");
     counter.style.color = w >= 80 ? "var(--green)" : "var(--muted)";
   });
   document.getElementById("btnFinishFullWrite").addEventListener("click", () => {
-    const w = countWords();
-    if (w < 20) { alert("Teksti është shumë i shkurtër. Shkruaj të paktën disa fjali."); return; }
-    const checked = document.querySelectorAll(".fchk:checked").length;
-    // Vlerësim: gjatësia (deri 50 pikë) + vetëkontrolli i pikave (deri 50 pikë)
-    const lengthScore = w >= 80 ? 50 : Math.round((w / 80) * 50);
-    const checkScore = Math.round((checked / EXAMS.schreiben.checklist.length) * 50);
-    finishModule(lengthScore + checkScore);
+    if (countWords() < 20) { alert("Teksti është shumë i shkurtër. Shkruaj të paktën disa fjali."); return; }
+    finishModule(scoreNow());
   });
 }
 
-/* --- Moduli 4: Sprechen --- */
+/* --- Moduli 4: Sprechen (15 min përgatitje + bisedë) --- */
 function runFullSprechen(mod) {
-  const e = EXAMS.sprechen;
-  const picked = shuffle(e.tasks).slice(0, 3);
+  const plan = currentExamSet.plan;
+  const present = currentExamSet.present;
+  window.__currentModuleProgress = () => ({ correct: 0, total: 0 });
   let html = fullProgressBar() +
-    `<div class="note" style="text-align:left;margin:0 0 12px;">Fol me zë të lartë për çdo detyrë. Pastaj vlerëso vetë sa mirë ia dole — ji i ndershëm, kështu e di ku qëndron vërtet.</div>`;
-  picked.forEach((t, i) => {
-    html += `<div class="speak-card">
-      <h4>Pjesa ${i+1} — ${esc(t.title)}</h4>
-      <div style="font-size:.92rem;line-height:1.55;">${esc(t.prompt)}</div>
-      <ul>${t.points.map(p => "<li>" + esc(p) + "</li>").join("")}</ul>
-      <div class="phrase-box"><strong>Shprehje ndihmëse:</strong><br>${esc(t.phrases)}</div>
-      <div class="self-rate" data-task="${i}">
+    `<div class="note" style="text-align:left;margin:0 0 12px;">Në provimin e vërtetë ke <strong>15 minuta përgatitje</strong>, pastaj flet me një partner përballë komisionit. Këtu: lexo detyrat, fol me zë të lartë (mundësisht regjistro veten) dhe pastaj vlerëso ndershmërisht.</div>`;
+
+  html += `<div class="speak-card">
+      <h4>Pjesa 1 — Planifikoni bashkë</h4>
+      <div style="font-size:.92rem;line-height:1.55;">${esc(plan.prompt)}</div>
+      <ul>${plan.points.map(p => "<li>" + esc(p) + "</li>").join("")}</ul>
+      <div class="phrase-box"><strong>Shprehje ndihmëse:</strong><br>${esc(plan.phrases)}</div>
+      <div class="self-rate">
         <div class="self-rate-label">Si ia dole?</div>
-        <button class="self-rate-btn" data-task="${i}" data-val="100">Shumë mirë</button>
-        <button class="self-rate-btn" data-task="${i}" data-val="75">Mirë</button>
-        <button class="self-rate-btn" data-task="${i}" data-val="50">Me vështirësi</button>
-        <button class="self-rate-btn" data-task="${i}" data-val="20">Nuk ia dola</button>
+        <button class="self-rate-btn" data-task="0" data-val="100">Shumë mirë</button>
+        <button class="self-rate-btn" data-task="0" data-val="75">Mirë</button>
+        <button class="self-rate-btn" data-task="0" data-val="50">Me vështirësi</button>
+        <button class="self-rate-btn" data-task="0" data-val="20">Nuk ia dola</button>
       </div>
     </div>`;
-  });
+
+  html += `<div class="speak-card">
+      <h4>Pjesa 2 — Prezantim</h4>
+      <div style="font-size:.92rem;line-height:1.55;">${esc(present.prompt)}</div>
+      <ul>${present.points.map(p => "<li>" + esc(p) + "</li>").join("")}</ul>
+      <div class="phrase-box"><strong>Shprehje ndihmëse:</strong><br>${esc(present.phrases)}</div>
+      <div class="self-rate">
+        <div class="self-rate-label">Si ia dole?</div>
+        <button class="self-rate-btn" data-task="1" data-val="100">Shumë mirë</button>
+        <button class="self-rate-btn" data-task="1" data-val="75">Mirë</button>
+        <button class="self-rate-btn" data-task="1" data-val="50">Me vështirësi</button>
+        <button class="self-rate-btn" data-task="1" data-val="20">Nuk ia dola</button>
+      </div>
+    </div>`;
+
+  html += `<div class="speak-card">
+      <h4>Pjesa 3 — Pyetje pas prezantimit</h4>
+      <div style="font-size:.92rem;line-height:1.55;">Partneri ose komisioni të bën pyetje për prezantimin tënd. Përgjigju shkurt dhe qartë.</div>
+      <ul><li>Përgjigju të paktën dy pyetjeve të mundshme.</li><li>Jep një shembull konkret.</li><li>Falëndero në fund.</li></ul>
+      <div class="phrase-box"><strong>Shprehje ndihmëse:</strong><br>Das ist eine gute Frage. / Wie ich schon gesagt habe, … / Zum Beispiel … / Danke für die Frage.</div>
+      <div class="self-rate">
+        <div class="self-rate-label">Si ia dole?</div>
+        <button class="self-rate-btn" data-task="2" data-val="100">Shumë mirë</button>
+        <button class="self-rate-btn" data-task="2" data-val="75">Mirë</button>
+        <button class="self-rate-btn" data-task="2" data-val="50">Me vështirësi</button>
+        <button class="self-rate-btn" data-task="2" data-val="20">Nuk ia dola</button>
+      </div>
+    </div>`;
+
   html += `<button class="btn btn-primary" id="btnFinishFullSpeak" style="width:100%;padding:15px;margin-top:6px;">Përfundo modulin →</button>`;
   examShell(`${mod.icon} Moduli 4/4 — ${mod.name}`, mod.minutes, html);
 
@@ -3861,11 +4311,13 @@ function runFullSprechen(mod) {
       ratings[t] = parseInt(btn.dataset.val);
       document.querySelectorAll(`.self-rate-btn[data-task="${t}"]`).forEach(b => b.classList.remove("selected"));
       btn.classList.add("selected");
+      const vals = Object.values(ratings);
+      window.__currentModuleProgress = () => ({ correct: vals.reduce((a,b)=>a+b,0)/Math.max(vals.length,1), total: 100 });
     });
   });
   document.getElementById("btnFinishFullSpeak").addEventListener("click", () => {
     const vals = Object.values(ratings);
-    if (vals.length < picked.length) { alert("Ju lutem vlerëso të tria pjesët."); return; }
+    if (vals.length < 3) { alert("Ju lutem vlerëso të tria pjesët."); return; }
     finishModule(vals.reduce((a, b) => a + b, 0) / vals.length);
   });
 }
@@ -3874,6 +4326,9 @@ function runFullSprechen(mod) {
 function showFullExamResult() {
   stopTimer();
   fullExamActive = false;
+  examRunCount++;                 // provimi tjetër do të jetë set tjetër
+  queueSave();
+
   const total = FULL_MODULES.reduce((sum, m) => sum + (fullScores[m.id] || 0), 0);
   const allModulesPassed = FULL_MODULES.every(m => (fullScores[m.id] || 0) >= PASS_MARK);
   const totalEnough = total >= 240;
@@ -3914,7 +4369,8 @@ function showFullExamResult() {
         <thead><tr><th>Moduli</th><th>Pikë</th><th>Vlerësimi</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
-      <button class="btn btn-primary" id="btnFullExamAgain" style="width:100%;padding:15px;margin-top:18px;">↺ Provo përsëri</button>
+      <div class="note" style="margin-top:14px;">Herën tjetër do të marrësh setin nr. ${(examRunCount % EXAM_SET_COUNT) + 1} me tekste dhe detyra të tjera.</div>
+      <button class="btn btn-primary" id="btnFullExamAgain" style="width:100%;padding:15px;margin-top:14px;">↺ Provim i ri</button>
       <button class="btn btn-secondary" id="btnFullExamBack" style="width:100%;padding:13px;margin-top:8px;">← Kthehu te provimet</button>
     </div>
   `);
@@ -4310,6 +4766,7 @@ async function loadProgress() {
       cefrLevel = data.cefr_level || null;
       placementTaken = !!data.placement_taken;
       selectedLevel = data.selected_level || cefrLevel || null;
+      examRunCount = data.exam_runs || 0;
       const custom = Array.isArray(data.custom_vocab) ? data.custom_vocab : [];
       custom.forEach(w => {
         if (w.al && w.de && !vocab.some(v => v.al === w.al && v.de === w.de)) {
@@ -4350,6 +4807,7 @@ async function saveProgress() {
       cefr_level: cefrLevel,
       placement_taken: placementTaken,
       selected_level: selectedLevel,
+      exam_runs: examRunCount,
       custom_vocab: custom,
       updated_at: new Date().toISOString()
     });
