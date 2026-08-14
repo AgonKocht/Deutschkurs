@@ -73,7 +73,6 @@
     font-size: 1.35rem; margin: 0 0 3px 0; font-weight: 800; letter-spacing: -.015em;
     display: flex; align-items: center; gap: 8px;
   }
-  h1 .mascot { animation: flicker 2.4s ease-in-out infinite; display: inline-block; filter: drop-shadow(0 0 10px var(--gold-glow)); }
   .subtitle { color: var(--muted); font-size: .82rem; font-weight: 600; }
   .cefr-pill {
     padding: 5px 12px; border-radius: var(--radius-pill); font-size: .78rem; font-weight: 800;
@@ -539,6 +538,8 @@
   .mascot-fab img { width: 82%; height: 82%; object-fit: contain; pointer-events: none; }
   .mascot-fab:active { transform: scale(.9); }
   @keyframes mascotFloat { 0%,100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-6px) rotate(4deg); } }
+  .mascot-fab.mascot-nudge { animation: mascotNudge .5s ease-in-out 2; }
+  @keyframes mascotNudge { 0%,100% { transform: scale(1) rotate(0); } 25% { transform: scale(1.15) rotate(-10deg); } 75% { transform: scale(1.15) rotate(10deg); } }
   .mascot-bubble {
     position: fixed; right: 16px; bottom: calc(90px + env(safe-area-inset-bottom));
     z-index: 851; max-width: min(320px, calc(100vw - 32px));
@@ -600,7 +601,7 @@
 
 <header>
   <div class="header-row">
-    <h1><span class="mascot">🦅</span> Shqip–Gjermanisht</h1>
+    <h1>Shqip–Gjermanisht</h1>
     <div class="cefr-pill hidden" id="cefrPill">B1</div>
   </div>
   <div class="subtitle">Fjalor &amp; përgatitje provimi</div>
@@ -2017,10 +2018,37 @@ function mascotRandomTip() {
   mascotSay(base + (Math.random() < 0.4 ? stats : ""), { duration: 5500 });
 }
 
+/* --- Shqiponja jep ndihmë për pyetjen aktuale (Kuiz, Kuiz me foto, Testi) --- */
+let activeQuestionHint = null;
+let idleHintTimer = null;
+
+function setActiveHint(correctText) {
+  clearTimeout(idleHintTimer);
+  const letter = (correctText || "").trim().replace(/^(der|die|das)\s+/i, "")[0];
+  activeQuestionHint = letter
+    ? `Fillon me shkronjën „${letter.toUpperCase()}“. Ke ${correctText.length} shkronja gjithsej.`
+    : "Mendo mirë përpara se të zgjedhësh!";
+  idleHintTimer = setTimeout(() => {
+    if (!activeQuestionHint) return;
+    document.getElementById("mascotFab").classList.add("mascot-nudge");
+    mascotSay("🦅 Duket sikur po mendon shumë... " + activeQuestionHint, { duration: 6500 });
+    setTimeout(() => document.getElementById("mascotFab").classList.remove("mascot-nudge"), 1200);
+  }, 15000);
+}
+
+function clearActiveHint() {
+  clearTimeout(idleHintTimer);
+  activeQuestionHint = null;
+}
+
 document.getElementById("mascotFab").addEventListener("click", () => {
   const bubble = document.getElementById("mascotBubble");
   if (!bubble.classList.contains("hidden")) { bubble.classList.add("hidden"); return; }
-  mascotRandomTip();
+  if (activeQuestionHint) {
+    mascotSay("🦅 " + activeQuestionHint, { duration: 6000 });
+  } else {
+    mascotRandomTip();
+  }
 });
 
 function mascotGreet() {
@@ -2370,6 +2398,7 @@ function goToView(t) {
   views.forEach(v => document.getElementById("view-"+v).classList.toggle("hidden", v !== t));
   window.speechSynthesis && window.speechSynthesis.cancel();
   stopTimer();
+  clearActiveHint();
   if (t === "list") renderList();
   if (t === "quiz") startQuiz();
   if (t === "imagequiz") startImageQuiz();
@@ -2465,6 +2494,7 @@ function renderQuiz() {
   document.getElementById("quizWord").textContent = correct[askField];
   document.getElementById("quizProgress").textContent = "Pyetja "+(quizIndex+1)+" / "+quizPool.length;
   document.getElementById("quizScore").textContent = "Richtig: "+quizScore;
+  setActiveHint(correct[ansField]);
   const distractors = shuffle(vocab.filter(w => w[ansField] !== correct[ansField])).slice(0,3);
   const options = shuffle([correct, ...distractors]);
   const box = document.getElementById("quizOptions");
@@ -2476,6 +2506,7 @@ function renderQuiz() {
     el.addEventListener("click", () => {
       if (quizAnswered) return;
       quizAnswered = true;
+      clearActiveHint();
       box.querySelectorAll(".quiz-option").forEach(o => {
         if (o.textContent === correct[ansField]) o.classList.add("correct");
         else if (o === el) o.classList.add("wrong");
@@ -2970,6 +3001,7 @@ async function renderImageQuiz() {
   photo.classList.remove("hidden");
   loading.classList.add("hidden");
   attribution.classList.remove("hidden");
+  setActiveHint(correct.de);
 
   const distractors = shuffle(IMAGE_QUIZ_POOL.filter(w => w.de !== correct.de)).slice(0, 3);
   const options = shuffle([correct, ...distractors]);
@@ -2980,6 +3012,7 @@ async function renderImageQuiz() {
     el.addEventListener("click", () => {
       if (imgQuizAnswered) return;
       imgQuizAnswered = true;
+      clearActiveHint();
       box.querySelectorAll(".quiz-option").forEach(o => {
         if (o.textContent === correct.de) o.classList.add("correct");
         else if (o === el) o.classList.add("wrong");
