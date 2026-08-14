@@ -740,6 +740,32 @@
   }
   .tree-message { font-size: .85rem; color: var(--muted); font-weight: 600; line-height: 1.6; }
   .tree-to-sun { margin-top: 6px; font-size: .76rem; color: var(--gold); font-weight: 800; }
+  .tree-hint-click { margin-top: 8px; font-size: .7rem; color: var(--muted); font-weight: 700; }
+  .tree-node-hit { cursor: pointer; }
+  .tree-node-hit:active .tree-node,
+  .tree-node-hit:active circle { transform: scale(.9); }
+  .tree-node-hit circle { transition: transform .12s ease; transform-origin: center; transform-box: fill-box; }
+
+  .checkpoint-overlay {
+    position: fixed; inset: 0; z-index: 999; display: flex; align-items: center; justify-content: center;
+    background: rgba(6,8,16,.65); backdrop-filter: blur(5px); padding: 20px;
+    animation: fadeSlideIn .25s ease;
+  }
+  .checkpoint-card {
+    background: var(--surface); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--line-strong); border-radius: var(--radius-lg); padding: 28px 24px;
+    text-align: center; max-width: 340px; width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,.55), 0 0 40px rgba(79,201,126,.18);
+    animation: popIn .4s cubic-bezier(.2,.8,.2,1);
+  }
+  .checkpoint-icon { font-size: 2.6rem; margin-bottom: 6px; }
+  .checkpoint-card h3 { margin: 0 0 4px; font-size: 1.2rem; font-weight: 800; }
+  .checkpoint-date { font-size: .78rem; color: var(--muted); font-weight: 700; margin-bottom: 18px; }
+  .checkpoint-stats { display: flex; justify-content: space-around; gap: 6px; margin-bottom: 16px; }
+  .cp-stat { display: flex; flex-direction: column; }
+  .cp-num { font-size: 1.15rem; font-weight: 800; color: var(--green); }
+  .cp-lbl { font-size: .62rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; max-width: 80px; }
+  .checkpoint-total { font-size: .8rem; color: var(--ink); font-weight: 600; padding: 10px 12px; background: rgba(79,201,126,.1); border: 1px solid rgba(79,201,126,.3); border-radius: var(--radius-md); }
   .tree-sun-msg { font-size: 1.05rem; font-weight: 800; color: var(--gold); text-shadow: 0 0 20px var(--gold-glow); line-height: 1.5; }
   .tree-sun-msg span { display: block; font-size: .84rem; color: var(--ink); font-weight: 700; margin-top: 6px; text-shadow: none; }
 
@@ -2731,7 +2757,8 @@ const DEFAULT_STATS = {
   cards:     { known: 0, unknown: 0 },
   exams:     { taken: 0, passed: 0, best: 0, bestModules: {} },
   words:     {},   // "al|de": { c: saktë, w: gabim }
-  bestStreak: 0
+  bestStreak: 0,
+  stageLog:  {}     // "idx": { at: ISO-datë, totalAnswers, correctAnswers }
 };
 let stats = JSON.parse(JSON.stringify(DEFAULT_STATS));
 
@@ -5197,9 +5224,21 @@ function treeStageFor(level) {
 
 let lastSeenTreeStage = null; // vendoset kur ngarkohet progresi, që të mos "spoiler" në hyrjen e parë
 
+function totalAnswersSoFar() {
+  ensureStats();
+  return {
+    total: stats.quiz.total + stats.imagequiz.total + stats.practice.total,
+    correct: stats.quiz.correct + stats.imagequiz.correct + stats.practice.correct
+  };
+}
+
 function celebrateTreeStage(idx) {
   const stage = TREE_STAGES[idx];
   const riddle = TREE_RIDDLES[idx];
+  ensureStats();
+  const a = totalAnswersSoFar();
+  stats.stageLog[idx] = { at: new Date().toISOString(), totalAnswers: a.total, correctAnswers: a.correct };
+  queueSave();
   spawnConfetti();
   vibrate([30, 40, 30, 40, 90]);
   playMilestoneFanfare();
@@ -5258,19 +5297,27 @@ function buildTreeSVG(level) {
     const isLast = i === pts.length - 1;
     const reached = i <= idx;
     const isCurrent = i === idx && !isSun;
+    const clickable = reached && stats.stageLog && stats.stageLog[i];
     const r = isLast ? 17 : 9;
+    const clickAttrs = clickable ? `class="tree-node-hit" data-checkpoint="${i}" tabindex="0"` : "";
     if (isLast) {
       // Nyja e fundit — dielli, ndryshe nga të tjerat, e madhe dhe rrezatuese
       nodes += `
         <circle cx="${p.x}" cy="${p.y}" r="${reached ? 46 : 20}" fill="url(#sunAura)" opacity="${reached ? 1 : .25}">
           ${reached ? '<animate attributeName="r" values="42;50;42" dur="2.6s" repeatCount="indefinite"/>' : ""}
         </circle>
-        <circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${reached ? "#ffe08a" : "rgba(255,255,255,.12)"}" ${reached ? 'filter="url(#nodeGlow)"' : ""}/>`;
+        <g ${clickAttrs}>
+          <circle cx="${p.x}" cy="${p.y}" r="${r + 10}" fill="transparent"/>
+          <circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${reached ? "#ffe08a" : "rgba(255,255,255,.12)"}" ${reached ? 'filter="url(#nodeGlow)"' : ""}/>
+        </g>`;
     } else {
       const fill = reached ? "url(#nodeLit)" : "rgba(255,255,255,.10)";
       nodes += `
-        <circle cx="${p.x}" cy="${p.y}" r="${r}" class="tree-node ${reached ? "lit" : "locked"} ${isCurrent ? "current" : ""}"
-                fill="${fill}" ${reached ? 'filter="url(#nodeGlow)"' : ""}/>`;
+        <g ${clickAttrs}>
+          <circle cx="${p.x}" cy="${p.y}" r="${r + 10}" fill="transparent"/>
+          <circle cx="${p.x}" cy="${p.y}" r="${r}" class="tree-node ${reached ? "lit" : "locked"} ${isCurrent ? "current" : ""}"
+                  fill="${fill}" ${reached ? 'filter="url(#nodeGlow)"' : ""}/>
+        </g>`;
       if (isCurrent) {
         nodes += `<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="none" stroke="#ffc857" stroke-width="2" opacity=".8">
           <animate attributeName="r" values="${r};${r + 9};${r}" dur="1.8s" repeatCount="indefinite"/>
@@ -5288,19 +5335,25 @@ function buildTreeSVG(level) {
   <svg viewBox="0 0 300 400" class="tree-svg" role="img" aria-label="Pema e dritës">
     <defs>
       <linearGradient id="nodeLit" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#8fb4ff"/>
-        <stop offset="100%" stop-color="#5b8cff"/>
+        <stop offset="0%" stop-color="#c8f2a0"/>
+        <stop offset="100%" stop-color="#4fc97e"/>
       </linearGradient>
       <radialGradient id="sunAura" cx="50%" cy="50%">
         <stop offset="0%" stop-color="#ffe08a" stop-opacity=".9"/>
         <stop offset="60%" stop-color="#ffc857" stop-opacity=".3"/>
         <stop offset="100%" stop-color="#ffc857" stop-opacity="0"/>
       </radialGradient>
+      <radialGradient id="cheerBg" cx="50%" cy="65%">
+        <stop offset="0%" stop-color="#4fc97e" stop-opacity=".16"/>
+        <stop offset="100%" stop-color="#4fc97e" stop-opacity="0"/>
+      </radialGradient>
       <filter id="nodeGlow" x="-120%" y="-120%" width="340%" height="340%">
         <feGaussianBlur stdDeviation="4.2" result="b"/>
         <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
       </filter>
     </defs>
+
+    <circle cx="150" cy="230" r="190" fill="url(#cheerBg)"/>
 
     <!-- shtegu i errët në sfond, që të duket forma e plotë e udhës -->
     ${pts.slice(0, -1).map((p, i) => `<path d="${curvePath(p, pts[i + 1])}" class="node-link-ghost"/>`).join("")}
@@ -5325,12 +5378,68 @@ function buildSparkles(p, count) {
   return out;
 }
 
+function formatDuration(ms) {
+  if (ms < 0) ms = 0;
+  const mins = Math.floor(ms / 60000);
+  const hrs = Math.floor(mins / 60);
+  const days = Math.floor(hrs / 24);
+  if (days >= 1) return days + (days === 1 ? " ditë" : " ditë") + (hrs % 24 ? " " + (hrs % 24) + " orë" : "");
+  if (hrs >= 1) return hrs + " orë" + (mins % 60 ? " " + (mins % 60) + " min" : "");
+  if (mins >= 1) return mins + " min";
+  return "më pak se 1 min";
+}
+
+function showCheckpointInfo(idx) {
+  const stage = TREE_STAGES[idx];
+  const log = stats.stageLog && stats.stageLog[idx];
+  if (!log) return;
+
+  // Koha e nisjes: nga checkpoint-i i mëparshëm i arritur, ose nga regjistrimi
+  let prevAt = null, prevAnswers = 0, prevCorrect = 0;
+  for (let i = idx - 1; i >= 0; i--) {
+    if (stats.stageLog[i]) { prevAt = stats.stageLog[i].at; prevAnswers = stats.stageLog[i].totalAnswers; prevCorrect = stats.stageLog[i].correctAnswers; break; }
+  }
+  if (!prevAt && currentUser && currentUser.created_at) prevAt = currentUser.created_at;
+
+  const reachedDate = new Date(log.at);
+  const duration = prevAt ? formatDuration(reachedDate - new Date(prevAt)) : "—";
+  const answersSince = Math.max(0, log.totalAnswers - prevAnswers);
+  const correctSince = Math.max(0, log.correctAnswers - prevCorrect);
+  const acc = answersSince ? Math.round((correctSince / answersSince) * 100) : 0;
+  const dateStr = reachedDate.toLocaleDateString("sq-AL", { day: "numeric", month: "long", year: "numeric" });
+
+  const overlay = document.createElement("div");
+  overlay.className = "checkpoint-overlay";
+  overlay.innerHTML = `
+    <div class="checkpoint-card">
+      <div class="checkpoint-icon">🏅</div>
+      <h3>${esc(stage.name)}</h3>
+      <div class="checkpoint-date">Arritur më ${esc(dateStr)}</div>
+      <div class="checkpoint-stats">
+        <div class="cp-stat"><span class="cp-num">${esc(duration)}</span><span class="cp-lbl">Kohë deri këtu</span></div>
+        <div class="cp-stat"><span class="cp-num">${answersSince}</span><span class="cp-lbl">Pyetje të bëra</span></div>
+        <div class="cp-stat"><span class="cp-num">${acc}%</span><span class="cp-lbl">Saktësia në atë periudhë</span></div>
+      </div>
+      <div class="checkpoint-total">Gjithsej deri këtu: <strong>${log.totalAnswers}</strong> pyetje, <strong>${log.correctAnswers}</strong> saktë</div>
+      <button class="btn btn-primary" id="btnCloseCheckpoint" style="width:100%;margin-top:16px;">Mbylle</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  const close = () => overlay.remove();
+  overlay.addEventListener("click", e => { if (e.target === overlay) close(); });
+  document.getElementById("btnCloseCheckpoint").addEventListener("click", close);
+}
+
 function renderTree() {
   const level = Math.floor(totalPoints / 100) + 1;
   const { idx, stage } = treeStageFor(level);
   const isSun = idx >= TREE_STAGES.length - 1;
 
   document.getElementById("treeCanvas").innerHTML = buildTreeSVG(level);
+  document.getElementById("treeCanvas").querySelectorAll("[data-checkpoint]").forEach(el => {
+    el.addEventListener("click", () => showCheckpointInfo(parseInt(el.dataset.checkpoint)));
+    el.addEventListener("keydown", e => { if (e.key === "Enter") showCheckpointInfo(parseInt(el.dataset.checkpoint)); });
+  });
   document.getElementById("treeStageLabel").textContent = stage.name;
   document.getElementById("treeLevelNow").textContent = "Niveli " + level;
 
@@ -5353,7 +5462,8 @@ function renderTree() {
   } else {
     const lastRiddle = TREE_RIDDLES[idx];
     msgEl.innerHTML = `${esc(stage.msg)}` +
-      (lastRiddle ? `<div class="tree-to-sun">🔮 ${esc(lastRiddle)}</div>` : `<div class="tree-to-sun">Diçka e veçantë të pret në krye të pemës…</div>`);
+      (lastRiddle ? `<div class="tree-to-sun">🔮 ${esc(lastRiddle)}</div>` : `<div class="tree-to-sun">Diçka e veçantë të pret në krye të pemës…</div>`) +
+      (idx > 0 ? `<div class="tree-hint-click">👆 Prek nyjet e ndritshme për të parë ecurinë tënde</div>` : "");
   }
 }
 
