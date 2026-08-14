@@ -746,6 +746,12 @@
   .tree-node-hit:active circle { transform: scale(.9); }
   .tree-node-hit circle { transition: transform .12s ease; transform-origin: center; transform-box: fill-box; }
 
+  .bark-stroke { fill: none; stroke-linecap: round; }
+  .root-stroke { stroke: url(#barkGrad); stroke-width: 3.5; opacity: .85; }
+  .trunk-stroke { stroke: url(#barkGrad); stroke-width: 15; }
+  .branch-stroke { stroke: url(#barkGrad); stroke-linecap: round; }
+  .bark-detail { stroke: rgba(0,0,0,.25); stroke-width: 1.4; fill: none; stroke-linecap: round; }
+
   .checkpoint-overlay {
     position: fixed; inset: 0; z-index: 999; display: flex; align-items: center; justify-content: center;
     background: rgba(6,8,16,.65); backdrop-filter: blur(5px); padding: 20px;
@@ -5257,109 +5263,195 @@ function checkTreeStageAdvance() {
   }
 }
 
-// Pozicionet e 12 nyjeve, nga poshtë (fara) lart e lart deri te maja (dielli).
-const TREE_NODE_POS = [
-  { x: 150, y: 372 },  // 0 Fara
-  { x: 108, y: 340 },  // 1 Filizi
-  { x: 150, y: 322 },  // 2 Bimë e re
-  { x: 194, y: 292 },  // 3 Trung i njomë
-  { x: 150, y: 272 },  // 4 Degët e para
-  { x: 104, y: 240 },  // 5 Pemë e re
-  { x: 150, y: 218 },  // 6 Gjethnaja
-  { x: 198, y: 186 },  // 7 Pemë e fortë
-  { x: 150, y: 164 },  // 8 Lulëzim
-  { x: 106, y: 130 },  // 9 Frytet
-  { x: 150, y: 100 },  // 10 Kurora
-  { x: 150, y: 40  }   // 11 Dielli
+/* ============ PEMA REALISTIKE ME RRËNJË, DEGË DHE GJETHE ============ */
+// Skeleti i plotë i pemës (forma finale). Çdo pjesë shfaqet gradualisht
+// sipas fazës — dega mbin, pastaj gjethet dalin mbi të.
+const TREE_ROOTS = [
+  "M160 440 Q128 452 100 462",
+  "M160 440 Q145 458 128 474",
+  "M160 440 Q160 460 160 478",
+  "M160 440 Q175 458 192 474",
+  "M160 440 Q192 452 220 462"
 ];
 
-function curvePath(a, b) {
-  const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2 + (a.x === b.x ? 0 : 6);
-  return `M${a.x} ${a.y} Q${mx} ${my} ${b.x} ${b.y}`;
+const TREE_BRANCHES = {
+  trunk:  "M160 440 Q150 320 160 250 Q168 190 160 110",
+  forkL:  "M159 258 Q108 240 76 200 Q58 176 48 150",
+  forkR:  "M161 258 Q212 240 244 200 Q262 176 272 150",
+  subL1:  "M48 150 Q28 128 18 100",
+  subL2:  "M48 150 Q66 122 78 96",
+  subR1:  "M272 150 Q292 128 302 100",
+  subR2:  "M272 150 Q254 122 242 96",
+  twigL:  "M160 172 Q140 138 122 108",
+  twigR:  "M160 172 Q180 138 198 108",
+  crownL: "M160 118 Q142 96 130 74",
+  crownR: "M160 118 Q178 96 190 74"
+};
+
+// Pikat ku vendosen 12 checkpoint-et, në pika natyrale të pemës
+const TREE_NODE_POS = [
+  { x: 160, y: 438 },  // 0 Fara — te rrënja
+  { x: 160, y: 392 },  // 1 Filizi — poshtë në trung
+  { x: 160, y: 330 },  // 2 Bimë e re — mesi i trungut
+  { x: 160, y: 258 },  // 3 Trung i njomë — pika ku ndahen degët
+  { x: 48,  y: 150 },  // 4 Degët e para — maja e degës së majtë
+  { x: 272, y: 150 },  // 5 Pemë e re — maja e degës së djathtë
+  { x: 78,  y: 96  },  // 6 Gjethnaja — nëndegë majtas
+  { x: 242, y: 96  },  // 7 Pemë e fortë — nëndegë djathtas
+  { x: 122, y: 108 },  // 8 Lulëzim — degëz e sipërme majtas
+  { x: 198, y: 108 },  // 9 Frytet — degëz e sipërme djathtas
+  { x: 160, y: 78  },  // 10 Kurora — maja e kurorës
+  { x: 160, y: 30  }   // 11 Dielli
+];
+
+function foliageCluster(cx, cy, scale, seedShift) {
+  scale = scale || 1; seedShift = seedShift || 0;
+  const blobs = [
+    { dx: -18, dy: 4,  r: 22, c: "#2f8d5f", o: .95 },
+    { dx: 16,  dy: 2,  r: 24, c: "#3f9e6b", o: .95 },
+    { dx: -2,  dy: -16,r: 21, c: "#4caf7d", o: 1  },
+    { dx: -26, dy: -10,r: 15, c: "#4caf7d", o: .9 },
+    { dx: 24,  dy: -12,r: 16, c: "#5cc38f", o: .9 },
+    { dx: 4,   dy: 12, r: 17, c: "#2a7d54", o: .85 }
+  ];
+  return blobs.map((b, i) => {
+    const ox = (i + seedShift) % 2 === 0 ? 1 : -1;
+    return `<circle cx="${cx + b.dx * scale}" cy="${cy + b.dy * scale}" r="${b.r * scale}" fill="${b.c}" opacity="${b.o}"/>`;
+  }).join("");
+}
+
+function fruitDots(cx, cy, n) {
+  const offs = [[-14,6],[10,10],[0,-10],[16,-6],[-10,-14],[6,16]];
+  let out = "";
+  for (let i = 0; i < n; i++) {
+    const [dx, dy] = offs[i % offs.length];
+    out += `<circle cx="${cx+dx}" cy="${cy+dy}" r="4.2" fill="#ff9ec4" filter="url(#nodeGlow)"/>`;
+  }
+  return out;
 }
 
 function buildTreeSVG(level) {
   const { idx } = treeStageFor(level);
   const isSun = idx >= TREE_STAGES.length - 1;
   const pts = TREE_NODE_POS;
+  const B = TREE_BRANCHES;
 
-  let connectors = "";
-  for (let i = 0; i < pts.length - 1; i++) {
-    const lit = i < idx;
-    const d = curvePath(pts[i], pts[i + 1]);
-    connectors += lit
-      ? `<path d="${d}" class="node-link node-link-lit" filter="url(#nodeGlow)"/>`
-      : `<path d="${d}" class="node-link node-link-dim"/>`;
+  const rootCount = Math.min(idx + 1, TREE_ROOTS.length);
+  const trunkClip = Math.min(1, (idx + 1) / 3); // trungu "rritet" deri te faza 2-3
+
+  let svg = "";
+
+  // Rrënjët
+  svg += TREE_ROOTS.slice(0, rootCount).map(d =>
+    `<path d="${d}" class="bark-stroke root-stroke"/>`).join("");
+
+  // Trungu — gjithmonë i dukshëm nga faza 1
+  if (idx >= 0) {
+    svg += `<path d="${B.trunk}" class="bark-stroke trunk-stroke" style="--grow:${trunkClip}"/>`;
+    // teksturë lëvozhge
+    svg += `<path d="M150 400 q6 -4 4 -14" class="bark-detail"/>
+            <path d="M172 340 q-6 -4 -4 -14" class="bark-detail"/>
+            <path d="M150 280 q6 -4 4 -14" class="bark-detail"/>`;
   }
 
-  let nodes = "";
+  const branch = (cond, d, w) => cond ? `<path d="${d}" class="bark-stroke branch-stroke" stroke-width="${w}"/>` : "";
+  svg += branch(idx >= 3, B.forkL, 7);
+  svg += branch(idx >= 3, B.forkR, 7);
+  svg += branch(idx >= 6, B.subL1, 5);
+  svg += branch(idx >= 6, B.subL2, 5);
+  svg += branch(idx >= 6, B.subR1, 5);
+  svg += branch(idx >= 6, B.subR2, 5);
+  svg += branch(idx >= 8, B.twigL, 4);
+  svg += branch(idx >= 8, B.twigR, 4);
+  svg += branch(idx >= 10, B.crownL, 3);
+  svg += branch(idx >= 10, B.crownR, 3);
+
+  // Gjethnaja — mbin një fazë pas degës përkatëse
+  if (idx >= 4) svg += foliageCluster(48, 150, .85, 0);
+  if (idx >= 5) svg += foliageCluster(272, 150, .85, 1);
+  if (idx >= 6) svg += foliageCluster(78, 96, .7, 0);
+  if (idx >= 7) svg += foliageCluster(242, 96, .7, 1);
+  if (idx >= 8) svg += foliageCluster(122, 108, .6, 0);
+  if (idx >= 9) svg += foliageCluster(198, 108, .6, 1);
+  if (idx >= 10) svg += foliageCluster(160, 78, .9, 0) + foliageCluster(160, 60, .5, 1);
+
+  // Lule/fruta të vogla kur pema bëhet e pjekur
+  if (idx >= 8 && idx < 11) svg += fruitDots(122, 108, 3) + fruitDots(198, 108, 3);
+  if (idx >= 10) svg += fruitDots(78, 96, 2) + fruitDots(242, 96, 2);
+
+  // Checkpoint-et: pika të prekshme mbi skeletin
+  let nodesHtml = "";
   pts.forEach((p, i) => {
     const isLast = i === pts.length - 1;
     const reached = i <= idx;
     const isCurrent = i === idx && !isSun;
     const clickable = reached && stats.stageLog && stats.stageLog[i];
-    const r = isLast ? 17 : 9;
+    const r = isLast ? 15 : (i === 0 ? 8 : 7);
     const clickAttrs = clickable ? `class="tree-node-hit" data-checkpoint="${i}" tabindex="0"` : "";
     if (isLast) {
-      // Nyja e fundit — dielli, ndryshe nga të tjerat, e madhe dhe rrezatuese
-      nodes += `
-        <circle cx="${p.x}" cy="${p.y}" r="${reached ? 46 : 20}" fill="url(#sunAura)" opacity="${reached ? 1 : .25}">
-          ${reached ? '<animate attributeName="r" values="42;50;42" dur="2.6s" repeatCount="indefinite"/>' : ""}
+      nodesHtml += `
+        <circle cx="${p.x}" cy="${p.y}" r="${reached ? 50 : 18}" fill="url(#sunAura)" opacity="${reached ? 1 : .22}">
+          ${reached ? '<animate attributeName="r" values="46;54;46" dur="2.6s" repeatCount="indefinite"/>' : ""}
         </circle>
         <g ${clickAttrs}>
-          <circle cx="${p.x}" cy="${p.y}" r="${r + 10}" fill="transparent"/>
-          <circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${reached ? "#ffe08a" : "rgba(255,255,255,.12)"}" ${reached ? 'filter="url(#nodeGlow)"' : ""}/>
+          <circle cx="${p.x}" cy="${p.y}" r="${r + 12}" fill="transparent"/>
+          <circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${reached ? "#ffe08a" : "rgba(255,255,255,.14)"}" ${reached ? 'filter="url(#nodeGlow)"' : ""}/>
         </g>`;
     } else {
-      const fill = reached ? "url(#nodeLit)" : "rgba(255,255,255,.10)";
-      nodes += `
+      const fill = reached ? "url(#nodeLit)" : "rgba(255,255,255,.12)";
+      nodesHtml += `
         <g ${clickAttrs}>
-          <circle cx="${p.x}" cy="${p.y}" r="${r + 10}" fill="transparent"/>
+          <circle cx="${p.x}" cy="${p.y}" r="${r + 11}" fill="transparent"/>
           <circle cx="${p.x}" cy="${p.y}" r="${r}" class="tree-node ${reached ? "lit" : "locked"} ${isCurrent ? "current" : ""}"
                   fill="${fill}" ${reached ? 'filter="url(#nodeGlow)"' : ""}/>
         </g>`;
       if (isCurrent) {
-        nodes += `<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="none" stroke="#ffc857" stroke-width="2" opacity=".8">
-          <animate attributeName="r" values="${r};${r + 9};${r}" dur="1.8s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values=".8;0;.8" dur="1.8s" repeatCount="indefinite"/>
+        nodesHtml += `<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="none" stroke="#ffc857" stroke-width="2" opacity=".85">
+          <animate attributeName="r" values="${r};${r + 10};${r}" dur="1.8s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values=".85;0;.85" dur="1.8s" repeatCount="indefinite"/>
         </circle>`;
       }
     }
   });
 
-  // Yje të vogla shkëlqimtare rreth nyjes aktuale, si "flair"
   const sparkles = idx > 0 && idx < pts.length - 1 ? buildSparkles(pts[idx]) : "";
   const sunSparkles = isSun ? buildSparkles(pts[pts.length - 1], 3) : "";
 
   return `
-  <svg viewBox="0 0 300 400" class="tree-svg" role="img" aria-label="Pema e dritës">
+  <svg viewBox="0 0 320 480" class="tree-svg" role="img" aria-label="Pema e rritjes">
     <defs>
       <linearGradient id="nodeLit" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stop-color="#c8f2a0"/>
         <stop offset="100%" stop-color="#4fc97e"/>
+      </linearGradient>
+      <linearGradient id="barkGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#6b4f30"/>
+        <stop offset="50%" stop-color="#8a6a3f"/>
+        <stop offset="100%" stop-color="#6b4f30"/>
       </linearGradient>
       <radialGradient id="sunAura" cx="50%" cy="50%">
         <stop offset="0%" stop-color="#ffe08a" stop-opacity=".9"/>
         <stop offset="60%" stop-color="#ffc857" stop-opacity=".3"/>
         <stop offset="100%" stop-color="#ffc857" stop-opacity="0"/>
       </radialGradient>
-      <radialGradient id="cheerBg" cx="50%" cy="65%">
-        <stop offset="0%" stop-color="#4fc97e" stop-opacity=".16"/>
+      <radialGradient id="cheerBg" cx="50%" cy="55%">
+        <stop offset="0%" stop-color="#4fc97e" stop-opacity=".14"/>
         <stop offset="100%" stop-color="#4fc97e" stop-opacity="0"/>
       </radialGradient>
       <filter id="nodeGlow" x="-120%" y="-120%" width="340%" height="340%">
-        <feGaussianBlur stdDeviation="4.2" result="b"/>
+        <feGaussianBlur stdDeviation="4" result="b"/>
         <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
       </filter>
     </defs>
 
-    <circle cx="150" cy="230" r="190" fill="url(#cheerBg)"/>
+    <circle cx="160" cy="260" r="210" fill="url(#cheerBg)"/>
 
-    <!-- shtegu i errët në sfond, që të duket forma e plotë e udhës -->
-    ${pts.slice(0, -1).map((p, i) => `<path d="${curvePath(p, pts[i + 1])}" class="node-link-ghost"/>`).join("")}
+    <!-- toka -->
+    <ellipse cx="160" cy="442" rx="120" ry="14" fill="rgba(255,255,255,.06)"/>
+    <path d="M50 442 Q160 428 270 442" stroke="rgba(255,255,255,.14)" stroke-width="2" fill="none"/>
 
-    ${connectors}
-    ${nodes}
+    ${svg}
+    ${nodesHtml}
     ${sparkles}
     ${sunSparkles}
   </svg>`;
