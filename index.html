@@ -538,6 +538,12 @@
   .mascot-fab img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
   .mascot-fab:active { transform: scale(.9); }
   @keyframes mascotFloat { 0%,100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-8px) rotate(4deg); } }
+  .mascot-fab.mascot-flying {
+    animation: mascotFlap .28s ease-in-out infinite;
+    transition: transform .62s cubic-bezier(.34,.9,.4,1);
+    z-index: 852;
+  }
+  @keyframes mascotFlap { 0%,100% { filter: drop-shadow(0 6px 14px rgba(0,0,0,.55)); } 50% { filter: drop-shadow(0 10px 20px rgba(0,0,0,.65)) brightness(1.08); } }
   .mascot-fab.mascot-nudge { animation: mascotNudge .5s ease-in-out 2; }
   @keyframes mascotNudge { 0%,100% { transform: scale(1) rotate(0); } 25% { transform: scale(1.18) rotate(-12deg); } 75% { transform: scale(1.18) rotate(12deg); } }
   .mascot-bubble {
@@ -589,14 +595,13 @@
 <div class="mascot-bubble hidden" id="mascotBubble">
   <button class="mascot-bubble-close" id="mascotBubbleClose">✕</button>
   <div class="mascot-bubble-inner">
-    <img src="mascot/eagle-64.png" alt="" class="mascot-bubble-avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='none';">
+    <img src="mascot/eagle-64.png" alt="" class="mascot-bubble-avatar" onerror="this.style.display='none';">
     <div class="mascot-bubble-text" id="mascotBubbleText"></div>
   </div>
   <button class="mascot-bubble-cta hidden" id="mascotBubbleCta"></button>
 </div>
 <button class="mascot-fab" id="mascotFab" aria-label="Shqiponja">
-  <img src="mascot/eagle-240.png" alt="" id="mascotFabImg" onerror="this.style.display='none'; document.getElementById('mascotFabEmoji').style.display='block';">
-  <span id="mascotFabEmoji" style="display:none;">🦅</span>
+  <img src="mascot/eagle-240.png" alt="" id="mascotFabImg">
 </button>
 
 <header>
@@ -1994,9 +1999,23 @@ function mascotSay(text, opts) {
     ctaEl.classList.add("hidden");
     ctaEl.onclick = null;
   }
+
+  // Flluska ndjek shqiponjën nëse ajo ka fluturuar te pyetja
+  const fab = document.getElementById("mascotFab");
+  const flying = fab.classList.contains("mascot-flying");
+  if (flying) {
+    const r = fab.getBoundingClientRect();
+    bubble.style.bottom = Math.max(12, window.innerHeight - r.top + 10) + "px";
+  } else {
+    bubble.style.bottom = "";
+  }
+
   bubble.classList.remove("hidden");
   const duration = opts.duration || 9000;
-  mascotBubbleTimer = setTimeout(() => bubble.classList.add("hidden"), duration);
+  mascotBubbleTimer = setTimeout(() => {
+    bubble.classList.add("hidden");
+    bubble.style.bottom = "";
+  }, duration);
 }
 
 document.getElementById("mascotBubbleClose").addEventListener("click", () => {
@@ -2023,47 +2042,159 @@ function mascotRandomTip() {
 let activeQuestionHint = null;
 let idleHintTimer = null;
 
-function buildHint(correctText) {
-  if (!correctText) return "Mendo mirë përpara se të zgjedhësh!";
+/* --- Ndihma me shembuj dhe fjali, jo me shkronja --- */
+// Fjali shembull për fjalët më të shpeshta. Fjala e kërkuar zëvendësohet me ___
+const HINT_EXAMPLES = {
+  "das Wasser": "Kur ke etje, pi një gotë ___.",
+  "das Brot": "Në mëngjes ha ___ me gjalpë dhe reçel.",
+  "der Apfel": "Një ___ në ditë e mban mjekun larg.",
+  "der Käse": "Në picë shkrihet ___ i verdhë.",
+  "die Milch": "Fëmijët e vegjël pinë shumë ___.",
+  "der Kaffee": "Në mëngjes pi një filxhan ___ që të zgjohem.",
+  "das Haus": "Familja jeton në një ___ me kopsht.",
+  "die Tür": "Kur hyn brenda, e mbyll ___ pas vetes.",
+  "das Fenster": "Kur bën vapë, e hap ___ që të hyjë ajri.",
+  "das Bett": "Në mbrëmje shkoj në ___ dhe fle.",
+  "der Stuhl": "Ulem në ___ para tavolinës.",
+  "der Hund": "___ leh dhe tund bishtin kur je i lumtur.",
+  "die Katze": "___ mjaullin dhe fle gjithë ditën.",
+  "das Pferd": "Kalorësi hipën mbi ___.",
+  "der Bahnhof": "Treni niset nga ___ në orën tetë.",
+  "das Auto": "Shoferi ngas ___ në autostradë.",
+  "das Flugzeug": "___ ngrihet nga aeroporti dhe fluturon.",
+  "das Fahrrad": "Në qytet shkoj me ___ sepse është më shpejt.",
+  "der Arzt": "Kur je i sëmurë, shkon te ___.",
+  "die Schule": "Fëmijët mësojnë çdo ditë në ___.",
+  "das Buch": "Lexoj një ___ interesant para gjumit.",
+  "die Arbeit": "Çdo mëngjes shkoj në ___ me autobus.",
+  "das Geld": "Pa ___ nuk mund të blesh asgjë.",
+  "die Zeit": "Nuk kam ___ sot, jam shumë i zënë.",
+  "der Freund": "___ im më ndihmon gjithmonë kur kam nevojë.",
+  "die Familie": "___ ime ka pesë anëtarë.",
+  "die Bewerbung": "Dërgova ___ time për vendin e ri të punës.",
+  "die Rechnung": "Pas darkës kërkojmë ___ nga kamerieri.",
+  "der Wasserfall": "Uji bie nga lart me zhurmë — ky është një ___.",
+  "das Gerüst": "Punëtorët ngjiten në ___ për të lyer fasadën.",
+  "die Erdbeere": "Kjo frutë e vogël e kuqe e verës është ___.",
+  "das Krankenhaus": "Pas aksidentit e çuan në ___.",
+  "die Wohnung": "Marr me qira një ___ me dy dhoma.",
+  "der Zug": "___ niset nga peroni pesë.",
+  "die Prüfung": "Nesër kam ___ e gjermanishtes.",
+  "der Schlüssel": "Pa ___ nuk mund ta hap derën.",
+  "die Nachhaltigkeit": "Mbrojtja e mjedisit ka të bëjë me ___.",
+  "die Voraussetzung": "Pa këtë ___ nuk mund të aplikosh."
+};
+
+// Fjalë të ngjashme që ndihmojnë si urë kujtese
+const HINT_BRIDGES = {
+  "das Wasser": "Ngjan me anglishten „water“.",
+  "das Haus": "Ngjan me anglishten „house“.",
+  "der Freund": "Ngjan me anglishten „friend“.",
+  "das Buch": "Ngjan me anglishten „book“.",
+  "die Milch": "Ngjan me anglishten „milk“.",
+  "der Apfel": "Ngjan me anglishten „apple“.",
+  "die Maus": "Ngjan me anglishten „mouse“.",
+  "der Fisch": "Ngjan me anglishten „fish“.",
+  "die Hand": "Njësoj si në anglisht: „hand“.",
+  "der Arm": "Njësoj si në anglisht: „arm“.",
+  "die Butter": "Njësoj si në anglisht: „butter“.",
+  "der Ball": "Njësoj si në anglisht: „ball“.",
+  "der Bus": "Njësoj si në shqip: „autobus“.",
+  "die Banane": "Shumë e ngjashme me shqipen „banane“.",
+  "die Familie": "Shumë e ngjashme me shqipen „familje“.",
+  "die Schokolade": "Shumë e ngjashme me shqipen „çokollatë“.",
+  "die Musik": "Shumë e ngjashme me shqipen „muzikë“.",
+  "das Telefon": "Shumë e ngjashme me shqipen „telefon“.",
+  "der Doktor": "Shumë e ngjashme me shqipen „doktor“."
+};
+
+function buildHint(correctText, categoryName) {
+  if (!correctText) return "Mendo mirë përpara se të zgjedhësh — lexoje edhe një herë pyetjen.";
   const raw = correctText.trim();
   const m = raw.match(/^(der|die|das)\s+(.+)$/i);
   const article = m ? m[1].toLowerCase() : null;
   const word = m ? m[2] : raw;
-  const first = word[0] ? word[0].toUpperCase() : "";
-  const parts = [];
-  if (article) {
-    const genderName = article === "der" ? "mashkullore (der)"
-                     : article === "die" ? "femërore (die)"
-                     : "asnjanëse (das)";
-    parts.push(`Fjala është ${genderName}`);
+
+  const pieces = [];
+
+  // 1) Fjali shembull me vend bosh — ndihma më e mirë
+  const example = HINT_EXAMPLES[raw];
+  if (example) pieces.push(example);
+
+  // 2) Urë kujtese (fjalë e ngjashme në anglisht ose shqip)
+  const bridge = HINT_BRIDGES[raw];
+  if (bridge) pieces.push(bridge);
+
+  // 3) Kategoria si kontekst
+  if (!example && categoryName) pieces.push(`Kjo fjalë vjen nga tema „${categoryName}“.`);
+
+  // 4) Nyja si ndihmë gramatikore (vetëm nëse s'kemi mjaft)
+  if (article && pieces.length < 2) {
+    const g = article === "der" ? "mashkullore" : article === "die" ? "femërore" : "asnjanëse";
+    pieces.push(`Është fjalë ${g} — shkon me „${article}“.`);
   }
-  if (first) parts.push(`fillon me „${first}“`);
-  parts.push(`ka ${word.length} shkronja`);
-  return parts.join(", ") + ".";
+
+  // 5) Rezervë nëse s'kemi asgjë
+  if (!pieces.length) pieces.push(`Mendo cila përgjigje i përshtatet kuptimit — lexoji me kujdes të katërta.`);
+
+  return pieces.join(" ");
 }
 
-function setActiveHint(correctText) {
+let hintTargetSelector = null;
+
+// Shqiponja fluturon te pyetja, ndalon aty, pastaj kthehet në cepin e vet
+function mascotFlyToQuestion(callback) {
+  const fab = document.getElementById("mascotFab");
+  const target = hintTargetSelector ? document.querySelector(hintTargetSelector) : null;
+  if (!target) { if (callback) callback(); return; }
+
+  const fabRect = fab.getBoundingClientRect();
+  const tRect = target.getBoundingClientRect();
+  // Pika e synuar: pak mbi cepin e djathtë të pyetjes
+  const targetX = tRect.right - fabRect.width * 0.5;
+  const targetY = tRect.top - fabRect.height * 0.35;
+  const dx = targetX - fabRect.left;
+  const dy = targetY - fabRect.top;
+
+  fab.classList.add("mascot-flying");
+  fab.style.transform = `translate(${dx}px, ${dy}px) scale(1.1) rotate(-8deg)`;
+
+  setTimeout(() => {
+    if (callback) callback();
+  }, 620);
+
+  // kthehu pas pak
+  setTimeout(() => {
+    fab.style.transform = "";
+    setTimeout(() => fab.classList.remove("mascot-flying"), 700);
+  }, 3400);
+}
+
+function setActiveHint(correctText, categoryName, targetSelector) {
   clearTimeout(idleHintTimer);
-  activeQuestionHint = buildHint(correctText);
+  activeQuestionHint = buildHint(correctText, categoryName);
+  hintTargetSelector = targetSelector || null;
   idleHintTimer = setTimeout(() => {
     if (!activeQuestionHint) return;
-    const fab = document.getElementById("mascotFab");
-    fab.classList.add("mascot-nudge");
-    mascotSay("Të ndihmoj pak? " + activeQuestionHint, { duration: 12000 });
-    setTimeout(() => fab.classList.remove("mascot-nudge"), 1200);
+    mascotFlyToQuestion(() => {
+      mascotSay("Të ndihmoj pak? " + activeQuestionHint, { duration: 13000 });
+    });
   }, 10000);
 }
 
 function clearActiveHint() {
   clearTimeout(idleHintTimer);
   activeQuestionHint = null;
+  hintTargetSelector = null;
+  const fab = document.getElementById("mascotFab");
+  if (fab) { fab.style.transform = ""; fab.classList.remove("mascot-flying"); }
 }
 
 document.getElementById("mascotFab").addEventListener("click", () => {
   const bubble = document.getElementById("mascotBubble");
   if (!bubble.classList.contains("hidden")) { bubble.classList.add("hidden"); return; }
   if (activeQuestionHint) {
-    mascotSay(activeQuestionHint, { duration: 12000 });
+    mascotFlyToQuestion(() => mascotSay(activeQuestionHint, { duration: 13000 }));
   } else {
     mascotRandomTip();
   }
@@ -2512,7 +2643,7 @@ function renderQuiz() {
   document.getElementById("quizWord").textContent = correct[askField];
   document.getElementById("quizProgress").textContent = "Pyetja "+(quizIndex+1)+" / "+quizPool.length;
   document.getElementById("quizScore").textContent = "Richtig: "+quizScore;
-  setActiveHint(correct[ansField]);
+  setActiveHint(correct[ansField], correct.cat, ".quiz-question");
   const distractors = shuffle(vocab.filter(w => w[ansField] !== correct[ansField])).slice(0,3);
   const options = shuffle([correct, ...distractors]);
   const box = document.getElementById("quizOptions");
@@ -3019,7 +3150,7 @@ async function renderImageQuiz() {
   photo.classList.remove("hidden");
   loading.classList.add("hidden");
   attribution.classList.remove("hidden");
-  setActiveHint(correct.de);
+  setActiveHint(correct.de, null, "#imgQuizFrame");
 
   const distractors = shuffle(IMAGE_QUIZ_POOL.filter(w => w.de !== correct.de)).slice(0, 3);
   const options = shuffle([correct, ...distractors]);
