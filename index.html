@@ -432,6 +432,7 @@
     box-shadow: 0 20px 60px rgba(0,0,0,.55), 0 0 40px var(--gold-glow); animation: popIn .45s cubic-bezier(.2,.8,.2,1);
   }
   .levelup-card .big { font-size: 2.8rem; margin-bottom: 6px; }
+  .levelup-eagle { width: 96px; height: 96px; object-fit: contain; margin-bottom: 8px; filter: drop-shadow(0 6px 18px rgba(0,0,0,.5)); animation: mascotFloat 3s ease-in-out infinite; }
   .levelup-card h2 { margin: 0 0 6px; font-size: 1.3rem; font-weight: 800; color: var(--gold); text-shadow: 0 0 16px var(--gold-glow); }
   .levelup-card p { margin: 0 0 18px; color: var(--muted); font-size: .88rem; font-weight: 600; }
   .confetti-piece { position: fixed; top: -10px; z-index: 1000; border-radius: 2px; animation: confettiFall linear forwards; pointer-events: none; }
@@ -566,6 +567,10 @@
   }
   .mascot-bubble-inner { display: flex; align-items: flex-start; gap: 9px; }
   .mascot-bubble-avatar { width: 30px; height: 30px; object-fit: contain; flex-shrink: 0; margin-top: 2px; }
+  .mascot-bubble-name {
+    font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 3px;
+  }
   .mascot-bubble-text { font-size: .85rem; font-weight: 700; line-height: 1.5; color: var(--ink); padding-right: 12px; }
   .mascot-bubble-cta {
     margin-top: 10px; width: 100%; padding: 10px; border-radius: 12px; border: none;
@@ -777,17 +782,20 @@
 </head>
 <body>
 
-<!-- MASKOTTI: SHQIPONJA -->
+<!-- MASKOTTI: URANI (Shqiponja) -->
 <div class="mascot-wrap" id="mascotWrap">
   <div class="mascot-bubble hidden" id="mascotBubble">
     <button class="mascot-bubble-close" id="mascotBubbleClose">✕</button>
     <div class="mascot-bubble-inner">
       <img src="mascot/eagle-64.png" alt="" class="mascot-bubble-avatar" onerror="this.style.display='none';">
-      <div class="mascot-bubble-text" id="mascotBubbleText"></div>
+      <div>
+        <div class="mascot-bubble-name">Urani</div>
+        <div class="mascot-bubble-text" id="mascotBubbleText"></div>
+      </div>
     </div>
     <button class="mascot-bubble-cta hidden" id="mascotBubbleCta"></button>
   </div>
-  <button class="mascot-fab" id="mascotFab" aria-label="Shqiponja">
+  <button class="mascot-fab" id="mascotFab" aria-label="Urani">
     <img src="mascot/eagle-240.png" alt="" id="mascotFabImg">
   </button>
 </div>
@@ -2169,7 +2177,7 @@ async function finishPlacementTest() {
     goToView("cards");
     pickBonusActivity();
     setTimeout(() => {
-      mascotSay(`Të lumtë! Fillojmë me nivelin ${level}. Bëj disa karta për t'u ngrohur — jam këtu nëse më duhesh!`, { duration: 11000 });
+      mascotSay(fmt(`Të lumtë{name}! Fillojmë nga niveli ${level}. Bëj disa karta për t'u ngrohur — unë jam këtu sa herë të më duhesh.`), { duration: 11000 });
     }, 900);
   });
   window.scrollTo(0,0);
@@ -2230,19 +2238,81 @@ document.getElementById("mascotBubbleClose").addEventListener("click", () => {
   document.getElementById("mascotBubble").classList.add("hidden");
 });
 
+/* ============ PERSONALITETI I URANIT ============ */
+// Emri i përdoruesit, që Urani të flasë personalisht
+function userFirstName() {
+  if (currentUser && currentUser.user_metadata && currentUser.user_metadata.username)
+    return currentUser.user_metadata.username;
+  if (currentUser && currentUser.email) {
+    const n = currentUser.email.split("@")[0].replace(/[._-]/g, " ").split(" ")[0];
+    return n.charAt(0).toUpperCase() + n.slice(1);
+  }
+  return null;
+}
+// „, Sanije" ose "" nëse s'e dimë emrin
+function nameSuffix() { const n = userFirstName(); return n ? ", " + n : ""; }
+function nameOr(fallback) { return userFirstName() || fallback; }
+
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
 const MASCOT_TIPS = [
-  "A e di? Nëse ushtron çdo ditë, seria jote e ditëve rritet dhe fiton më shumë pikë!",
-  "Provo kuizin me foto — të mësuarit me imazhe ngelet më gjatë në kujtesë.",
-  "5 përgjigje radhazi saktë = bonus pikësh. Vazhdo kështu!",
-  "Kalo herë pas here nëpër fjalët e vjetra te 'Karta', mos i harro.",
-  "Prapa çdo gabimi qëndron një hap më afër B1. Mos u dorëzo!",
-  "Nëse dëgjon fjalën me zë (🔊), e mëson shqiptimin shumë më shpejt."
+  "A e di? Nëse ushtron çdo ditë, seria jote rritet dhe fiton më shumë pikë.",
+  "Provo kuizin me foto — fjalët që i sheh me imazh të ngelin më gjatë në kokë.",
+  "Pesë përgjigje radhazi saktë dhe të vjen bonusi. E ke bërë edhe më parë.",
+  "Kthehu ndonjëherë te kartat e vjetra. Përsëritja është gjysma e mësimit.",
+  "Çdo gabim është një hap drejt B1. Unë nuk i numëroj gabimet, i numëroj përpjekjet.",
+  "Shtyp 🔊 dhe dëgjo fjalën. Shqiptimi mësohet me veshë, jo vetëm me sy.",
+  "Mos u nxito. Më mirë dhjetë fjalë të mësuara mirë sesa pesëdhjetë të harruara.",
+  "Nëse lodhesh, bëj një pushim të shkurtër. Truri mëson edhe kur pushon."
 ];
 
+// Lavdërime kur përgjigjesh saktë
+const PRAISE_SHORT = [
+  "Saktë!", "Shumë mirë!", "Ashtu është!", "E gjete!", "Bravo!", "Pikërisht ashtu!"
+];
+const PRAISE_WARM = [
+  "Të lumtë{name}! E dije mirë atë.",
+  "Bravo{name}, po ecën shumë mirë sot.",
+  "E shoh që po përmirësohesh{name}. Vazhdo!",
+  "Kjo ishte e bukur{name}. Urani është krenar për ty.",
+  "E qëllove pa hezitim{name}. Kështu duhet!",
+  "Po të shkon mendja shpejt sot{name}."
+];
+const ENCOURAGE = [
+  "S'ka gjë{name}, provo prapë. Edhe unë i harroj ndonjëherë.",
+  "Mos u mërzit{name} — kjo fjalë është e ndërlikuar.",
+  "Ishe afër{name}. Herën tjetër e zë.",
+  "Gabimet janë pjesë e rrugës{name}. Vazhdojmë bashkë.",
+  "Merr frymë{name}, dhe provojmë edhe një herë."
+];
+const BIG_STREAK = [
+  "{n} radhazi{name}?! Sot je i pandalshëm.",
+  "{n} pa asnjë gabim{name}. Urani është vërtet krenar për ty!",
+  "{n} me radhë{name} — kështu kalohet B1!",
+  "Po fluturojmë bashkë{name}: {n} radhazi!"
+];
+
+function fmt(tpl, extra) {
+  let s = tpl.replace(/\{name\}/g, nameSuffix());
+  if (extra) for (const k in extra) s = s.replace(new RegExp("\\{" + k + "\\}", "g"), extra[k]);
+  return s;
+}
+
+function mascotPraise(short) {
+  if (short) return pick(PRAISE_SHORT);
+  return fmt(pick(PRAISE_WARM));
+}
+
 function mascotRandomTip() {
-  const stats = ` (${totalPoints} pikë, seri ${streakDays} ditë)`;
-  const base = MASCOT_TIPS[Math.floor(Math.random() * MASCOT_TIPS.length)];
-  mascotSay(base + (Math.random() < 0.4 ? stats : ""), { duration: 10000 });
+  const n = userFirstName();
+  let msg = pick(MASCOT_TIPS);
+  // Herë pas here shto diçka personale për gjendjen aktuale
+  if (Math.random() < 0.45) {
+    if (streakDays >= 3) msg = `${streakDays} ditë me radhë${nameSuffix()} — kjo është disiplinë e vërtetë. ` + msg;
+    else if (totalPoints >= 500) msg = `Ke mbledhur tashmë ${totalPoints} pikë${nameSuffix()}. ` + msg;
+    else if (n) msg = `${n}, ` + msg.charAt(0).toLowerCase() + msg.slice(1);
+  }
+  mascotSay(msg, { duration: 10000 });
 }
 
 /* --- Shqiponja jep ndihmë për pyetjen aktuale (Kuiz, Kuiz me foto) --- */
@@ -2429,22 +2499,51 @@ function mascotGreet() {
   mascotGreeted = true;
   pickBonusActivity();
   const hour = new Date().getHours();
-  const timeGreet = hour < 11 ? "Mirëmëngjes" : hour < 18 ? "Mirëdita" : "Mirëmbrëma";
-  const name = (currentUser && currentUser.email) ? currentUser.email.split("@")[0] : null;
+  const timeGreet = hour < 5 ? "Natën e mirë" : hour < 11 ? "Mirëmëngjes" : hour < 18 ? "Mirëdita" : "Mirëmbrëma";
+  const name = userFirstName();
   const who = name ? ", " + name : "";
 
   setTimeout(() => {
     if (!placementTaken) return; // gjatë testit fillestar mos ndërhyj
-    let msg;
+
+    // 1) Nuk ka ende nivel — mirëseardhje e ngrohtë
     if (!cefrLevel && !selectedLevel) {
-      msg = `${timeGreet}${who}! Unë jam shqiponja jote — do të të ndihmoj gjatë mësimit. Fillo me Kartat për t'u njohur me fjalët e para!`;
-      mascotSay(msg, { duration: 14000, ctaLabel: "Shko te Kartat", onCta: () => goToView("cards") });
-    } else {
-      const lvlInfo = CEFR_INFO[cefrLevel || selectedLevel] || {};
-      const actLabel = MASCOT_ACTIVITY_LABEL[bonusActivity];
-      msg = `${timeGreet}${who}! Ke arritur nivelin ${cefrLevel || selectedLevel} (${lvlInfo.friendly || ""}). Sot të sugjeroj: bëj ${actLabel} — merr 2X pikë deri sa të mbyllësh faqen!`;
-      mascotSay(msg, { duration: 16000, ctaLabel: "Shko te " + actLabel, onCta: () => goToView(MASCOT_ACTIVITY_TAB[bonusActivity]) });
+      mascotSay(`${timeGreet}${who}! Unë jam Urani, shqiponja jote. Do të të shoqëroj në çdo hap drejt B1-shit. Fillojmë me disa karta?`,
+        { duration: 14000, ctaLabel: "Fillojmë!", onCta: () => goToView("cards") });
+      return;
     }
+
+    const lvl = cefrLevel || selectedLevel;
+    const actLabel = MASCOT_ACTIVITY_LABEL[bonusActivity];
+    const opts = [];
+
+    // 2) Seri e gjatë ditësh — lavdëro disiplinën
+    if (streakDays >= 7) {
+      opts.push(`${timeGreet}${who}! ${streakDays} ditë me radhë pa munguar — pak njerëz e bëjnë këtë. Jam vërtet krenar për ty.`);
+    } else if (streakDays >= 3) {
+      opts.push(`${timeGreet}${who}! Dita e ${streakDays}-të me radhë. Po e ndërton zakonin, vazhdo ashtu.`);
+    }
+
+    // 3) Pikë të shumta — përmend përparimin
+    if (totalPoints >= 1000) {
+      opts.push(`${timeGreet}${who}! Mbi ${totalPoints} pikë tashmë. Kur nisëm, ishe në zero — shiko ku je tani.`);
+    } else if (totalPoints >= 200) {
+      opts.push(`${timeGreet}${who}! ${totalPoints} pikë deri tani. Po shkon mirë puna jonë.`);
+    }
+
+    // 4) Sugjerimi i ditës me bonus
+    opts.push(`${timeGreet}${who}! Sot kam një propozim: bëj ${actLabel} dhe të jap 2X pikë. Ç'thua?`);
+    opts.push(`${timeGreet}${who}! Të pres me ${actLabel} sot — pikët janë të dyfishta. Nuk e lëmë të shkojë dëm.`);
+
+    // 5) Motivim i thjeshtë
+    opts.push(`${timeGreet}${who}! Niveli yt është ${lvl}. Sot bëjmë edhe një hap përpara — një hap në ditë mjafton.`);
+
+    const msg = pick(opts);
+    mascotSay(msg, {
+      duration: 15000,
+      ctaLabel: "Shko te " + actLabel,
+      onCta: () => goToView(MASCOT_ACTIVITY_TAB[bonusActivity])
+    });
   }, 1200);
 }
 
@@ -2579,11 +2678,17 @@ function spawnConfetti() {
 function showLevelUp(level) {
   const overlay = document.createElement("div");
   overlay.className = "levelup-overlay";
+  const msgs = [
+    "Nivel i ri{name}! Po ngjitesh hap pas hapi — ashtu si duhet.",
+    "E arritëm bashkë{name}. Urani është krenar për ty!",
+    "Shiko sa larg ke ardhur{name}. Nuk ndalemi këtu.",
+    "Nivel {lvl}{name}! Puna jote po jep fryte."
+  ];
   overlay.innerHTML = `
     <div class="levelup-card">
-      <div class="big">🎉</div>
+      <img src="mascot/eagle-120.png" alt="" class="levelup-eagle" onerror="this.style.display='none';">
       <h2>Arrite Nivelin ${level}!</h2>
-      <p>Vazhdo kështu — fjalori yt B1 po rritet.</p>
+      <p id="levelUpMsg">${esc(fmt(pick(msgs), { lvl: level }))}</p>
       <button class="btn btn-primary" id="btnCloseLevelUp" style="width:100%;">Vazhdo ushtrimin</button>
     </div>
   `;
@@ -2619,7 +2724,7 @@ function awardPoints(base, source) {
   const isBonus = bonusActivity && source === bonusActivity;
   const total = isBonus ? base * 2 : base;
   addPoints(total);
-  if (isBonus) mascotSay("🔥 +" + total + " pikë bonus! Zgjodhe mirë.", { duration: 4000 });
+  if (isBonus) mascotSay(fmt("🔥 +" + total + " pikë{name}! Ma dëgjove këshillën, të falënderoj."), { duration: 4000 });
 }
 
 function renderPoints(animateFrom) {
@@ -2744,8 +2849,8 @@ function registerAnswer(isCorrect) {
       playMilestoneFanfare();
       spawnConfetti();
       showMilestoneToast(answerStreak, bonus);
-      if (answerStreak >= 20) {
-        setTimeout(() => mascotSay("😍 " + answerStreak + " radhazi?! Je në zjarr sot — vazhdo!", { duration: 7000 }), 900);
+      if (answerStreak >= 10) {
+        setTimeout(() => mascotSay(fmt(pick(BIG_STREAK), { n: answerStreak }), { duration: 7000 }), 900);
       }
     }
   } else {
@@ -3431,7 +3536,7 @@ function startPractice() {
   practiceRound = 0; practiceScore = 0; practiceActive = true;
   document.getElementById("practiceIntro").classList.add("hidden");
   document.getElementById("practiceRunner").classList.remove("hidden");
-  mascotSay("Le t'ia nisim! Do të të jap ushtrime rastësore.", { duration: 4000 });
+  mascotSay(fmt("Le t'ia nisim{name}! Unë zgjedh, ti përgjigjesh. Gati?"), { duration: 4500 });
   nextPracticeRound();
 }
 
@@ -3480,12 +3585,12 @@ function practiceAnswerHandler(box, correctLabel, onCorrectPoints) {
       registerAnswer(true);
       flash.textContent = "+" + onCorrectPoints;
       if (practiceRound % 3 === 0) {
-        mascotSay(PRACTICE_CHEERS[Math.floor(Math.random()*PRACTICE_CHEERS.length)], { duration: 3500 });
+        mascotSay(mascotPraise(false), { duration: 4500 });
       }
     } else {
       registerAnswer(false);
       flash.textContent = "Saktë: " + correctLabel;
-      mascotSay(PRACTICE_ENCOURAGE[Math.floor(Math.random()*PRACTICE_ENCOURAGE.length)] + " Përgjigja: " + correctLabel, { duration: 6000 });
+      mascotSay(fmt(pick(ENCOURAGE)) + " Përgjigja ishte: " + correctLabel, { duration: 6000 });
     }
     document.getElementById("practiceScore").textContent = "Saktë: " + practiceScore;
     document.getElementById("btnNextPractice").classList.remove("hidden");
@@ -4379,9 +4484,9 @@ function showFullExamResult() {
     spawnConfetti(); setTimeout(spawnConfetti, 350); setTimeout(spawnConfetti, 700);
     playFanfare(); vibrate([50, 60, 50, 60, 140]);
     addPoints(200);
-    setTimeout(() => mascotSay("Nuk e besoj! E kalove provimin e plotë B1 me " + total + " pikë. Jam krenar për ty!", { duration: 12000 }), 900);
+    setTimeout(() => mascotSay(fmt("E kalove provimin e plotë B1 me " + total + " pikë{name}! Urani është vërtet krenar për ty sot."), { duration: 12000 }), 900);
   } else {
-    setTimeout(() => mascotSay("Mos u dorëzo — tani e di saktësisht ku duhet të punosh më shumë. Provo përsëri!", { duration: 10000 }), 900);
+    setTimeout(() => mascotSay(fmt("Mos u dorëzo{name}. Tani e dimë saktësisht ku duhet punuar — dhe unë jam këtu. Provojmë sërish."), { duration: 10000 }), 900);
   }
 
   document.getElementById("btnFullExamAgain").addEventListener("click", startFullExam);
