@@ -551,6 +551,58 @@
     50% { transform: translateY(-5px) rotate(6deg) scale(1.12); }
   }
   .mascot-fab.mascot-nudge { animation: mascotNudge .5s ease-in-out 2; }
+
+  /* ---- Dhurata e Madhe (dielli + provimi i kaluar) ---- */
+  .grandgift-overlay {
+    position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(circle at 50% 30%, rgba(255,224,138,.25), rgba(6,8,16,.85) 70%);
+    backdrop-filter: blur(6px); padding: 20px; overflow-y: auto;
+    animation: fadeSlideIn .4s ease;
+  }
+  .grandgift-rays {
+    position: absolute; top: -20%; left: 50%; width: 900px; height: 900px; margin-left: -450px;
+    background: repeating-conic-gradient(rgba(255,224,138,.16) 0deg 6deg, transparent 6deg 18deg);
+    animation: rayRotate 40s linear infinite; pointer-events: none;
+  }
+  @keyframes rayRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .grandgift-card {
+    position: relative; background: var(--surface); backdrop-filter: blur(26px); -webkit-backdrop-filter: blur(26px);
+    border: 1px solid var(--line-strong); border-radius: var(--radius-lg); padding: 34px 26px;
+    text-align: center; max-width: 380px; width: 100%;
+    box-shadow: 0 24px 70px rgba(0,0,0,.6), 0 0 60px rgba(255,200,87,.3);
+    animation: popIn .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .grandgift-box {
+    font-size: 4.5rem; line-height: 1; margin-bottom: 8px; display: inline-block;
+    animation: giftShake 2.2s ease-in-out infinite;
+  }
+  .grandgift-box.grandgift-open { animation: giftPop .6s cubic-bezier(.3,1.4,.4,1) forwards; }
+  @keyframes giftShake { 0%,100% { transform: rotate(0deg); } 20% { transform: rotate(-8deg); } 40% { transform: rotate(7deg); } 60% { transform: rotate(-5deg); } 80% { transform: rotate(4deg); } }
+  @keyframes giftPop { 0% { transform: scale(1) rotate(0); } 40% { transform: scale(1.5) rotate(-10deg); } 70% { transform: scale(1.25) rotate(6deg); } 100% { transform: scale(1.35) rotate(0); filter: drop-shadow(0 0 26px var(--gold-glow)); } }
+  #grandGiftTitle {
+    margin: 4px 0 18px; font-size: 1.5rem; font-weight: 800; letter-spacing: .02em;
+    color: var(--gold); text-shadow: 0 0 24px var(--gold-glow); animation: popIn .5s ease;
+  }
+  .grandgift-eagle { width: 74px; height: 74px; object-fit: contain; margin-bottom: 10px; filter: drop-shadow(0 6px 16px rgba(0,0,0,.5)); }
+  .grandgift-msg { font-size: .9rem; color: var(--ink); font-weight: 600; line-height: 1.6; margin: 0 0 18px; }
+  .grandgift-cert {
+    background: linear-gradient(160deg, rgba(255,224,138,.14), rgba(255,200,87,.05));
+    border: 1px solid rgba(255,200,87,.4); border-radius: var(--radius-md); padding: 16px 14px; margin-bottom: 16px;
+  }
+  .cert-label { font-size: .62rem; font-weight: 800; letter-spacing: .12em; color: var(--gold); text-transform: uppercase; margin-bottom: 6px; }
+  .cert-name { font-size: 1.15rem; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+  .cert-sub { font-size: .76rem; color: var(--muted); font-weight: 700; }
+  .grandgift-bonus {
+    display: inline-block; padding: 8px 18px; border-radius: var(--radius-pill); font-weight: 800; font-size: .88rem;
+    background: linear-gradient(135deg, var(--gold), #ffe08a); color: #241a03;
+    box-shadow: 0 6px 18px var(--gold-glow); animation: floatGlow 2s ease-in-out infinite;
+  }
+  .grandgift-real {
+    margin-top: 16px; text-align: left; background: rgba(79,201,126,.1);
+    border: 1px solid rgba(79,201,126,.35); border-radius: var(--radius-md); padding: 14px 16px;
+  }
+  .real-label { font-size: .68rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--green); margin-bottom: 6px; }
+  .real-text { font-size: .84rem; color: var(--ink); font-weight: 600; line-height: 1.55; }
   @keyframes mascotNudge { 0%,100% { transform: scale(1) rotate(0); } 25% { transform: scale(1.18) rotate(-12deg); } 75% { transform: scale(1.18) rotate(12deg); } }
   .mascot-bubble {
     position: relative; width: max-content;
@@ -2764,7 +2816,8 @@ const DEFAULT_STATS = {
   exams:     { taken: 0, passed: 0, best: 0, bestModules: {} },
   words:     {},   // "al|de": { c: saktë, w: gabim }
   bestStreak: 0,
-  stageLog:  {}     // "idx": { at: ISO-datë, totalAnswers, correctAnswers }
+  stageLog:  {},    // "idx": { at: ISO-datë, totalAnswers, correctAnswers }
+  grandGift: null   // { at: ISO-datë, score } — dhurata e madhe, vetëm një herë
 };
 let stats = JSON.parse(JSON.stringify(DEFAULT_STATS));
 
@@ -4706,13 +4759,73 @@ function showFullExamResult() {
     spawnConfetti(); setTimeout(spawnConfetti, 350); setTimeout(spawnConfetti, 700);
     playFanfare(); vibrate([50, 60, 50, 60, 140]);
     addPoints(200);
-    setTimeout(() => mascotSay(fmt("E kalove provimin e plotë B1 me " + total + " pikë{name}! Urani është vërtet krenar për ty sot."), { duration: 12000 }), 900);
+    const reachedSun = treeStageFor(Math.floor(totalPoints / 100) + 1).idx >= TREE_STAGES.length - 1;
+    ensureStats();
+    if (reachedSun && !stats.grandGift) {
+      stats.grandGift = { at: new Date().toISOString(), score: total };
+      queueSave();
+      setTimeout(() => showGrandGift(total), 1400);
+    } else {
+      setTimeout(() => mascotSay(fmt("E kalove provimin e plotë B1 me " + total + " pikë{name}! Urani është vërtet krenar për ty sot."), { duration: 12000 }), 900);
+    }
   } else {
     setTimeout(() => mascotSay(fmt("Mos u dorëzo{name}. Tani e dimë saktësisht ku duhet punuar — dhe unë jam këtu. Provojmë sërish."), { duration: 10000 }), 900);
   }
 
   document.getElementById("btnFullExamAgain").addEventListener("click", startFullExam);
   document.getElementById("btnFullExamBack").addEventListener("click", renderExamMenu);
+}
+
+/* ============ DHURATA E MADHE: dielli + provimi i kaluar, vetëm një herë ============ */
+function showGrandGift(score) {
+  addPoints(500);
+  const overlay = document.createElement("div");
+  overlay.className = "grandgift-overlay";
+  overlay.innerHTML = `
+    <div class="grandgift-rays"></div>
+    <div class="grandgift-card">
+      <div class="grandgift-box" id="grandGiftBox">🎁</div>
+      <h2 class="hidden" id="grandGiftTitle">URIME${esc(nameSuffix().toUpperCase())}!</h2>
+      <div class="hidden" id="grandGiftBody">
+        <img src="mascot/eagle-120.png" alt="" class="grandgift-eagle" onerror="this.style.display='none';">
+        <p class="grandgift-msg">E arrite majën e pemës dhe e kalove provimin e plotë B1 me <strong>${score}/400</strong> pikë.<br>Nga fara te dielli — gjithçka me duart e tua.</p>
+        <div class="grandgift-cert">
+          <div class="cert-label">CERTIFIKATA E RRITJES</div>
+          <div class="cert-name">${esc(nameOr("Nxënësi"))}</div>
+          <div class="cert-sub">Niveli B1 · ${score}/400 pikë · ${new Date().toLocaleDateString("sq-AL",{day:"numeric",month:"long",year:"numeric"})}</div>
+        </div>
+        <div class="grandgift-bonus">+500 pikë bonus 🎉</div>
+        <div class="grandgift-real">
+          <div class="real-label">🎁 Mesazh personal nga Agoni</div>
+          <div class="real-text">Kjo arritje meriton diçka reale, jo vetëm pikë. Kur të shohësh këtë mesazh, eja te unë — kam një kupon prej <strong>100€</strong> për ty, personalisht.</div>
+        </div>
+        <button class="btn btn-primary" id="btnCloseGrandGift" style="width:100%;padding:16px;font-size:1rem;margin-top:18px;">Faleminderit, Uran!</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  // Konfeti të mëdha, valë pas vale
+  spawnConfetti(); setTimeout(spawnConfetti, 300); setTimeout(spawnConfetti, 600);
+  setTimeout(spawnConfetti, 950); setTimeout(spawnConfetti, 1300);
+  playFanfare();
+  vibrate([40, 50, 40, 50, 40, 50, 160]);
+
+  const box = document.getElementById("grandGiftBox");
+  setTimeout(() => {
+    box.classList.add("grandgift-open");
+    playMilestoneFanfare();
+    vibrate([30, 40, 100]);
+  }, 700);
+  setTimeout(() => {
+    document.getElementById("grandGiftTitle").classList.remove("hidden");
+  }, 1300);
+  setTimeout(() => {
+    document.getElementById("grandGiftBody").classList.remove("hidden");
+    spawnConfetti();
+  }, 1900);
+
+  document.getElementById("btnCloseGrandGift").addEventListener("click", () => overlay.remove());
 }
 
 function buildQuestionHtml(q, idx) {
