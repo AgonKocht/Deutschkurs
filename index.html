@@ -526,22 +526,22 @@
 
   /* ---- Maskotti: Shqiponja (Adler) ---- */
   .mascot-fab {
-    position: fixed; right: 16px; bottom: calc(18px + env(safe-area-inset-bottom));
-    z-index: 850; width: 64px; height: 64px; border-radius: 50%;
-    background: radial-gradient(circle at 32% 28%, #ffe08a, var(--gold));
-    border: 2px solid rgba(255,255,255,.25); font-size: 1.7rem; padding: 0; overflow: hidden;
+    position: fixed; right: 12px; bottom: calc(14px + env(safe-area-inset-bottom));
+    z-index: 850; width: 76px; height: 76px; border-radius: 0;
+    background: none; border: none; padding: 0; overflow: visible;
     display: flex; align-items: center; justify-content: center; cursor: pointer;
-    box-shadow: 0 8px 26px var(--gold-glow), 0 4px 14px rgba(0,0,0,.4);
+    box-shadow: none;
+    filter: drop-shadow(0 6px 14px rgba(0,0,0,.55));
     animation: mascotFloat 3.2s ease-in-out infinite;
     transition: transform .12s ease;
   }
-  .mascot-fab img { width: 82%; height: 82%; object-fit: contain; pointer-events: none; }
+  .mascot-fab img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
   .mascot-fab:active { transform: scale(.9); }
-  @keyframes mascotFloat { 0%,100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-6px) rotate(4deg); } }
+  @keyframes mascotFloat { 0%,100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-8px) rotate(4deg); } }
   .mascot-fab.mascot-nudge { animation: mascotNudge .5s ease-in-out 2; }
-  @keyframes mascotNudge { 0%,100% { transform: scale(1) rotate(0); } 25% { transform: scale(1.15) rotate(-10deg); } 75% { transform: scale(1.15) rotate(10deg); } }
+  @keyframes mascotNudge { 0%,100% { transform: scale(1) rotate(0); } 25% { transform: scale(1.18) rotate(-12deg); } 75% { transform: scale(1.18) rotate(12deg); } }
   .mascot-bubble {
-    position: fixed; right: 16px; bottom: calc(90px + env(safe-area-inset-bottom));
+    position: fixed; right: 16px; bottom: calc(100px + env(safe-area-inset-bottom));
     z-index: 851; max-width: min(320px, calc(100vw - 32px));
     background: var(--surface); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
     border: 1px solid var(--line-strong); border-radius: 20px 20px 4px 20px;
@@ -595,7 +595,7 @@
   <button class="mascot-bubble-cta hidden" id="mascotBubbleCta"></button>
 </div>
 <button class="mascot-fab" id="mascotFab" aria-label="Shqiponja">
-  <img src="mascot/eagle-120.png" alt="" id="mascotFabImg" onerror="this.style.display='none'; document.getElementById('mascotFabEmoji').style.display='block';">
+  <img src="mascot/eagle-240.png" alt="" id="mascotFabImg" onerror="this.style.display='none'; document.getElementById('mascotFabEmoji').style.display='block';">
   <span id="mascotFabEmoji" style="display:none;">🦅</span>
 </button>
 
@@ -1816,6 +1816,7 @@ const TYPE_LABEL = { image: "🖼️ Foto", vocab: "📖 Fjalor", grammar: "🧩
 
 function renderPlacementQuestion(index) {
   const runner = document.getElementById("placementRunner");
+  clearActiveHint();
   if (index >= PLACEMENT_TEST.length) { finishPlacementTest(); return; }
   const q = PLACEMENT_TEST[index];
   const pct = Math.round((index / PLACEMENT_TEST.length) * 100);
@@ -1946,7 +1947,7 @@ async function finishPlacementTest() {
     goToView("cards");
     pickBonusActivity();
     setTimeout(() => {
-      mascotSay(`Të lumtë! Fillojmë me nivelin ${level}. Bëj disa karta për t'u ngrohur — jam këtu nëse më duhesh!`, { duration: 6000 });
+      mascotSay(`Të lumtë! Fillojmë me nivelin ${level}. Bëj disa karta për t'u ngrohur — jam këtu nëse më duhesh!`, { duration: 11000 });
     }, 900);
   });
   window.scrollTo(0,0);
@@ -1994,7 +1995,7 @@ function mascotSay(text, opts) {
     ctaEl.onclick = null;
   }
   bubble.classList.remove("hidden");
-  const duration = opts.duration || 5000;
+  const duration = opts.duration || 9000;
   mascotBubbleTimer = setTimeout(() => bubble.classList.add("hidden"), duration);
 }
 
@@ -2015,25 +2016,42 @@ const MASCOT_TIPS = [
 function mascotRandomTip() {
   const stats = ` (${totalPoints} pikë, seri ${streakDays} ditë)`;
   const base = MASCOT_TIPS[Math.floor(Math.random() * MASCOT_TIPS.length)];
-  mascotSay(base + (Math.random() < 0.4 ? stats : ""), { duration: 5500 });
+  mascotSay(base + (Math.random() < 0.4 ? stats : ""), { duration: 10000 });
 }
 
-/* --- Shqiponja jep ndihmë për pyetjen aktuale (Kuiz, Kuiz me foto, Testi) --- */
+/* --- Shqiponja jep ndihmë për pyetjen aktuale (Kuiz, Kuiz me foto) --- */
 let activeQuestionHint = null;
 let idleHintTimer = null;
 
+function buildHint(correctText) {
+  if (!correctText) return "Mendo mirë përpara se të zgjedhësh!";
+  const raw = correctText.trim();
+  const m = raw.match(/^(der|die|das)\s+(.+)$/i);
+  const article = m ? m[1].toLowerCase() : null;
+  const word = m ? m[2] : raw;
+  const first = word[0] ? word[0].toUpperCase() : "";
+  const parts = [];
+  if (article) {
+    const genderName = article === "der" ? "mashkullore (der)"
+                     : article === "die" ? "femërore (die)"
+                     : "asnjanëse (das)";
+    parts.push(`Fjala është ${genderName}`);
+  }
+  if (first) parts.push(`fillon me „${first}“`);
+  parts.push(`ka ${word.length} shkronja`);
+  return parts.join(", ") + ".";
+}
+
 function setActiveHint(correctText) {
   clearTimeout(idleHintTimer);
-  const letter = (correctText || "").trim().replace(/^(der|die|das)\s+/i, "")[0];
-  activeQuestionHint = letter
-    ? `Fillon me shkronjën „${letter.toUpperCase()}“. Ke ${correctText.length} shkronja gjithsej.`
-    : "Mendo mirë përpara se të zgjedhësh!";
+  activeQuestionHint = buildHint(correctText);
   idleHintTimer = setTimeout(() => {
     if (!activeQuestionHint) return;
-    document.getElementById("mascotFab").classList.add("mascot-nudge");
-    mascotSay("🦅 Duket sikur po mendon shumë... " + activeQuestionHint, { duration: 6500 });
-    setTimeout(() => document.getElementById("mascotFab").classList.remove("mascot-nudge"), 1200);
-  }, 15000);
+    const fab = document.getElementById("mascotFab");
+    fab.classList.add("mascot-nudge");
+    mascotSay("Të ndihmoj pak? " + activeQuestionHint, { duration: 12000 });
+    setTimeout(() => fab.classList.remove("mascot-nudge"), 1200);
+  }, 10000);
 }
 
 function clearActiveHint() {
@@ -2045,7 +2063,7 @@ document.getElementById("mascotFab").addEventListener("click", () => {
   const bubble = document.getElementById("mascotBubble");
   if (!bubble.classList.contains("hidden")) { bubble.classList.add("hidden"); return; }
   if (activeQuestionHint) {
-    mascotSay("🦅 " + activeQuestionHint, { duration: 6000 });
+    mascotSay(activeQuestionHint, { duration: 12000 });
   } else {
     mascotRandomTip();
   }
@@ -2065,12 +2083,12 @@ function mascotGreet() {
     let msg;
     if (!cefrLevel && !selectedLevel) {
       msg = `${timeGreet}${who}! Unë jam shqiponja jote — do të të ndihmoj gjatë mësimit. Fillo me Kartat për t'u njohur me fjalët e para!`;
-      mascotSay(msg, { duration: 7000, ctaLabel: "Shko te Kartat", onCta: () => goToView("cards") });
+      mascotSay(msg, { duration: 14000, ctaLabel: "Shko te Kartat", onCta: () => goToView("cards") });
     } else {
       const lvlInfo = CEFR_INFO[cefrLevel || selectedLevel] || {};
       const actLabel = MASCOT_ACTIVITY_LABEL[bonusActivity];
       msg = `${timeGreet}${who}! Ke arritur nivelin ${cefrLevel || selectedLevel} (${lvlInfo.friendly || ""}). Sot të sugjeroj: bëj ${actLabel} — merr 2X pikë deri sa të mbyllësh faqen!`;
-      mascotSay(msg, { duration: 8000, ctaLabel: "Shko te " + actLabel, onCta: () => goToView(MASCOT_ACTIVITY_TAB[bonusActivity]) });
+      mascotSay(msg, { duration: 16000, ctaLabel: "Shko te " + actLabel, onCta: () => goToView(MASCOT_ACTIVITY_TAB[bonusActivity]) });
     }
   }, 1200);
 }
@@ -2245,7 +2263,7 @@ function awardPoints(base, source) {
   const isBonus = bonusActivity && source === bonusActivity;
   const total = isBonus ? base * 2 : base;
   addPoints(total);
-  if (isBonus) mascotSay("🔥 +" + total + " pikë bonus! Zgjodhe mirë.", { duration: 2200 });
+  if (isBonus) mascotSay("🔥 +" + total + " pikë bonus! Zgjodhe mirë.", { duration: 4000 });
 }
 
 function renderPoints(animateFrom) {
@@ -2371,7 +2389,7 @@ function registerAnswer(isCorrect) {
       spawnConfetti();
       showMilestoneToast(answerStreak, bonus);
       if (answerStreak >= 20) {
-        setTimeout(() => mascotSay("😍 " + answerStreak + " radhazi?! Je në zjarr sot — vazhdo!", { duration: 4500 }), 900);
+        setTimeout(() => mascotSay("😍 " + answerStreak + " radhazi?! Je në zjarr sot — vazhdo!", { duration: 7000 }), 900);
       }
     }
   } else {
@@ -3094,6 +3112,7 @@ function renderExamMenu() {
 function examShell(title, minutes, inner) {
   menuEl.classList.add("hidden");
   runnerEl.classList.remove("hidden");
+  clearActiveHint();
   runnerEl.innerHTML = `
     <div class="exam-header">
       <span class="exam-title">${esc(title)}</span>
