@@ -525,9 +525,15 @@
   }
 
   /* ---- Maskotti: Shqiponja (Adler) ---- */
-  .mascot-fab {
+  .mascot-wrap {
     position: fixed; right: 12px; bottom: calc(14px + env(safe-area-inset-bottom));
-    z-index: 850; width: 76px; height: 76px; border-radius: 0;
+    z-index: 850; display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
+    pointer-events: none;
+    transition: transform .62s cubic-bezier(.34,.9,.4,1);
+  }
+  .mascot-wrap > * { pointer-events: auto; }
+  .mascot-fab {
+    width: 76px; height: 76px; border-radius: 0; flex-shrink: 0;
     background: none; border: none; padding: 0; overflow: visible;
     display: flex; align-items: center; justify-content: center; cursor: pointer;
     box-shadow: none;
@@ -536,37 +542,53 @@
     transition: transform .12s ease;
   }
   .mascot-fab img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
-  .mascot-fab:active { transform: scale(.9); }
+  .mascot-fab:active { transform: scale(.92); }
   @keyframes mascotFloat { 0%,100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-8px) rotate(4deg); } }
-  .mascot-fab.mascot-flying {
-    animation: mascotFlap .28s ease-in-out infinite;
-    transition: transform .62s cubic-bezier(.34,.9,.4,1);
-    z-index: 852;
+  .mascot-wrap.mascot-flying .mascot-fab { animation: mascotFlap .3s ease-in-out infinite; }
+  @keyframes mascotFlap {
+    0%,100% { transform: translateY(0) rotate(-6deg) scale(1.06); }
+    50% { transform: translateY(-5px) rotate(6deg) scale(1.12); }
   }
-  @keyframes mascotFlap { 0%,100% { filter: drop-shadow(0 6px 14px rgba(0,0,0,.55)); } 50% { filter: drop-shadow(0 10px 20px rgba(0,0,0,.65)) brightness(1.08); } }
   .mascot-fab.mascot-nudge { animation: mascotNudge .5s ease-in-out 2; }
   @keyframes mascotNudge { 0%,100% { transform: scale(1) rotate(0); } 25% { transform: scale(1.18) rotate(-12deg); } 75% { transform: scale(1.18) rotate(12deg); } }
   .mascot-bubble {
-    position: fixed; right: 16px; bottom: calc(100px + env(safe-area-inset-bottom));
-    z-index: 851; max-width: min(320px, calc(100vw - 32px));
+    position: relative; width: max-content;
+    max-width: min(300px, calc(100vw - 28px));
     background: var(--surface); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
-    border: 1px solid var(--line-strong); border-radius: 20px 20px 4px 20px;
-    padding: 16px 18px; box-shadow: 0 16px 40px rgba(0,0,0,.5), 0 0 30px rgba(255,200,87,.15);
+    border: 1px solid var(--line-strong); border-radius: 18px 18px 4px 18px;
+    padding: 14px 16px; box-shadow: 0 16px 40px rgba(0,0,0,.5), 0 0 30px rgba(255,200,87,.12);
     animation: bubbleIn .35s cubic-bezier(.2,.8,.2,1);
   }
-  @keyframes bubbleIn { from { opacity: 0; transform: translateY(12px) scale(.92); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes bubbleIn { from { opacity: 0; transform: translateY(10px) scale(.94); } to { opacity: 1; transform: translateY(0) scale(1); } }
   .mascot-bubble-close {
-    position: absolute; top: 8px; right: 10px; background: none; border: none;
-    color: var(--muted); font-size: .85rem; cursor: pointer; padding: 4px;
+    position: absolute; top: 6px; right: 8px; background: none; border: none;
+    color: var(--muted); font-size: .8rem; cursor: pointer; padding: 6px; line-height: 1;
   }
-  .mascot-bubble-inner { display: flex; align-items: flex-start; gap: 10px; }
-  .mascot-bubble-avatar { width: 34px; height: 34px; object-fit: contain; flex-shrink: 0; margin-top: 2px; }
-  .mascot-bubble-text { font-size: .88rem; font-weight: 700; line-height: 1.5; color: var(--ink); padding-right: 10px; }
+  .mascot-bubble-inner { display: flex; align-items: flex-start; gap: 9px; }
+  .mascot-bubble-avatar { width: 30px; height: 30px; object-fit: contain; flex-shrink: 0; margin-top: 2px; }
+  .mascot-bubble-text { font-size: .85rem; font-weight: 700; line-height: 1.5; color: var(--ink); padding-right: 12px; }
   .mascot-bubble-cta {
     margin-top: 10px; width: 100%; padding: 10px; border-radius: 12px; border: none;
     background: linear-gradient(135deg, var(--gold), #ffe08a); color: #241a03;
     font-weight: 800; font-size: .84rem; cursor: pointer; font-family: var(--font);
   }
+
+  /* Telefona të vegjël: shqiponja pak më e vogël, flluska më e ngushtë */
+  @media (max-width: 400px) {
+    .mascot-wrap { right: 8px; bottom: calc(10px + env(safe-area-inset-bottom)); }
+    .mascot-fab { width: 62px; height: 62px; }
+    .mascot-bubble { max-width: calc(100vw - 20px); padding: 12px 14px; }
+    .mascot-bubble-text { font-size: .82rem; }
+  }
+  /* iPad / ekrane të mëdha: pak më e madhe dhe më larg cepit */
+  @media (min-width: 700px) {
+    .mascot-wrap { right: 24px; bottom: calc(24px + env(safe-area-inset-bottom)); }
+    .mascot-fab { width: 92px; height: 92px; }
+    .mascot-bubble { max-width: 360px; padding: 16px 18px; }
+    .mascot-bubble-text { font-size: .92rem; }
+    .mascot-bubble-avatar { width: 36px; height: 36px; }
+  }
+
 
   /* ---- iPad / größere Bildschirme ---- */
   @media (min-width: 700px) {
@@ -592,17 +614,19 @@
 <body>
 
 <!-- MASKOTTI: SHQIPONJA -->
-<div class="mascot-bubble hidden" id="mascotBubble">
-  <button class="mascot-bubble-close" id="mascotBubbleClose">✕</button>
-  <div class="mascot-bubble-inner">
-    <img src="mascot/eagle-64.png" alt="" class="mascot-bubble-avatar" onerror="this.style.display='none';">
-    <div class="mascot-bubble-text" id="mascotBubbleText"></div>
+<div class="mascot-wrap" id="mascotWrap">
+  <div class="mascot-bubble hidden" id="mascotBubble">
+    <button class="mascot-bubble-close" id="mascotBubbleClose">✕</button>
+    <div class="mascot-bubble-inner">
+      <img src="mascot/eagle-64.png" alt="" class="mascot-bubble-avatar" onerror="this.style.display='none';">
+      <div class="mascot-bubble-text" id="mascotBubbleText"></div>
+    </div>
+    <button class="mascot-bubble-cta hidden" id="mascotBubbleCta"></button>
   </div>
-  <button class="mascot-bubble-cta hidden" id="mascotBubbleCta"></button>
+  <button class="mascot-fab" id="mascotFab" aria-label="Shqiponja">
+    <img src="mascot/eagle-240.png" alt="" id="mascotFabImg">
+  </button>
 </div>
-<button class="mascot-fab" id="mascotFab" aria-label="Shqiponja">
-  <img src="mascot/eagle-240.png" alt="" id="mascotFabImg">
-</button>
 
 <header>
   <div class="header-row">
@@ -2000,21 +2024,11 @@ function mascotSay(text, opts) {
     ctaEl.onclick = null;
   }
 
-  // Flluska ndjek shqiponjën nëse ajo ka fluturuar te pyetja
-  const fab = document.getElementById("mascotFab");
-  const flying = fab.classList.contains("mascot-flying");
-  if (flying) {
-    const r = fab.getBoundingClientRect();
-    bubble.style.bottom = Math.max(12, window.innerHeight - r.top + 10) + "px";
-  } else {
-    bubble.style.bottom = "";
-  }
-
   bubble.classList.remove("hidden");
   const duration = opts.duration || 9000;
   mascotBubbleTimer = setTimeout(() => {
     bubble.classList.add("hidden");
-    bubble.style.bottom = "";
+    if (!activeQuestionHint) mascotReturn();
   }, duration);
 }
 
@@ -2141,33 +2155,46 @@ function buildHint(correctText, categoryName) {
 }
 
 let hintTargetSelector = null;
+let mascotFlyResetTimer = null;
 
-// Shqiponja fluturon te pyetja, ndalon aty, pastaj kthehet në cepin e vet
+// Shqiponja bashkë me flluskën fluturojnë te pyetja, pastaj kthehen
 function mascotFlyToQuestion(callback) {
-  const fab = document.getElementById("mascotFab");
+  const wrap = document.getElementById("mascotWrap");
   const target = hintTargetSelector ? document.querySelector(hintTargetSelector) : null;
-  if (!target) { if (callback) callback(); return; }
+  if (!target || !wrap) { if (callback) callback(); return; }
 
-  const fabRect = fab.getBoundingClientRect();
+  clearTimeout(mascotFlyResetTimer);
+  wrap.style.transform = "";       // matje nga pozicioni bazë
+  const wrapRect = wrap.getBoundingClientRect();
   const tRect = target.getBoundingClientRect();
-  // Pika e synuar: pak mbi cepin e djathtë të pyetjes
-  const targetX = tRect.right - fabRect.width * 0.5;
-  const targetY = tRect.top - fabRect.height * 0.35;
-  const dx = targetX - fabRect.left;
-  const dy = targetY - fabRect.top;
 
-  fab.classList.add("mascot-flying");
-  fab.style.transform = `translate(${dx}px, ${dy}px) scale(1.1) rotate(-8deg)`;
+  // Synimi: skaji i djathtë i pyetjes, pak mbi të
+  let desiredRight = tRect.right + 6;
+  let desiredBottom = tRect.top - 6;          // fundi i wrap-it mbi pyetjen
 
-  setTimeout(() => {
-    if (callback) callback();
-  }, 620);
+  // Mos dil nga ekrani (edhe në telefona të vegjël)
+  const margin = 8;
+  desiredRight = Math.min(window.innerWidth - margin, Math.max(wrapRect.width + margin, desiredRight));
+  desiredBottom = Math.max(wrapRect.height + margin, Math.min(window.innerHeight - margin, desiredBottom));
 
-  // kthehu pas pak
-  setTimeout(() => {
-    fab.style.transform = "";
-    setTimeout(() => fab.classList.remove("mascot-flying"), 700);
-  }, 3400);
+  const dx = desiredRight - wrapRect.right;
+  const dy = desiredBottom - wrapRect.bottom;
+
+  wrap.classList.add("mascot-flying");
+  requestAnimationFrame(() => {
+    wrap.style.transform = `translate(${dx}px, ${dy}px)`;
+  });
+
+  setTimeout(() => { if (callback) callback(); }, 640);
+
+  mascotFlyResetTimer = setTimeout(() => mascotReturn(), 4200);
+}
+
+function mascotReturn() {
+  const wrap = document.getElementById("mascotWrap");
+  if (!wrap) return;
+  wrap.style.transform = "";
+  setTimeout(() => wrap.classList.remove("mascot-flying"), 650);
 }
 
 function setActiveHint(correctText, categoryName, targetSelector) {
@@ -2184,15 +2211,19 @@ function setActiveHint(correctText, categoryName, targetSelector) {
 
 function clearActiveHint() {
   clearTimeout(idleHintTimer);
+  clearTimeout(mascotFlyResetTimer);
   activeQuestionHint = null;
   hintTargetSelector = null;
-  const fab = document.getElementById("mascotFab");
-  if (fab) { fab.style.transform = ""; fab.classList.remove("mascot-flying"); }
+  mascotReturn();
 }
 
 document.getElementById("mascotFab").addEventListener("click", () => {
   const bubble = document.getElementById("mascotBubble");
-  if (!bubble.classList.contains("hidden")) { bubble.classList.add("hidden"); return; }
+  if (!bubble.classList.contains("hidden")) {
+    bubble.classList.add("hidden");
+    mascotReturn();
+    return;
+  }
   if (activeQuestionHint) {
     mascotFlyToQuestion(() => mascotSay(activeQuestionHint, { duration: 13000 }));
   } else {
