@@ -2877,6 +2877,7 @@ function addPoints(n) {
   renderBadges();
   touchStreak();
   if (typeof queueSave === "function") queueSave();
+  if (typeof checkTreeStageAdvance === "function") checkTreeStageAdvance();
   if (newLevel > prevLevel) showLevelUp(newLevel);
 }
 
@@ -5047,6 +5048,7 @@ async function loadProgress() {
       selectedLevel = data.selected_level || cefrLevel || null;
       examRunCount = data.exam_runs || 0;
       if (data.stats && typeof data.stats === "object") { stats = data.stats; ensureStats(); }
+      lastSeenTreeStage = treeStageFor(Math.floor(totalPoints / 100) + 1).idx;
       const custom = Array.isArray(data.custom_vocab) ? data.custom_vocab : [];
       custom.forEach(w => {
         if (w.al && w.de && !vocab.some(v => v.al === w.al && v.de === w.de)) {
@@ -5152,14 +5154,54 @@ const TREE_STAGES = [
   { min: 26, name: "Pemë e fortë",      msg: "Pemë e fortë, me hije për të tjerët. Mbresëlënëse." },
   { min: 31, name: "Lulëzim",           msg: "Pema jote lulëzoi. Rezultatet po duken qartë." },
   { min: 36, name: "Frytet",            msg: "Tani jep fryte — puna jote po shpërblehet." },
-  { min: 42, name: "Kurora",            msg: "Ke arritur kurorën e pemës. Pak mbetën deri te dielli." },
+  { min: 42, name: "Kurora",            msg: "Ke arritur kurorën e pemës. Diçka të pret aty lart — por s'ta them ende." },
   { min: 50, name: "Dielli ☀️",         msg: "" }
+];
+
+// Aluzione të koduara — asnjëra nuk e thotë drejtpërdrejt fjalën "diell".
+// Shfaqen njëra pas tjetrës, sipas fazës që sapo është arritur.
+const TREE_RIDDLES = [
+  null, // faza 0, s'ka aluzion — sapo mbolle farën
+  "Diçka atje lart po të thërret, edhe pse s'e sheh ende.",
+  "Çdo gjë e gjelbër kërkon një burim që vetë nuk e prek kurrë.",
+  "Sa më lart shkon, aq më afër je diçkaje që s'të djeg — vetëm të ngroh.",
+  "Lind çdo mëngjes, fle çdo mbrëmje, por vetë nuk fle kurrë.",
+  "Sa më shumë degë shtrin pema, aq më shumë kërkon të prekë atë që s'e prek askush.",
+  "Gjethet kthehen gjithnjë nga e njëjta anë — nga ajo që u jep jetë pa fjalë.",
+  "Është mbretëresha e qiellit, por s'ka kurorë — vetëm rreze.",
+  "Lulet hapen kur ndjejnë afrimin e diçkaje që s'e shohin kurrë drejt e në sy.",
+  "Fryti pjek vetëm kur diçka e padukshme e prek çdo ditë me duar të nxehta.",
+  "Edhe pak, dhe do jesh aq lart sa ajo do të njohë me emër.",
+  "Një hap i fundit… dhe fytyra e saj do jetë e para gjë që sheh."
 ];
 
 function treeStageFor(level) {
   let idx = 0;
   TREE_STAGES.forEach((s, i) => { if (level >= s.min) idx = i; });
   return { idx, stage: TREE_STAGES[idx] };
+}
+
+let lastSeenTreeStage = null; // vendoset kur ngarkohet progresi, që të mos "spoiler" në hyrjen e parë
+
+function celebrateTreeStage(idx) {
+  const stage = TREE_STAGES[idx];
+  const riddle = TREE_RIDDLES[idx];
+  spawnConfetti();
+  vibrate([30, 40, 30, 40, 90]);
+  playMilestoneFanfare();
+  const base = `Pema jote arriti fazën „${stage.name}"${nameSuffix()}!`;
+  const msg = riddle ? base + " " + riddle : base;
+  mascotSay(msg, { duration: 10000 });
+}
+
+function checkTreeStageAdvance() {
+  const level = Math.floor(totalPoints / 100) + 1;
+  const { idx } = treeStageFor(level);
+  if (lastSeenTreeStage === null) { lastSeenTreeStage = idx; return; } // hera e parë: mos feston retroaktivisht
+  if (idx > lastSeenTreeStage) {
+    for (let i = lastSeenTreeStage + 1; i <= idx; i++) celebrateTreeStage(i);
+    lastSeenTreeStage = idx;
+  }
 }
 
 function buildTreeSVG(level) {
@@ -5258,8 +5300,9 @@ function renderTree() {
   if (isSun) {
     msgEl.innerHTML = `<div class="tree-sun-msg">☀️ Je gati për provimin${nameSuffix()}!<br><span>Do t'ia dalësh — unë e di.</span></div>`;
   } else {
-    const toSun = TREE_STAGES[TREE_STAGES.length - 1].min - level;
-    msgEl.innerHTML = `${esc(stage.msg)}<div class="tree-to-sun">Edhe ${toSun} nivele deri te dielli ☀️</div>`;
+    const lastRiddle = TREE_RIDDLES[idx];
+    msgEl.innerHTML = `${esc(stage.msg)}` +
+      (lastRiddle ? `<div class="tree-to-sun">🔮 ${esc(lastRiddle)}</div>` : `<div class="tree-to-sun">Diçka e veçantë të pret në krye të pemës…</div>`);
   }
 }
 
@@ -5356,6 +5399,7 @@ initCardOrder();
 renderPoints();
 renderCard();
 renderStreakBar();
+if (lastSeenTreeStage === null) lastSeenTreeStage = treeStageFor(Math.floor(totalPoints / 100) + 1).idx;
 
 // PWA: Service Worker registrieren, damit die App installierbar ist
 // und auch ohne Internet weiter funktioniert (Karten, Quiz, Prüfung).
