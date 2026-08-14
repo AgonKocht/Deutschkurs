@@ -705,6 +705,59 @@
     box-shadow: 0 4px 14px var(--blue-glow);
   }
 
+  /* ---- Pema e niveleve + statistika ---- */
+  .tree-card {
+    background: var(--surface); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35); text-align: center; margin-bottom: 14px;
+  }
+  .tree-stage-label {
+    font-size: .7rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 4px;
+  }
+  .tree-svg { width: 100%; max-width: 260px; height: auto; display: block; margin: 0 auto; }
+  .tree-level-line { display: flex; justify-content: space-between; align-items: baseline; margin-top: 10px; }
+  .tree-level-now { font-size: 1.05rem; font-weight: 800; }
+  .tree-level-next { font-size: .74rem; color: var(--muted); font-weight: 700; }
+  .tree-progress-track { height: 8px; background: rgba(255,255,255,.07); border-radius: var(--radius-pill); overflow: hidden; margin: 8px 0 12px; }
+  .tree-progress-fill {
+    height: 100%; border-radius: var(--radius-pill); transition: width .6s cubic-bezier(.2,.8,.2,1);
+    background: linear-gradient(90deg, #3f9e6b, #4caf7d, var(--gold)); box-shadow: 0 0 10px rgba(76,175,125,.5);
+  }
+  .tree-message { font-size: .85rem; color: var(--muted); font-weight: 600; line-height: 1.6; }
+  .tree-to-sun { margin-top: 6px; font-size: .76rem; color: var(--gold); font-weight: 800; }
+  .tree-sun-msg { font-size: 1.05rem; font-weight: 800; color: var(--gold); text-shadow: 0 0 20px var(--gold-glow); line-height: 1.5; }
+  .tree-sun-msg span { display: block; font-size: .84rem; color: var(--ink); font-weight: 700; margin-top: 6px; text-shadow: none; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+  .stat-box {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md);
+    padding: 14px 8px; text-align: center;
+  }
+  .stat-num { font-size: 1.35rem; font-weight: 800; display: block; line-height: 1.2; }
+  .stat-lbl { font-size: .62rem; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: .05em; display: block; margin-top: 3px; }
+  .stat-green { color: var(--green); } .stat-red { color: var(--red); } .stat-gold { color: var(--gold); }
+
+  .stats-card {
+    background: var(--surface); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 14px;
+  }
+  .stats-card h3 { margin: 0 0 4px; font-size: .98rem; font-weight: 800; }
+  .stats-sub { font-size: .76rem; color: var(--muted); font-weight: 600; margin-bottom: 10px; }
+  .acc-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+  .acc-name { font-size: .8rem; font-weight: 700; width: 108px; flex-shrink: 0; }
+  .acc-bar { flex: 1; height: 8px; background: rgba(255,255,255,.07); border-radius: var(--radius-pill); overflow: hidden; }
+  .acc-fill { height: 100%; border-radius: var(--radius-pill); transition: width .5s ease; }
+  .acc-val { font-size: .78rem; font-weight: 800; width: 62px; text-align: right; flex-shrink: 0; }
+  .acc-val span { display: block; font-size: .64rem; color: var(--muted); font-weight: 700; }
+  .exam-stat-row { display: flex; justify-content: space-around; text-align: center; margin-top: 8px; }
+  .word-score { font-size: .82rem; font-weight: 800; }
+
+  @media (max-width: 400px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .acc-name { width: 88px; font-size: .74rem; }
+  }
+
   /* ---- Përshtatje për telefon dhe tablet ---- */
 
   /* Telefona të vegjël (iPhone SE, mini) */
@@ -861,6 +914,7 @@
   <button class="tab-btn" data-view="imagequiz"><span class="tab-icon">🖼️</span><span class="tab-label">Foto</span></button>
   <button class="tab-btn" data-view="practice"><img src="mascot/eagle-64.png" alt="" class="tab-icon-img"><span class="tab-label">Shpejt</span></button>
   <button class="tab-btn" data-view="exam"><span class="tab-icon">📝</span><span class="tab-label">Provim</span></button>
+  <button class="tab-btn" data-view="stats"><span class="tab-icon">🌳</span><span class="tab-label">Rritja</span></button>
 </nav>
 
 <!-- KARTEN -->
@@ -970,6 +1024,44 @@
       <button class="btn btn-primary hidden" id="btnNextPractice">Vazhdo →</button>
       <button class="btn btn-secondary" id="btnStopPractice">■ Ndalo</button>
     </div>
+  </div>
+</div>
+
+<!-- RRITJA: PEMA E NIVELEVE + STATISTIKA -->
+<div class="view hidden" id="view-stats">
+  <div class="tree-card">
+    <div class="tree-stage-label" id="treeStageLabel">Fara</div>
+    <div id="treeCanvas"></div>
+    <div class="tree-level-line">
+      <span class="tree-level-now" id="treeLevelNow">Niveli 1</span>
+      <span class="tree-level-next" id="treeLevelNext"></span>
+    </div>
+    <div class="tree-progress-track"><div class="tree-progress-fill" id="treeProgressFill" style="width:0%"></div></div>
+    <div class="tree-message" id="treeMessage"></div>
+  </div>
+
+  <div class="stats-grid" id="statsGrid"></div>
+
+  <div class="stats-card">
+    <h3>🎯 Saktësia sipas ushtrimit</h3>
+    <div id="accuracyList"></div>
+  </div>
+
+  <div class="stats-card">
+    <h3>📝 Provimet e plota</h3>
+    <div id="examStats"></div>
+  </div>
+
+  <div class="stats-card">
+    <h3>💪 Fjalët që i di mirë</h3>
+    <div class="stats-sub" id="strongCount"></div>
+    <div id="strongWords"></div>
+  </div>
+
+  <div class="stats-card">
+    <h3>🔁 Fjalët për të përsëritur</h3>
+    <div class="stats-sub" id="weakCount"></div>
+    <div id="weakWords"></div>
   </div>
 </div>
 
@@ -2616,6 +2708,76 @@ let cefrLevel = null;
 let placementTaken = false;
 let selectedLevel = null;
 let examRunCount = 0;
+
+/* ============ STATISTIKA PERSONALE ============ */
+const DEFAULT_STATS = {
+  quiz:      { total: 0, correct: 0 },
+  imagequiz: { total: 0, correct: 0 },
+  practice:  { total: 0, correct: 0 },
+  cards:     { known: 0, unknown: 0 },
+  exams:     { taken: 0, passed: 0, best: 0, bestModules: {} },
+  words:     {},   // "al|de": { c: saktë, w: gabim }
+  bestStreak: 0
+};
+let stats = JSON.parse(JSON.stringify(DEFAULT_STATS));
+
+function ensureStats() {
+  for (const k in DEFAULT_STATS) {
+    if (stats[k] === undefined) stats[k] = JSON.parse(JSON.stringify(DEFAULT_STATS[k]));
+  }
+  if (!stats.words) stats.words = {};
+}
+
+// Regjistro një përgjigje: burimi, saktë/gabim, dhe fjala (nëse ka)
+function recordStat(source, isCorrect, wordKey) {
+  ensureStats();
+  if (stats[source] && stats[source].total !== undefined) {
+    stats[source].total++;
+    if (isCorrect) stats[source].correct++;
+  }
+  if (wordKey) {
+    if (!stats.words[wordKey]) stats.words[wordKey] = { c: 0, w: 0 };
+    if (isCorrect) stats.words[wordKey].c++; else stats.words[wordKey].w++;
+  }
+  if (answerStreak > (stats.bestStreak || 0)) stats.bestStreak = answerStreak;
+  queueSave();
+}
+
+function recordCard(known) {
+  ensureStats();
+  if (known) stats.cards.known++; else stats.cards.unknown++;
+  queueSave();
+}
+
+function recordExam(total, passed, moduleScores) {
+  ensureStats();
+  stats.exams.taken++;
+  if (passed) stats.exams.passed++;
+  if (total > (stats.exams.best || 0)) {
+    stats.exams.best = total;
+    stats.exams.bestModules = Object.assign({}, moduleScores);
+  }
+  queueSave();
+}
+
+// Fjalët që i di mirë / që i ngatërron shpesh
+function wordBuckets() {
+  ensureStats();
+  const strong = [], weak = [];
+  for (const key in stats.words) {
+    const s = stats.words[key];
+    const tries = s.c + s.w;
+    if (tries < 1) continue;
+    const ratio = s.c / tries;
+    const [al, de] = key.split("|");
+    const entry = { al, de, ...s, tries, ratio };
+    if (ratio >= 0.75 && s.c >= 2) strong.push(entry);
+    else if (ratio < 0.5 || s.w >= 2) weak.push(entry);
+  }
+  strong.sort((a, b) => b.c - a.c);
+  weak.sort((a, b) => b.w - a.w);
+  return { strong, weak, touched: Object.keys(stats.words).length };
+}
 let lastActiveDate = null;
 
 const BADGES = [
@@ -2871,7 +3033,7 @@ function speak(text) {
 }
 
 /* ============ NAVIGATION ============ */
-const views = ["cards","quiz","imagequiz","practice","exam","list","add","account"];
+const views = ["cards","quiz","imagequiz","practice","exam","stats","list","add","account"];
 function goToView(t) {
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.view === t));
   views.forEach(v => document.getElementById("view-"+v).classList.toggle("hidden", v !== t));
@@ -2884,6 +3046,7 @@ function goToView(t) {
   if (t !== "practice") { practiceActive = false; }
   if (t === "cards") renderCard();
   if (t === "exam") renderExamMenu();
+  if (t === "stats") renderStatsView();
   window.scrollTo(0,0);
 }
 document.querySelectorAll(".tab-btn").forEach(btn => {
@@ -2940,8 +3103,8 @@ document.getElementById("btnSpeak").addEventListener("click", e => {
   e.stopPropagation();
   if (cardIndex < currentDeck.length) speak(currentDeck[cardIndex].de);
 });
-document.getElementById("btnKnow").addEventListener("click", () => { if (cardIndex < currentDeck.length){knownCount++;cardIndex++;addPoints(5);feedbackCorrect();renderCard();} });
-document.getElementById("btnDontKnow").addEventListener("click", () => { if (cardIndex < currentDeck.length){cardIndex++;feedbackWrong();renderCard();} });
+document.getElementById("btnKnow").addEventListener("click", () => { if (cardIndex < currentDeck.length){const w=currentDeck[cardIndex];knownCount++;cardIndex++;addPoints(5);feedbackCorrect();recordCard(true);recordStat(null,true,w.al+"|"+w.de);renderCard();} });
+document.getElementById("btnDontKnow").addEventListener("click", () => { if (cardIndex < currentDeck.length){const w=currentDeck[cardIndex];cardIndex++;feedbackWrong();recordCard(false);recordStat(null,false,w.al+"|"+w.de);renderCard();} });
 document.getElementById("btnShuffle").addEventListener("click", () => { initCardOrder(); renderCard(); });
 document.getElementById("btnResetProgress").addEventListener("click", () => { initCardOrder(); renderCard(); });
 document.getElementById("catFilter").addEventListener("change", () => { initCardOrder(); renderCard(); });
@@ -2995,9 +3158,11 @@ function renderQuiz() {
         quizScore++;
         awardPoints(10, "quiz");
         registerAnswer(true);
+        recordStat("quiz", true, correct.al + "|" + correct.de);
         document.getElementById("streakFlash").textContent = "+10";
       } else {
         registerAnswer(false);
+        recordStat("quiz", false, correct.al + "|" + correct.de);
         document.getElementById("streakFlash").textContent = "Seria u ndërpre";
       }
       document.getElementById("quizScore").textContent = "Saktë: "+quizScore;
@@ -3501,9 +3666,11 @@ async function renderImageQuiz() {
         imgQuizScore++;
         awardPoints(10, "imagequiz");
         registerAnswer(true);
+        recordStat("imagequiz", true, "|" + correct.de);
         document.getElementById("imgQuizStreakFlash").textContent = "+10";
       } else {
         registerAnswer(false);
+        recordStat("imagequiz", false, "|" + correct.de);
         document.getElementById("imgQuizStreakFlash").textContent = "Përgjigja e saktë: " + correct.de;
       }
       document.getElementById("imgQuizScore").textContent = "Saktë: " + imgQuizScore;
@@ -3517,6 +3684,7 @@ document.getElementById("btnRestartImgQuiz").addEventListener("click", startImag
 
 /* ============ USHTRIM I SHPEJTË (Schnellübung mit dem Adler) ============ */
 let practiceRound = 0, practiceScore = 0, practiceAnswered = false, practiceActive = false;
+let currentPracticeWordKey = null;
 
 const PRACTICE_CHEERS = [
   "Bravo! Vazhdo kështu.",
@@ -3583,12 +3751,14 @@ function practiceAnswerHandler(box, correctLabel, onCorrectPoints) {
       practiceScore++;
       awardPoints(onCorrectPoints, "practice");
       registerAnswer(true);
+      recordStat("practice", true, currentPracticeWordKey);
       flash.textContent = "+" + onCorrectPoints;
       if (practiceRound % 3 === 0) {
         mascotSay(mascotPraise(false), { duration: 4500 });
       }
     } else {
       registerAnswer(false);
+      recordStat("practice", false, currentPracticeWordKey);
       flash.textContent = "Saktë: " + correctLabel;
       mascotSay(fmt(pick(ENCOURAGE)) + " Përgjigja ishte: " + correctLabel, { duration: 6000 });
     }
@@ -3619,6 +3789,7 @@ function renderPracticeTranslate(dir) {
 
   document.getElementById("practiceTypeBar").textContent =
     dir === "al-de" ? "🇦🇱 → 🇩🇪  Përkthe në gjermanisht" : "🇩🇪 → 🇦🇱  Përkthe në shqip";
+  currentPracticeWordKey = correct.al + "|" + correct.de;
   document.getElementById("practiceBody").innerHTML =
     `<div class="practice-prompt"><div class="big-word">${esc(correct[askField])}</div></div>`;
 
@@ -3632,6 +3803,7 @@ function renderPracticeListen() {
   const distractors = shuffle(vocab.filter(w => w.de !== correct.de)).slice(0, 3);
   const options = shuffle([correct, ...distractors]);
 
+  currentPracticeWordKey = correct.al + "|" + correct.de;
   document.getElementById("practiceTypeBar").textContent = "🔊  Dëgjo dhe zgjidh fjalën";
   document.getElementById("practiceBody").innerHTML = `
     <div class="practice-prompt">
@@ -3648,6 +3820,7 @@ function renderPracticeListen() {
 
 async function renderPracticeImage() {
   const correct = shuffle(IMAGE_QUIZ_POOL)[0];
+  currentPracticeWordKey = "|" + correct.de;
   document.getElementById("practiceTypeBar").textContent = "🖼️  Çfarë është kjo?";
   document.getElementById("practiceBody").innerHTML = `
     <div class="practice-prompt">
@@ -4438,6 +4611,7 @@ function showFullExamResult() {
   const allModulesPassed = FULL_MODULES.every(m => (fullScores[m.id] || 0) >= PASS_MARK);
   const totalEnough = total >= 240;
   const passed = allModulesPassed && totalEnough;
+  recordExam(total, passed, fullScores);
 
   const rows = FULL_MODULES.map(m => {
     const s = fullScores[m.id] || 0;
@@ -4872,6 +5046,7 @@ async function loadProgress() {
       placementTaken = !!data.placement_taken;
       selectedLevel = data.selected_level || cefrLevel || null;
       examRunCount = data.exam_runs || 0;
+      if (data.stats && typeof data.stats === "object") { stats = data.stats; ensureStats(); }
       const custom = Array.isArray(data.custom_vocab) ? data.custom_vocab : [];
       custom.forEach(w => {
         if (w.al && w.de && !vocab.some(v => v.al === w.al && v.de === w.de)) {
@@ -4913,6 +5088,7 @@ async function saveProgress() {
       placement_taken: placementTaken,
       selected_level: selectedLevel,
       exam_runs: examRunCount,
+      stats: stats,
       custom_vocab: custom,
       updated_at: new Date().toISOString()
     });
@@ -4961,6 +5137,216 @@ if (sb) {
       showAuthView(false);
     }
   });
+}
+
+/* ============ PEMA E NIVELEVE ============ */
+// 12 faza: nga fara deri te dielli. Niveli 1 = fara, niveli 40+ = dielli.
+const TREE_STAGES = [
+  { min: 1,  name: "Fara",              msg: "Çdo pemë e madhe nis si farë. Ti sapo e mbolle." },
+  { min: 3,  name: "Filizi",            msg: "Filizi doli mbi tokë. Vazhdo ta ujitësh çdo ditë." },
+  { min: 5,  name: "Bimë e re",         msg: "Po rritesh vërtet. Rrënjët po forcohen." },
+  { min: 8,  name: "Trung i njomë",     msg: "Tani ke një trung. Erërat s'të rrëzojnë më lehtë." },
+  { min: 12, name: "Degët e para",      msg: "Degët po shtohen — ashtu si fjalët e tua." },
+  { min: 16, name: "Pemë e re",         msg: "Kjo tashmë është pemë e vërtetë. Bravo!" },
+  { min: 21, name: "Gjethnaja",         msg: "Gjethet mbulojnë degët. Po bëhesh i sigurt." },
+  { min: 26, name: "Pemë e fortë",      msg: "Pemë e fortë, me hije për të tjerët. Mbresëlënëse." },
+  { min: 31, name: "Lulëzim",           msg: "Pema jote lulëzoi. Rezultatet po duken qartë." },
+  { min: 36, name: "Frytet",            msg: "Tani jep fryte — puna jote po shpërblehet." },
+  { min: 42, name: "Kurora",            msg: "Ke arritur kurorën e pemës. Pak mbetën deri te dielli." },
+  { min: 50, name: "Dielli ☀️",         msg: "" }
+];
+
+function treeStageFor(level) {
+  let idx = 0;
+  TREE_STAGES.forEach((s, i) => { if (level >= s.min) idx = i; });
+  return { idx, stage: TREE_STAGES[idx] };
+}
+
+function buildTreeSVG(level) {
+  const { idx } = treeStageFor(level);
+  const isSun = idx >= TREE_STAGES.length - 1;
+  const g = (cond, content) => cond ? content : "";
+
+  // Sa e gjatë është pema sipas fazës
+  const trunkTop = 250 - Math.min(idx, 10) * 13;   // sa më lart, aq më e gjatë
+  const trunkW = 6 + Math.min(idx, 10) * 1.4;
+
+  return `
+  <svg viewBox="0 0 300 300" class="tree-svg" role="img" aria-label="Pema e niveleve">
+    <defs>
+      <radialGradient id="sunGlow" cx="50%" cy="50%">
+        <stop offset="0%" stop-color="#ffe08a" stop-opacity="1"/>
+        <stop offset="70%" stop-color="#ffc857" stop-opacity=".35"/>
+        <stop offset="100%" stop-color="#ffc857" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+
+    ${g(isSun, `<circle cx="150" cy="42" r="60" fill="url(#sunGlow)"><animate attributeName="r" values="55;65;55" dur="3s" repeatCount="indefinite"/></circle>
+                <circle cx="150" cy="42" r="24" fill="#ffc857"/>`)}
+    ${g(!isSun && idx >= 9, `<circle cx="246" cy="46" r="15" fill="#ffc857" opacity=".45"/>`)}
+
+    <!-- toka -->
+    <ellipse cx="150" cy="272" rx="86" ry="13" fill="rgba(255,255,255,.07)"/>
+    <path d="M64 272 Q150 258 236 272" stroke="rgba(255,255,255,.16)" stroke-width="2" fill="none"/>
+
+    ${g(idx === 0, `<ellipse cx="150" cy="264" rx="9" ry="12" fill="#8a6a3f"/>
+                    <ellipse cx="147" cy="261" rx="3" ry="4" fill="#a98457" opacity=".8"/>`)}
+
+    ${g(idx >= 1, `<path d="M150 272 L150 ${trunkTop}" stroke="#8a6a3f" stroke-width="${trunkW}" stroke-linecap="round"/>`)}
+
+    ${g(idx === 1, `<path d="M150 250 Q136 240 132 232" stroke="#4caf7d" stroke-width="4" fill="none" stroke-linecap="round"/>
+                    <ellipse cx="130" cy="229" rx="9" ry="6" fill="#4caf7d" transform="rotate(-25 130 229)"/>
+                    <ellipse cx="170" cy="234" rx="9" ry="6" fill="#4caf7d" transform="rotate(25 170 234)"/>
+                    <path d="M150 246 Q164 238 168 231" stroke="#4caf7d" stroke-width="4" fill="none" stroke-linecap="round"/>`)}
+
+    ${g(idx >= 2 && idx <= 3, `<ellipse cx="150" cy="${trunkTop - 6}" rx="${26 + idx * 5}" ry="${18 + idx * 4}" fill="#3f9e6b"/>
+                               <ellipse cx="${138}" cy="${trunkTop - 2}" rx="16" ry="12" fill="#4caf7d" opacity=".9"/>`)}
+
+    ${g(idx >= 4, `
+      <path d="M150 ${trunkTop + 42} Q120 ${trunkTop + 30} 108 ${trunkTop + 14}" stroke="#8a6a3f" stroke-width="${trunkW * .55}" fill="none" stroke-linecap="round"/>
+      <path d="M150 ${trunkTop + 50} Q182 ${trunkTop + 36} 194 ${trunkTop + 20}" stroke="#8a6a3f" stroke-width="${trunkW * .55}" fill="none" stroke-linecap="round"/>`)}
+    ${g(idx >= 6, `
+      <path d="M150 ${trunkTop + 24} Q124 ${trunkTop + 8} 116 ${trunkTop - 6}" stroke="#8a6a3f" stroke-width="${trunkW * .45}" fill="none" stroke-linecap="round"/>
+      <path d="M150 ${trunkTop + 28} Q178 ${trunkTop + 12} 188 ${trunkTop - 2}" stroke="#8a6a3f" stroke-width="${trunkW * .45}" fill="none" stroke-linecap="round"/>`)}
+
+    ${g(idx >= 4, `
+      <ellipse cx="150" cy="${trunkTop - 10}" rx="${34 + Math.min(idx,10) * 3.4}" ry="${26 + Math.min(idx,10) * 2.6}" fill="#2f8d5f"/>
+      <ellipse cx="${112 - idx}" cy="${trunkTop + 12}" rx="${20 + idx}" ry="${16 + idx * .7}" fill="#3f9e6b"/>
+      <ellipse cx="${190 + idx}" cy="${trunkTop + 16}" rx="${20 + idx}" ry="${16 + idx * .7}" fill="#3f9e6b"/>
+      <ellipse cx="${132}" cy="${trunkTop - 26}" rx="${18 + idx * .8}" ry="${14 + idx * .6}" fill="#4caf7d" opacity=".95"/>
+      <ellipse cx="${172}" cy="${trunkTop - 22}" rx="${18 + idx * .8}" ry="${14 + idx * .6}" fill="#4caf7d" opacity=".95"/>`)}
+
+    ${g(idx >= 8, `
+      <circle cx="126" cy="${trunkTop - 4}" r="4" fill="#ff9ec4"/>
+      <circle cx="176" cy="${trunkTop - 16}" r="4" fill="#ff9ec4"/>
+      <circle cx="152" cy="${trunkTop - 34}" r="4" fill="#ff9ec4"/>
+      <circle cx="198" cy="${trunkTop + 10}" r="4" fill="#ff9ec4"/>`)}
+
+    ${g(idx >= 9, `
+      <circle cx="134" cy="${trunkTop + 4}" r="6" fill="#e8503a"/>
+      <circle cx="182" cy="${trunkTop - 8}" r="6" fill="#e8503a"/>
+      <circle cx="158" cy="${trunkTop + 20}" r="6" fill="#e8503a"/>`)}
+
+    ${g(idx >= 10 && !isSun, `
+      <path d="M150 ${trunkTop - 52} l6 12 13 2 -9 9 2 13 -12 -6 -12 6 2 -13 -9 -9 13 -2z" fill="#ffc857"/>`)}
+  </svg>`;
+}
+
+function renderTree() {
+  const level = Math.floor(totalPoints / 100) + 1;
+  const { idx, stage } = treeStageFor(level);
+  const isSun = idx >= TREE_STAGES.length - 1;
+
+  document.getElementById("treeCanvas").innerHTML = buildTreeSVG(level);
+  document.getElementById("treeStageLabel").textContent = stage.name;
+  document.getElementById("treeLevelNow").textContent = "Niveli " + level;
+
+  const nextStage = TREE_STAGES[idx + 1];
+  const nextEl = document.getElementById("treeLevelNext");
+  const fill = document.getElementById("treeProgressFill");
+  if (nextStage) {
+    const span = nextStage.min - stage.min;
+    const done = level - stage.min;
+    nextEl.textContent = `${nextStage.name} në nivelin ${nextStage.min}`;
+    fill.style.width = Math.max(4, Math.min(100, (done / span) * 100)) + "%";
+  } else {
+    nextEl.textContent = "Faza maksimale";
+    fill.style.width = "100%";
+  }
+
+  const msgEl = document.getElementById("treeMessage");
+  if (isSun) {
+    msgEl.innerHTML = `<div class="tree-sun-msg">☀️ Je gati për provimin${nameSuffix()}!<br><span>Do t'ia dalësh — unë e di.</span></div>`;
+  } else {
+    const toSun = TREE_STAGES[TREE_STAGES.length - 1].min - level;
+    msgEl.innerHTML = `${esc(stage.msg)}<div class="tree-to-sun">Edhe ${toSun} nivele deri te dielli ☀️</div>`;
+  }
+}
+
+function pct(part, total) { return total ? Math.round((part / total) * 100) : 0; }
+
+function renderStatsView() {
+  ensureStats();
+  renderTree();
+
+  const buckets = wordBuckets();
+  const allAnswers = stats.quiz.total + stats.imagequiz.total + stats.practice.total;
+  const allCorrect = stats.quiz.correct + stats.imagequiz.correct + stats.practice.correct;
+
+  // Kartat kryesore
+  document.getElementById("statsGrid").innerHTML = `
+    <div class="stat-box"><div class="stat-num">${buckets.touched}</div><div class="stat-lbl">Fjalë të prekura</div></div>
+    <div class="stat-box"><div class="stat-num stat-green">${buckets.strong.length}</div><div class="stat-lbl">I di mirë</div></div>
+    <div class="stat-box"><div class="stat-num stat-red">${buckets.weak.length}</div><div class="stat-lbl">Për të përsëritur</div></div>
+    <div class="stat-box"><div class="stat-num">${allAnswers}</div><div class="stat-lbl">Përgjigje gjithsej</div></div>
+    <div class="stat-box"><div class="stat-num stat-gold">${pct(allCorrect, allAnswers)}%</div><div class="stat-lbl">Saktësia mesatare</div></div>
+    <div class="stat-box"><div class="stat-num stat-gold">${stats.bestStreak || 0}</div><div class="stat-lbl">Seria më e gjatë</div></div>
+  `;
+
+  // Saktësia sipas ushtrimit
+  const rows = [
+    { name: "Kuiz", icon: "❓", d: stats.quiz },
+    { name: "Kuiz me foto", icon: "🖼️", d: stats.imagequiz },
+    { name: "Ushtrim i shpejtë", icon: "🦅", d: stats.practice }
+  ];
+  document.getElementById("accuracyList").innerHTML = rows.map(r => {
+    const p = pct(r.d.correct, r.d.total);
+    const color = p >= 80 ? "var(--green)" : p >= 60 ? "var(--gold)" : "var(--red)";
+    return `<div class="acc-row">
+      <div class="acc-name">${r.icon} ${r.name}</div>
+      <div class="acc-bar"><div class="acc-fill" style="width:${p}%;background:${color}"></div></div>
+      <div class="acc-val">${r.d.total ? p + "%" : "—"}<span>${r.d.correct}/${r.d.total}</span></div>
+    </div>`;
+  }).join("") + `<div class="acc-row">
+      <div class="acc-name">🗂️ Karta</div>
+      <div class="acc-bar"><div class="acc-fill" style="width:${pct(stats.cards.known, stats.cards.known + stats.cards.unknown)}%;background:var(--blue)"></div></div>
+      <div class="acc-val">${stats.cards.known + stats.cards.unknown ? pct(stats.cards.known, stats.cards.known + stats.cards.unknown) + "%" : "—"}<span>${stats.cards.known}/${stats.cards.known + stats.cards.unknown}</span></div>
+    </div>`;
+
+  // Provimet
+  const ex = stats.exams;
+  const examEl = document.getElementById("examStats");
+  if (!ex.taken) {
+    examEl.innerHTML = `<div class="empty-state" style="padding:18px;">Ende pa provim të plotë. Provoje te tabi „Provim“!</div>`;
+  } else {
+    const modRows = FULL_MODULES.map(m => {
+      const s = (ex.bestModules && ex.bestModules[m.id]) || 0;
+      const ok = s >= PASS_MARK;
+      return `<tr><td>${m.icon} ${m.name}</td><td class="${ok ? "cell-pass" : "cell-fail"}"><strong>${s}</strong>/100</td></tr>`;
+    }).join("");
+    examEl.innerHTML = `
+      <div class="exam-stat-row">
+        <div><span class="stat-num">${ex.taken}</span><span class="stat-lbl">Provime</span></div>
+        <div><span class="stat-num stat-green">${ex.passed}</span><span class="stat-lbl">Të kaluara</span></div>
+        <div><span class="stat-num stat-gold">${ex.best}</span><span class="stat-lbl">Rekordi /400</span></div>
+      </div>
+      <table class="full-table" style="margin-top:12px;">
+        <thead><tr><th>Moduli (rekordi)</th><th>Pikë</th></tr></thead>
+        <tbody>${modRows}</tbody>
+      </table>`;
+  }
+
+  // Fjalët e forta
+  const strongEl = document.getElementById("strongWords");
+  document.getElementById("strongCount").textContent = buckets.strong.length
+    ? `${buckets.strong.length} fjalë me të paktën 75% saktësi`
+    : "Ende pa të dhëna — ushtro pak dhe kthehu këtu.";
+  strongEl.innerHTML = buckets.strong.slice(0, 15).map(w => `
+    <div class="word-item">
+      <div><span class="sq">${esc(w.al || "—")}</span> — <span class="de">${esc(w.de)}</span></div>
+      <div class="word-score stat-green">${w.c}✓</div>
+    </div>`).join("");
+
+  // Fjalët e dobëta
+  const weakEl = document.getElementById("weakWords");
+  document.getElementById("weakCount").textContent = buckets.weak.length
+    ? `${buckets.weak.length} fjalë që i ngatërron më shpesh`
+    : "Asnjë fjalë problematike — shumë mirë!";
+  weakEl.innerHTML = buckets.weak.slice(0, 15).map(w => `
+    <div class="word-item">
+      <div><span class="sq">${esc(w.al || "—")}</span> — <span class="de">${esc(w.de)}</span></div>
+      <div class="word-score stat-red">${w.w}✗</div>
+    </div>`).join("");
 }
 
 /* ============ START ============ */
