@@ -628,6 +628,66 @@
     .practice-img-frame { max-width: 340px; height: 240px; }
   }
 
+  /* ---- Provimi i plotë ---- */
+  .exam-tile-full {
+    border-color: rgba(255,200,87,.45);
+    box-shadow: 0 8px 26px rgba(0,0,0,.35), 0 0 24px rgba(255,200,87,.12);
+  }
+  .exam-tile-full h3 { color: var(--gold); }
+  .exam-tile-full .meta { color: var(--gold); }
+  .exam-section-label {
+    font-size: .7rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase;
+    color: var(--muted); margin: 14px 0 2px; text-align: center;
+  }
+  .full-intro h3 { margin: 0 0 8px; font-size: 1.2rem; font-weight: 800; }
+  .full-intro p { margin: 0 0 16px; color: var(--muted); font-size: .88rem; line-height: 1.6; font-weight: 600; }
+  .full-table {
+    width: 100%; border-collapse: collapse; font-size: .84rem;
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); overflow: hidden;
+  }
+  .full-table th {
+    text-align: left; padding: 10px 12px; font-size: .68rem; text-transform: uppercase;
+    letter-spacing: .06em; color: var(--muted); font-weight: 800; border-bottom: 1px solid var(--line);
+  }
+  .full-table td { padding: 11px 12px; border-bottom: 1px solid rgba(255,255,255,.05); font-weight: 700; }
+  .full-table tr:last-child td { border-bottom: none; }
+  .full-table th:not(:first-child), .full-table td:not(:first-child) { text-align: center; }
+  .full-table .total-row td { background: rgba(255,200,87,.08); color: var(--gold); }
+  .mod-alb { color: var(--muted); font-weight: 600; font-size: .76rem; }
+  .full-warning {
+    margin-top: 14px; padding: 12px 14px; border-radius: var(--radius-md);
+    background: rgba(255,200,87,.1); border: 1px solid rgba(255,200,87,.3);
+    font-size: .82rem; line-height: 1.55; font-weight: 600; color: var(--ink);
+  }
+  .full-progress { display: flex; gap: 8px; justify-content: center; margin-bottom: 14px; }
+  .full-step {
+    width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; background: var(--surface); border: 1px solid var(--line); opacity: .35;
+  }
+  .full-step.done { opacity: 1; border-color: var(--green); background: rgba(53,220,156,.15); }
+  .full-step.current { opacity: 1; border-color: var(--blue); background: rgba(91,140,255,.18); box-shadow: 0 0 16px var(--blue-glow); }
+  .total-big { font-size: 2.8rem; font-weight: 800; letter-spacing: -.02em; margin: 10px 0 16px; }
+  .verdict { font-size: 1.05rem; font-weight: 800; line-height: 1.4; }
+  .verdict-pass { color: var(--green); text-shadow: 0 0 20px var(--green-glow); }
+  .verdict-fail { color: var(--red); }
+  .verdict-note { font-size: .84rem; color: var(--muted); font-weight: 600; line-height: 1.6; margin-top: 8px; }
+  .result-table { margin-top: 6px; text-align: left; }
+  .cell-pass { color: var(--green); }
+  .cell-fail { color: var(--red); }
+  .grade-vg { color: var(--green); } .grade-g { color: #7fd6c9; }
+  .grade-s { color: var(--blue); } .grade-a { color: var(--gold); } .grade-f { color: var(--red); }
+  .self-rate { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; align-items: center; }
+  .self-rate-label { width: 100%; font-size: .75rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 2px; }
+  .self-rate-btn {
+    flex: 1; min-width: 76px; padding: 9px 8px; border-radius: var(--radius-md);
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    font-family: var(--font); font-weight: 700; font-size: .76rem; cursor: pointer;
+  }
+  .self-rate-btn.selected {
+    background: linear-gradient(135deg, var(--blue), #6f97ff); color: #fff; border-color: transparent;
+    box-shadow: 0 4px 14px var(--blue-glow);
+  }
+
   /* ---- Përshtatje për telefon dhe tablet ---- */
 
   /* Telefona të vegjël (iPhone SE, mini) */
@@ -3534,30 +3594,36 @@ function renderExamMenu() {
   runnerEl.classList.add("hidden");
   menuEl.classList.remove("hidden");
   menuEl.innerHTML = `
+    <button class="exam-tile exam-tile-full" data-exam="full">
+      <h3>🎓 Provimi i plotë B1</h3>
+      <p>Të katër modulet njëri pas tjetrit, si në provimin e vërtetë. Çdo modul 100 pikë — duhen të paktën 60 në secilin.</p>
+      <div class="meta">4 module · rreth 90 minuta · deri në 400 pikë</div>
+    </button>
+    <div class="exam-section-label">Ose ushtro një modul veç e veç:</div>
     <button class="exam-tile" data-exam="lesen">
       <h3>📖 Lesen (Lexim)</h3>
       <p>Tre tekste me pyetje: email, artikull gazete dhe njoftime.</p>
-      <div class="meta">11 pyetje · 25 minuta · deri në 110 pikë</div>
+      <div class="meta">11 pyetje · 25 minuta</div>
     </button>
     <button class="exam-tile" data-exam="grammatik">
       <h3>🧩 Sprachbausteine (Gramatikë)</h3>
       <p>Tekst gramatikor me boshllëqe: fjali të nënrenditura, parafjalë, Konjunktiv II.</p>
-      <div class="meta">20 pyetje · 20 minuta · deri në 200 pikë</div>
+      <div class="meta">20 pyetje · 20 minuta</div>
     </button>
     <button class="exam-tile" data-exam="hoeren">
       <h3>🎧 Hören (Dëgjim)</h3>
       <p>Pajisja jote i lexon tekstet me zë: njoftim në stacion, mesazh telefonik, bisedë në zyrë.</p>
-      <div class="meta">9 pyetje · 15 minuta · deri në 90 pikë</div>
+      <div class="meta">9 pyetje · 15 minuta</div>
     </button>
     <button class="exam-tile" data-exam="schreiben">
       <h3>✍️ Schreiben (Shkrim)</h3>
       <p>Shkruaj një email ose postim në forum, me numërues fjalësh dhe vetëkontroll.</p>
-      <div class="meta">1 detyrë · 30 minuta · deri në 70 pikë</div>
+      <div class="meta">1 detyrë · 30 minuta</div>
     </button>
     <button class="exam-tile" data-exam="sprechen">
       <h3>🗣️ Sprechen (Të folurit)</h3>
       <p>Karta bisede me shprehje ndihmëse — ushtro me zë, mundësisht me regjistrim në telefon.</p>
-      <div class="meta">3 detyra · 15 minuta · deri në 60 pikë</div>
+      <div class="meta">3 detyra · 15 minuta</div>
     </button>
   `;
   menuEl.querySelectorAll(".exam-tile").forEach(t =>
@@ -3584,11 +3650,286 @@ function examShell(title, minutes, inner) {
 }
 
 function startExam(kind) {
+  if (kind === "full") return startFullExam();
   if (kind === "lesen") return runLesen();
   if (kind === "grammatik") return runGrammatik();
   if (kind === "hoeren") return runHoeren();
   if (kind === "schreiben") return runSchreiben();
   if (kind === "sprechen") return runSprechen();
+}
+
+/* ============ PROVIMI I PLOTË B1 (4 module, 400 pikë) ============ */
+const FULL_MODULES = [
+  { id: "lesen",     name: "Lesen",     alb: "Lexim",       icon: "📖", minutes: 65 },
+  { id: "hoeren",    name: "Hören",     alb: "Dëgjim",      icon: "🎧", minutes: 40 },
+  { id: "schreiben", name: "Schreiben", alb: "Shkrim",      icon: "✍️", minutes: 60 },
+  { id: "sprechen",  name: "Sprechen",  alb: "Të folurit",  icon: "🗣️", minutes: 15 }
+];
+const PASS_MARK = 60;
+
+let fullExamActive = false;
+let fullModuleIndex = 0;
+let fullScores = {};   // { lesen: 0-100, ... }
+
+function gradeFor(score) {
+  if (score >= 90) return { label: "shumë mirë", cls: "grade-vg" };
+  if (score >= 80) return { label: "mirë", cls: "grade-g" };
+  if (score >= 70) return { label: "kënaqshëm", cls: "grade-s" };
+  if (score >= 60) return { label: "mjaftueshëm", cls: "grade-a" };
+  return { label: "nuk u kalua", cls: "grade-f" };
+}
+
+function startFullExam() {
+  fullExamActive = true;
+  fullModuleIndex = 0;
+  fullScores = {};
+  showFullExamIntro();
+}
+
+function showFullExamIntro() {
+  const rows = FULL_MODULES.map(m =>
+    `<tr><td>${m.icon} ${m.name} <span class="mod-alb">(${m.alb})</span></td><td>100</td><td>${PASS_MARK}</td></tr>`
+  ).join("");
+  examShell("Provimi i plotë B1", 0, `
+    <div class="full-intro">
+      <h3>🎓 Provimi i plotë B1</h3>
+      <p>Do të kalosh nëpër të katër modulet me radhë, si në provimin e vërtetë të Goethe-Institut.</p>
+      <table class="full-table">
+        <thead><tr><th>Moduli</th><th>Maksimumi</th><th>Për të kaluar</th></tr></thead>
+        <tbody>${rows}
+          <tr class="total-row"><td><strong>Gjithsej</strong></td><td><strong>400</strong></td><td><strong>240</strong></td></tr>
+        </tbody>
+      </table>
+      <div class="full-warning">
+        ⚠️ <strong>E rëndësishme:</strong> 240 pikë gjithsej nuk mjaftojnë.
+        Duhet të arrish të paktën <strong>60 pikë në çdo modul veç e veç</strong>.
+      </div>
+      <button class="btn btn-primary" id="btnBeginFullExam" style="width:100%;padding:16px;font-size:1rem;margin-top:16px;">Fillo provimin →</button>
+    </div>
+  `);
+  document.getElementById("btnBeginFullExam").addEventListener("click", () => runFullModule(0));
+}
+
+function fullProgressBar() {
+  return `<div class="full-progress">` + FULL_MODULES.map((m, i) => {
+    const state = i < fullModuleIndex ? "done" : i === fullModuleIndex ? "current" : "";
+    return `<span class="full-step ${state}">${m.icon}</span>`;
+  }).join("") + `</div>`;
+}
+
+function runFullModule(index) {
+  fullModuleIndex = index;
+  if (index >= FULL_MODULES.length) { showFullExamResult(); return; }
+  const mod = FULL_MODULES[index];
+  if (mod.id === "lesen") runFullLesen(mod);
+  else if (mod.id === "hoeren") runFullHoeren(mod);
+  else if (mod.id === "schreiben") runFullSchreiben(mod);
+  else if (mod.id === "sprechen") runFullSprechen(mod);
+}
+
+function finishModule(score) {
+  const mod = FULL_MODULES[fullModuleIndex];
+  fullScores[mod.id] = Math.max(0, Math.min(100, Math.round(score)));
+  const g = gradeFor(fullScores[mod.id]);
+  const passed = fullScores[mod.id] >= PASS_MARK;
+  stopTimer();
+  examShell(`${mod.icon} ${mod.name} — përfundoi`, 0, `
+    ${fullProgressBar()}
+    <div class="result-box">
+      <div class="result-score ${passed ? "result-pass" : "result-fail"}">${fullScores[mod.id]}<span style="font-size:1.2rem;opacity:.6;">/100</span></div>
+      <div class="result-label">${esc(g.label)}</div>
+      <div style="margin-top:12px;font-weight:700;color:${passed ? "var(--green)" : "var(--red)"}">
+        ${passed ? "✓ Ky modul u kalua" : "✗ Nën 60 pikë — ky modul nuk u kalua"}
+      </div>
+      <button class="btn btn-primary" id="btnNextModule" style="width:100%;padding:15px;margin-top:18px;">
+        ${fullModuleIndex + 1 < FULL_MODULES.length ? "Moduli tjetër →" : "Shiko rezultatin final →"}
+      </button>
+    </div>
+  `);
+  if (passed) { spawnConfetti(); playMilestoneFanfare(); }
+  document.getElementById("btnNextModule").addEventListener("click", () => runFullModule(fullModuleIndex + 1));
+}
+
+/* --- Moduli 1: Lesen --- */
+function runFullLesen(mod) {
+  const e = EXAMS.lesen;
+  const { item: parts } = pickVariant(e.variants, -1);
+  let html = fullProgressBar() +
+    `<div class="note" style="text-align:left;margin:0 0 12px;">${esc(e.intro)}</div>`;
+  let n = 0;
+  parts.forEach(part => {
+    html += `<div class="reading-text"><h4>${esc(part.text.head)}</h4>${esc(part.text.body).replace(/\n/g,"<br>")}</div>`;
+    part.questions.forEach(q => { html += buildQuestionHtml(q, n); n++; });
+  });
+  examShell(`${mod.icon} Moduli 1/4 — ${mod.name}`, mod.minutes, html);
+  wireQuestions(document.getElementById("examBody"),
+    (correct, total) => finishModule((correct / total) * 100), n);
+}
+
+/* --- Moduli 2: Hören --- */
+function runFullHoeren(mod) {
+  const e = EXAMS.hoeren;
+  const { item: parts } = pickVariant(e.variants, -1);
+  let html = fullProgressBar() +
+    `<div class="note" style="text-align:left;margin:0 0 12px;">${esc(e.intro)}</div>`;
+  let n = 0;
+  parts.forEach((part, pi) => {
+    html += `<div class="reading-text"><h4>${esc(part.title)}</h4>
+      <div class="audio-controls">
+        <button class="btn btn-blue" data-play="${pi}">🔊 Dëgjo tekstin</button>
+        <button class="btn btn-secondary" data-stop="1">⏹ Ndalo</button>
+      </div>
+    </div>`;
+    part.questions.forEach(q => { html += buildQuestionHtml(q, n); n++; });
+  });
+  examShell(`${mod.icon} Moduli 2/4 — ${mod.name}`, mod.minutes, html);
+  const body = document.getElementById("examBody");
+  body.querySelectorAll("[data-play]").forEach(b =>
+    b.addEventListener("click", () => speak(parts[parseInt(b.dataset.play)].script)));
+  body.querySelectorAll("[data-stop]").forEach(b =>
+    b.addEventListener("click", () => window.speechSynthesis && window.speechSynthesis.cancel()));
+  wireQuestions(body, (correct, total) => finishModule((correct / total) * 100), n);
+}
+
+/* --- Moduli 3: Schreiben --- */
+function runFullSchreiben(mod) {
+  const e = EXAMS.schreiben;
+  const task = e.tasks[Math.floor(Math.random() * e.tasks.length)];
+  examShell(`${mod.icon} Moduli 3/4 — ${mod.name}`, mod.minutes, `
+    ${fullProgressBar()}
+    <div class="speak-card">
+      <h4>${esc(task.title)}</h4>
+      <div style="font-size:.92rem;line-height:1.55;">${esc(task.prompt)}</div>
+      <ul>${task.points.map(p => "<li>" + esc(p) + "</li>").join("")}</ul>
+      <div class="phrase-box"><strong>Shprehje ndihmëse:</strong><br>${esc(task.phrases)}</div>
+    </div>
+    <textarea class="writing-area" id="fullWriteArea" placeholder="Shkruaj tekstin tënd këtu..."></textarea>
+    <div class="word-counter" id="fullWordCount">0 fjalë (min. 80)</div>
+    <div class="checklist">
+      <div style="font-weight:600;margin-bottom:10px;font-size:.9rem;">Vetëkontroll — shëno çfarë ke bërë</div>
+      ${e.checklist.map((c, i) => `<label><input type="checkbox" class="fchk" data-i="${i}"><span>${esc(c)}</span></label>`).join("")}
+    </div>
+    <button class="btn btn-primary" id="btnFinishFullWrite" style="width:100%;padding:15px;margin-top:14px;">Dorëzo tekstin →</button>
+  `);
+  const area = document.getElementById("fullWriteArea");
+  const counter = document.getElementById("fullWordCount");
+  const countWords = () => area.value.trim().split(/\s+/).filter(Boolean).length;
+  area.addEventListener("input", () => {
+    const w = countWords();
+    counter.textContent = w + " fjalë" + (w >= 80 ? " ✓" : " (min. 80)");
+    counter.style.color = w >= 80 ? "var(--green)" : "var(--muted)";
+  });
+  document.getElementById("btnFinishFullWrite").addEventListener("click", () => {
+    const w = countWords();
+    if (w < 20) { alert("Teksti është shumë i shkurtër. Shkruaj të paktën disa fjali."); return; }
+    const checked = document.querySelectorAll(".fchk:checked").length;
+    // Vlerësim: gjatësia (deri 50 pikë) + vetëkontrolli i pikave (deri 50 pikë)
+    const lengthScore = w >= 80 ? 50 : Math.round((w / 80) * 50);
+    const checkScore = Math.round((checked / EXAMS.schreiben.checklist.length) * 50);
+    finishModule(lengthScore + checkScore);
+  });
+}
+
+/* --- Moduli 4: Sprechen --- */
+function runFullSprechen(mod) {
+  const e = EXAMS.sprechen;
+  const picked = shuffle(e.tasks).slice(0, 3);
+  let html = fullProgressBar() +
+    `<div class="note" style="text-align:left;margin:0 0 12px;">Fol me zë të lartë për çdo detyrë. Pastaj vlerëso vetë sa mirë ia dole — ji i ndershëm, kështu e di ku qëndron vërtet.</div>`;
+  picked.forEach((t, i) => {
+    html += `<div class="speak-card">
+      <h4>Pjesa ${i+1} — ${esc(t.title)}</h4>
+      <div style="font-size:.92rem;line-height:1.55;">${esc(t.prompt)}</div>
+      <ul>${t.points.map(p => "<li>" + esc(p) + "</li>").join("")}</ul>
+      <div class="phrase-box"><strong>Shprehje ndihmëse:</strong><br>${esc(t.phrases)}</div>
+      <div class="self-rate" data-task="${i}">
+        <div class="self-rate-label">Si ia dole?</div>
+        <button class="self-rate-btn" data-task="${i}" data-val="100">Shumë mirë</button>
+        <button class="self-rate-btn" data-task="${i}" data-val="75">Mirë</button>
+        <button class="self-rate-btn" data-task="${i}" data-val="50">Me vështirësi</button>
+        <button class="self-rate-btn" data-task="${i}" data-val="20">Nuk ia dola</button>
+      </div>
+    </div>`;
+  });
+  html += `<button class="btn btn-primary" id="btnFinishFullSpeak" style="width:100%;padding:15px;margin-top:6px;">Përfundo modulin →</button>`;
+  examShell(`${mod.icon} Moduli 4/4 — ${mod.name}`, mod.minutes, html);
+
+  const ratings = {};
+  document.querySelectorAll(".self-rate-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const t = btn.dataset.task;
+      ratings[t] = parseInt(btn.dataset.val);
+      document.querySelectorAll(`.self-rate-btn[data-task="${t}"]`).forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+    });
+  });
+  document.getElementById("btnFinishFullSpeak").addEventListener("click", () => {
+    const vals = Object.values(ratings);
+    if (vals.length < picked.length) { alert("Ju lutem vlerëso të tria pjesët."); return; }
+    finishModule(vals.reduce((a, b) => a + b, 0) / vals.length);
+  });
+}
+
+/* --- Rezultati final --- */
+function showFullExamResult() {
+  stopTimer();
+  fullExamActive = false;
+  const total = FULL_MODULES.reduce((sum, m) => sum + (fullScores[m.id] || 0), 0);
+  const allModulesPassed = FULL_MODULES.every(m => (fullScores[m.id] || 0) >= PASS_MARK);
+  const totalEnough = total >= 240;
+  const passed = allModulesPassed && totalEnough;
+
+  const rows = FULL_MODULES.map(m => {
+    const s = fullScores[m.id] || 0;
+    const g = gradeFor(s);
+    const ok = s >= PASS_MARK;
+    return `<tr>
+      <td>${m.icon} ${m.name}<br><span class="mod-alb">${m.alb}</span></td>
+      <td class="${ok ? "cell-pass" : "cell-fail"}"><strong>${s}</strong>/100</td>
+      <td class="${g.cls}">${esc(g.label)}</td>
+    </tr>`;
+  }).join("");
+
+  const failedMods = FULL_MODULES.filter(m => (fullScores[m.id] || 0) < PASS_MARK);
+  let verdict;
+  if (passed) {
+    verdict = `<div class="verdict verdict-pass">✅ URIME — PROVIMI U KALUA!</div>
+      <div class="verdict-note">Ke arritur të paktën 60 pikë në çdo modul dhe ${total} pikë gjithsej.</div>`;
+  } else if (!allModulesPassed) {
+    const names = failedMods.map(m => m.name).join(", ");
+    verdict = `<div class="verdict verdict-fail">❌ Provimi nuk u kalua</div>
+      <div class="verdict-note">Gjithsej ${total}/400 pikë${totalEnough ? " (mjaftueshëm)" : ""}, por
+      <strong>${esc(names)}</strong> ${failedMods.length > 1 ? "janë" : "është"} nën 60 pikë.
+      Çdo modul duhet të ketë të paktën 60.</div>`;
+  } else {
+    verdict = `<div class="verdict verdict-fail">❌ Provimi nuk u kalua</div>
+      <div class="verdict-note">Të gjitha modulet mbi 60, por gjithsej vetëm ${total}/400 — duhen së paku 240.</div>`;
+  }
+
+  examShell("Rezultati final", 0, `
+    <div class="result-box" style="padding:22px 18px;">
+      ${verdict}
+      <div class="total-big ${passed ? "result-pass" : "result-fail"}">${total}<span style="font-size:1.3rem;opacity:.6;">/400</span></div>
+      <table class="full-table result-table">
+        <thead><tr><th>Moduli</th><th>Pikë</th><th>Vlerësimi</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <button class="btn btn-primary" id="btnFullExamAgain" style="width:100%;padding:15px;margin-top:18px;">↺ Provo përsëri</button>
+      <button class="btn btn-secondary" id="btnFullExamBack" style="width:100%;padding:13px;margin-top:8px;">← Kthehu te provimet</button>
+    </div>
+  `);
+
+  if (passed) {
+    spawnConfetti(); setTimeout(spawnConfetti, 350); setTimeout(spawnConfetti, 700);
+    playFanfare(); vibrate([50, 60, 50, 60, 140]);
+    addPoints(200);
+    setTimeout(() => mascotSay("Nuk e besoj! E kalove provimin e plotë B1 me " + total + " pikë. Jam krenar për ty!", { duration: 12000 }), 900);
+  } else {
+    setTimeout(() => mascotSay("Mos u dorëzo — tani e di saktësisht ku duhet të punosh më shumë. Provo përsëri!", { duration: 10000 }), 900);
+  }
+
+  document.getElementById("btnFullExamAgain").addEventListener("click", startFullExam);
+  document.getElementById("btnFullExamBack").addEventListener("click", renderExamMenu);
 }
 
 function buildQuestionHtml(q, idx) {
