@@ -590,6 +590,44 @@
   }
 
 
+  /* ---- Ushtrim i shpejtë ---- */
+  .tab-icon-img { width: 30px; height: 30px; object-fit: contain; display: block; }
+  nav button.active .tab-icon-img { transform: scale(1.12) translateY(-1px); transition: transform .18s ease; }
+  .practice-hero { text-align: center; margin-bottom: 18px; }
+  .practice-hero-img {
+    width: 130px; height: 130px; object-fit: contain; margin-bottom: 10px;
+    filter: drop-shadow(0 8px 20px rgba(0,0,0,.5));
+    animation: mascotFloat 3.2s ease-in-out infinite;
+  }
+  .practice-hero h2 { margin: 0 0 8px; font-size: 1.35rem; font-weight: 800; }
+  .practice-hero p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.6; font-weight: 600; }
+  .practice-types { display: flex; gap: 7px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+  .practice-types span {
+    padding: 7px 12px; border-radius: var(--radius-pill); font-size: .74rem; font-weight: 800;
+    background: var(--surface); border: 1px solid var(--line); color: var(--muted);
+  }
+  .practice-typebar {
+    text-align: center; font-size: .72rem; font-weight: 800; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--blue); margin-bottom: 10px;
+  }
+  .practice-prompt {
+    background: var(--surface); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 24px 20px;
+    text-align: center; margin-bottom: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.36);
+    animation: fadeSlideIn .3s cubic-bezier(.2,.8,.2,1);
+  }
+  .practice-prompt .big-word { font-size: 1.6rem; font-weight: 800; letter-spacing: -.01em; }
+  .practice-img-frame {
+    width: 100%; max-width: 280px; height: 200px; margin: 0 auto;
+    border-radius: var(--radius-md); background: rgba(255,255,255,.05);
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .practice-img-frame img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  @media (min-width: 700px) {
+    .practice-hero-img { width: 170px; height: 170px; }
+    .practice-img-frame { max-width: 340px; height: 240px; }
+  }
+
   /* ---- iPad / größere Bildschirme ---- */
   @media (min-width: 700px) {
     body { padding-left: calc(28px + env(safe-area-inset-left)); padding-right: calc(28px + env(safe-area-inset-right)); }
@@ -687,9 +725,8 @@
   <button class="tab-btn active" data-view="cards"><span class="tab-icon">🗂️</span><span class="tab-label">Karta</span></button>
   <button class="tab-btn" data-view="quiz"><span class="tab-icon">❓</span><span class="tab-label">Kuiz</span></button>
   <button class="tab-btn" data-view="imagequiz"><span class="tab-icon">🖼️</span><span class="tab-label">Foto</span></button>
+  <button class="tab-btn" data-view="practice"><img src="mascot/eagle-64.png" alt="" class="tab-icon-img"><span class="tab-label">Shpejt</span></button>
   <button class="tab-btn" data-view="exam"><span class="tab-icon">📝</span><span class="tab-label">Provim</span></button>
-  <button class="tab-btn" data-view="list"><span class="tab-icon">📖</span><span class="tab-label">Fjalë</span></button>
-  <button class="tab-btn" data-view="add"><span class="tab-icon">➕</span><span class="tab-label">Shto</span></button>
 </nav>
 
 <!-- KARTEN -->
@@ -769,6 +806,36 @@
   <div class="controls" style="margin-top:10px;">
     <button class="btn btn-primary hidden" id="btnNextImgQuiz">Vazhdo →</button>
     <button class="btn btn-secondary" id="btnRestartImgQuiz">↺ Kuiz i ri me foto</button>
+  </div>
+</div>
+
+<!-- SCHNELLÜBUNG MIT DEM ADLER -->
+<div class="view hidden" id="view-practice">
+  <div id="practiceIntro">
+    <div class="practice-hero">
+      <img src="mascot/eagle-240.png" alt="" class="practice-hero-img">
+      <h2>Ushtrim i shpejtë</h2>
+      <p>Unë të zgjedh ushtrime rastësore: përkthime, foto dhe dëgjim. Sa më shumë radhazi saktë, aq më shumë pikë!</p>
+    </div>
+    <div class="practice-types">
+      <span>🇦🇱→🇩🇪 Përkthim</span><span>🇩🇪→🇦🇱 Përkthim</span><span>🖼️ Foto</span><span>🔊 Dëgjim</span>
+    </div>
+    <button class="btn btn-primary" id="btnStartPractice" style="width:100%;padding:16px;font-size:1rem;">Nisma! Fillo ushtrimin</button>
+  </div>
+
+  <div class="hidden" id="practiceRunner">
+    <div class="stats-bar">
+      <span id="practiceProgress">Raundi 0</span>
+      <span id="practiceScore">Saktë: 0</span>
+    </div>
+    <div class="practice-typebar" id="practiceTypeBar"></div>
+    <div id="practiceBody"></div>
+    <div class="quiz-options" id="practiceOptions"></div>
+    <div class="streak-flash" id="practiceFlash"></div>
+    <div class="controls" style="margin-top:10px;">
+      <button class="btn btn-primary hidden" id="btnNextPractice">Vazhdo →</button>
+      <button class="btn btn-secondary" id="btnStopPractice">■ Ndalo</button>
+    </div>
   </div>
 </div>
 
@@ -2206,7 +2273,7 @@ function setActiveHint(correctText, categoryName, targetSelector) {
     mascotFlyToQuestion(() => {
       mascotSay("Të ndihmoj pak? " + activeQuestionHint, { duration: 13000 });
     });
-  }, 10000);
+  }, 6000);
 }
 
 function clearActiveHint() {
@@ -2572,7 +2639,7 @@ function speak(text) {
 }
 
 /* ============ NAVIGATION ============ */
-const views = ["cards","quiz","imagequiz","exam","list","add","account"];
+const views = ["cards","quiz","imagequiz","practice","exam","list","add","account"];
 function goToView(t) {
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.view === t));
   views.forEach(v => document.getElementById("view-"+v).classList.toggle("hidden", v !== t));
@@ -2582,6 +2649,7 @@ function goToView(t) {
   if (t === "list") renderList();
   if (t === "quiz") startQuiz();
   if (t === "imagequiz") startImageQuiz();
+  if (t !== "practice") { practiceActive = false; }
   if (t === "cards") renderCard();
   if (t === "exam") renderExamMenu();
   window.scrollTo(0,0);
@@ -3214,6 +3282,177 @@ async function renderImageQuiz() {
 }
 document.getElementById("btnNextImgQuiz").addEventListener("click", () => { imgQuizIndex++; renderImageQuiz(); });
 document.getElementById("btnRestartImgQuiz").addEventListener("click", startImageQuiz);
+
+/* ============ USHTRIM I SHPEJTË (Schnellübung mit dem Adler) ============ */
+let practiceRound = 0, practiceScore = 0, practiceAnswered = false, practiceActive = false;
+
+const PRACTICE_CHEERS = [
+  "Bravo! Vazhdo kështu.",
+  "Shumë mirë! Je duke ecur përpara.",
+  "E shkëlqyer! E dije këtë.",
+  "Perfekt! Edhe një herë.",
+  "Të lumtë! Po bëhesh më i shpejtë."
+];
+const PRACTICE_ENCOURAGE = [
+  "S'ka gjë, provo prapë!",
+  "Mos u shqetëso — kështu mësohet.",
+  "Afër ishe! Vazhdojmë.",
+  "Gabimi është pjesë e mësimit."
+];
+
+function startPractice() {
+  practiceRound = 0; practiceScore = 0; practiceActive = true;
+  document.getElementById("practiceIntro").classList.add("hidden");
+  document.getElementById("practiceRunner").classList.remove("hidden");
+  mascotSay("Le t'ia nisim! Do të të jap ushtrime rastësore.", { duration: 4000 });
+  nextPracticeRound();
+}
+
+function stopPractice() {
+  practiceActive = false;
+  clearActiveHint();
+  document.getElementById("practiceRunner").classList.add("hidden");
+  document.getElementById("practiceIntro").classList.remove("hidden");
+  if (practiceRound > 0) {
+    mascotSay(`Ushtrim i mbaruar: ${practiceScore} saktë nga ${practiceRound} raunde. ${practiceScore >= practiceRound * 0.7 ? "Punë e mrekullueshme!" : "Vazhdo të ushtrosh, po përmirësohesh!"}`, { duration: 9000 });
+  }
+}
+
+function nextPracticeRound() {
+  if (!practiceActive) return;
+  practiceRound++;
+  practiceAnswered = false;
+  document.getElementById("btnNextPractice").classList.add("hidden");
+  document.getElementById("practiceFlash").textContent = "";
+  document.getElementById("practiceProgress").textContent = "Raundi " + practiceRound;
+  document.getElementById("practiceScore").textContent = "Saktë: " + practiceScore;
+
+  // Adler wählt zufällig eine Übungsart
+  const types = ["al-de", "de-al", "listen"];
+  if (IMAGE_QUIZ_POOL.length >= 4) types.push("image");
+  const type = types[Math.floor(Math.random() * types.length)];
+
+  if (type === "image") renderPracticeImage();
+  else if (type === "listen") renderPracticeListen();
+  else renderPracticeTranslate(type);
+}
+
+function practiceAnswerHandler(box, correctLabel, onCorrectPoints) {
+  return (el, isCorrect) => {
+    if (practiceAnswered) return;
+    practiceAnswered = true;
+    clearActiveHint();
+    box.querySelectorAll(".quiz-option").forEach(o => {
+      if (o.textContent === correctLabel) o.classList.add("correct");
+      else if (o === el) o.classList.add("wrong");
+    });
+    const flash = document.getElementById("practiceFlash");
+    if (isCorrect) {
+      practiceScore++;
+      awardPoints(onCorrectPoints, "practice");
+      registerAnswer(true);
+      flash.textContent = "+" + onCorrectPoints;
+      if (practiceRound % 3 === 0) {
+        mascotSay(PRACTICE_CHEERS[Math.floor(Math.random()*PRACTICE_CHEERS.length)], { duration: 3500 });
+      }
+    } else {
+      registerAnswer(false);
+      flash.textContent = "Saktë: " + correctLabel;
+      mascotSay(PRACTICE_ENCOURAGE[Math.floor(Math.random()*PRACTICE_ENCOURAGE.length)] + " Përgjigja: " + correctLabel, { duration: 6000 });
+    }
+    document.getElementById("practiceScore").textContent = "Saktë: " + practiceScore;
+    document.getElementById("btnNextPractice").classList.remove("hidden");
+  };
+}
+
+function buildPracticeOptions(options, correctLabel, labelOf, handler) {
+  const box = document.getElementById("practiceOptions");
+  box.innerHTML = "";
+  options.forEach(opt => {
+    const el = document.createElement("button");
+    el.className = "quiz-option";
+    el.textContent = labelOf(opt);
+    el.addEventListener("click", () => handler(el, labelOf(opt) === correctLabel));
+    box.appendChild(el);
+  });
+  return box;
+}
+
+function renderPracticeTranslate(dir) {
+  const askField = dir === "al-de" ? "al" : "de";
+  const ansField = dir === "al-de" ? "de" : "al";
+  const correct = shuffle(vocab)[0];
+  const distractors = shuffle(vocab.filter(w => w[ansField] !== correct[ansField])).slice(0, 3);
+  const options = shuffle([correct, ...distractors]);
+
+  document.getElementById("practiceTypeBar").textContent =
+    dir === "al-de" ? "🇦🇱 → 🇩🇪  Përkthe në gjermanisht" : "🇩🇪 → 🇦🇱  Përkthe në shqip";
+  document.getElementById("practiceBody").innerHTML =
+    `<div class="practice-prompt"><div class="big-word">${esc(correct[askField])}</div></div>`;
+
+  const box = buildPracticeOptions(options, correct[ansField], o => o[ansField],
+    practiceAnswerHandler(document.getElementById("practiceOptions"), correct[ansField], 10));
+  if (dir === "al-de") setActiveHint(correct.de, correct.cat, ".practice-prompt");
+}
+
+function renderPracticeListen() {
+  const correct = shuffle(vocab)[0];
+  const distractors = shuffle(vocab.filter(w => w.de !== correct.de)).slice(0, 3);
+  const options = shuffle([correct, ...distractors]);
+
+  document.getElementById("practiceTypeBar").textContent = "🔊  Dëgjo dhe zgjidh fjalën";
+  document.getElementById("practiceBody").innerHTML = `
+    <div class="practice-prompt">
+      <div style="font-size:2.6rem;margin-bottom:10px;">🔊</div>
+      <button class="btn btn-blue" id="btnPracticeReplay" style="padding:12px 22px;">Dëgjo përsëri</button>
+    </div>`;
+  document.getElementById("btnPracticeReplay").addEventListener("click", () => speak(correct.de));
+  setTimeout(() => speak(correct.de), 350);
+
+  buildPracticeOptions(options, correct.de, o => o.de,
+    practiceAnswerHandler(document.getElementById("practiceOptions"), correct.de, 12));
+  setActiveHint(correct.de, correct.cat, ".practice-prompt");
+}
+
+async function renderPracticeImage() {
+  const correct = shuffle(IMAGE_QUIZ_POOL)[0];
+  document.getElementById("practiceTypeBar").textContent = "🖼️  Çfarë është kjo?";
+  document.getElementById("practiceBody").innerHTML = `
+    <div class="practice-prompt">
+      <div class="practice-img-frame">
+        <div id="practiceImgLoading" style="color:var(--muted);font-size:.85rem;font-weight:700;">Fotoja po ngarkohet…</div>
+        <img id="practiceImg" class="hidden" alt="">
+      </div>
+    </div>`;
+  document.getElementById("practiceOptions").innerHTML = "";
+
+  const src = await fetchWikiImage(correct.w);
+  const ok = await preloadImage(src);
+  if (!practiceActive) return;
+  if (!ok) { nextPracticeRoundSilently(); return; }
+
+  const imgEl = document.getElementById("practiceImg");
+  if (!imgEl) return;
+  imgEl.src = src;
+  imgEl.classList.remove("hidden");
+  const loadEl = document.getElementById("practiceImgLoading");
+  if (loadEl) loadEl.classList.add("hidden");
+
+  const distractors = shuffle(IMAGE_QUIZ_POOL.filter(w => w.de !== correct.de)).slice(0, 3);
+  const options = shuffle([correct, ...distractors]);
+  buildPracticeOptions(options, correct.de, o => o.de,
+    practiceAnswerHandler(document.getElementById("practiceOptions"), correct.de, 12));
+  setActiveHint(correct.de, null, ".practice-img-frame");
+}
+
+function nextPracticeRoundSilently() {
+  practiceRound--;              // dieser Versuch zählt nicht
+  nextPracticeRound();
+}
+
+document.getElementById("btnStartPractice").addEventListener("click", startPractice);
+document.getElementById("btnStopPractice").addEventListener("click", stopPractice);
+document.getElementById("btnNextPractice").addEventListener("click", nextPracticeRound);
 
 /* ============ TIMER ============ */
 let timerInt = null, timerLeft = 0;
