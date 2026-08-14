@@ -67,7 +67,7 @@
 
   .view, .hud, .account-bar { animation: fadeSlideIn .35s cubic-bezier(.2,.8,.2,1); }
 
-  header { text-align: center; margin-bottom: 4px; width: 100%; max-width: 520px; }
+  header { text-align: center; margin: 0 auto 4px; width: 100%; max-width: 520px; }
   .header-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
   h1 {
     font-size: 1.35rem; margin: 0 0 3px 0; font-weight: 800; letter-spacing: -.015em;
@@ -628,23 +628,77 @@
     .practice-img-frame { max-width: 340px; height: 240px; }
   }
 
-  /* ---- iPad / größere Bildschirme ---- */
+  /* ---- Përshtatje për telefon dhe tablet ---- */
+
+  /* Telefona të vegjël (iPhone SE, mini) */
+  @media (max-width: 400px) {
+    body { padding-left: calc(12px + env(safe-area-inset-left)); padding-right: calc(12px + env(safe-area-inset-right)); }
+    h1 { font-size: 1.18rem; }
+    .subtitle { font-size: .76rem; }
+    nav { gap: 4px; padding: 6px; border-radius: 20px; }
+    nav button { padding: 9px 2px 8px; font-size: .64rem; border-radius: 15px; gap: 3px; }
+    nav button .tab-icon { font-size: 1.15rem; }
+    .tab-icon-img { width: 24px; height: 24px; }
+    .hud { padding: 12px 13px; }
+    .hud-stat-value { font-size: 1.02rem; }
+    .hud-stat-icon { font-size: 1rem; }
+    .hud-stat-label { font-size: .56rem; }
+    .level-badge { padding: 6px 10px; font-size: .68rem; }
+    .hud-bar-label { width: 56px; font-size: .58rem; }
+    .card-wrap { height: 196px; }
+    .card-word { font-size: 1.45rem; }
+    .quiz-question { padding: 20px 16px; }
+    .quiz-question .word { font-size: 1.35rem; }
+    .quiz-option { padding: 13px 14px; font-size: .92rem; }
+    .badge { width: 40px; height: 40px; font-size: 1.05rem; }
+    .practice-hero-img { width: 104px; height: 104px; }
+    .practice-hero h2 { font-size: 1.18rem; }
+    .practice-img-frame { height: 168px; }
+  }
+
+  /* Telefona standard: mbaj gjithçka në qendër */
+  .view, .hud, .account-bar, nav, header { margin-left: auto; margin-right: auto; }
+
+  /* Tablet / iPad portret */
   @media (min-width: 700px) {
     body { padding-left: calc(28px + env(safe-area-inset-left)); padding-right: calc(28px + env(safe-area-inset-right)); }
-    .view, .hud, .account-bar, nav { max-width: 680px; }
-    h1 { font-size: 1.9rem; }
-    .subtitle { font-size: .95rem; }
-    .card-wrap { height: 260px; }
-    .card-word { font-size: 2.1rem; }
-    nav button { font-size: .82rem; padding: 14px 6px 12px; }
-    nav button .tab-icon { font-size: 1.55rem; }
+    .view, .hud, .account-bar, nav, header { max-width: 640px; }
+    h1 { font-size: 1.7rem; }
+    .subtitle { font-size: .92rem; }
+    nav button { font-size: .8rem; padding: 14px 6px 12px; }
+    nav button .tab-icon { font-size: 1.5rem; }
+    .tab-icon-img { width: 34px; height: 34px; }
+    .hud { padding: 16px 20px; }
+    .hud-stat-value { font-size: 1.3rem; }
+    .hud-stat-icon { font-size: 1.3rem; }
+    .card-wrap { height: 250px; }
+    .card-word { font-size: 2rem; }
+    .quiz-question .word { font-size: 1.8rem; }
+    .quiz-option { padding: 17px 18px; font-size: 1.02rem; }
+    .badge { width: 52px; height: 52px; font-size: 1.35rem; }
+    .exam-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     #wordList { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .word-item { margin-bottom: 0; }
-    .exam-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .level-picker { grid-template-columns: repeat(6, 1fr); }
   }
+
+  /* iPad landscape / ekrane të mëdha */
   @media (min-width: 1024px) {
-    .view, .hud, .account-bar, nav { max-width: 800px; }
+    .view, .hud, .account-bar, nav, header { max-width: 720px; }
+    .card-wrap { height: 280px; }
+    .card-word { font-size: 2.2rem; }
+    .practice-hero-img { width: 190px; height: 190px; }
     #wordList { grid-template-columns: 1fr 1fr 1fr; }
+  }
+
+  /* Telefon në pozicion horizontal: kursej lartësi */
+  @media (max-height: 480px) and (orientation: landscape) {
+    .card-wrap { height: 150px; }
+    .practice-hero-img { width: 80px; height: 80px; }
+    .mascot-fab { width: 54px; height: 54px; }
+    nav button { padding: 7px 2px 6px; }
+    nav button .tab-icon { font-size: 1.05rem; }
+    .tab-icon-img { width: 22px; height: 22px; }
   }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
