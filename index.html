@@ -663,6 +663,13 @@
     padding: 7px 12px; border-radius: var(--radius-pill); font-size: .74rem; font-weight: 800;
     background: var(--surface); border: 1px solid var(--line); color: var(--muted);
   }
+  .practice-gram-sentence { font-size: 1.1rem; font-weight: 700; line-height: 1.6; }
+  .practice-gram-sentence .gap { display:inline-block; min-width:60px; border-bottom:3px solid var(--gold); color:transparent; margin:0 4px; }
+  .practice-gram-sentence .gap.filled { color: var(--green); border-bottom-color: var(--green); font-weight: 800; }
+  .practice-gram-help {
+    margin-top: 12px; font-size: .82rem; font-weight: 600; color: var(--muted);
+    display: flex; align-items: center; gap: 7px; justify-content: center;
+  }
   .practice-typebar {
     text-align: center; font-size: .72rem; font-weight: 800; letter-spacing: .06em;
     text-transform: uppercase; color: var(--blue); margin-bottom: 10px;
@@ -692,6 +699,25 @@
   }
   .exam-tile-full h3 { color: var(--gold); }
   .exam-tile-full .meta { color: var(--gold); }
+  .exam-level-card {
+    position: relative; display: flex; align-items: center; gap: 14px; width: 100%;
+    background: var(--surface); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 15px;
+    margin-bottom: 9px; cursor: pointer; text-align: left; font-family: var(--font); color: var(--ink);
+    box-shadow: 0 6px 20px rgba(0,0,0,.28); transition: transform .12s ease, border-color .2s ease;
+  }
+  .exam-level-card:active { transform: scale(.98); }
+  .exam-level-card.recommended { border-color: rgba(255,200,87,.5); box-shadow: 0 6px 22px rgba(0,0,0,.3), 0 0 20px rgba(255,200,87,.14); }
+  .elc-badge {
+    width: 52px; height: 52px; flex-shrink: 0; border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem; font-weight: 800; border: 1px solid;
+  }
+  .elc-body { flex: 1; min-width: 0; }
+  .elc-name { font-size: .95rem; font-weight: 800; margin-bottom: 2px; }
+  .elc-desc { font-size: .76rem; color: var(--muted); font-weight: 600; line-height: 1.4; margin-bottom: 4px; }
+  .elc-meta { font-size: .7rem; color: var(--blue); font-weight: 800; }
+  .elc-star { position: absolute; top: 8px; right: 12px; color: var(--gold); font-size: .8rem; }
   .exam-section-label {
     font-size: .7rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase;
     color: var(--muted); margin: 14px 0 2px; text-align: center;
@@ -856,6 +882,73 @@
     .acc-name { width: 88px; font-size: .74rem; }
   }
 
+  /* ---- Gramatikë ---- */
+  .grammar-cat-tag {
+    display: inline-block; padding: 5px 13px; border-radius: var(--radius-pill);
+    background: rgba(91,140,255,.15); border: 1px solid rgba(91,140,255,.35);
+    color: var(--blue); font-size: .7rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: .05em; margin-bottom: 10px;
+  }
+  .grammar-sentence {
+    background: var(--surface); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 24px 20px;
+    font-size: 1.22rem; font-weight: 700; line-height: 1.6; text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35); margin-bottom: 10px;
+    animation: fadeSlideIn .3s cubic-bezier(.2,.8,.2,1);
+  }
+  .grammar-sentence .gap {
+    display: inline-block; min-width: 68px; border-bottom: 3px solid var(--gold);
+    color: transparent; margin: 0 4px;
+  }
+  .grammar-sentence .gap.filled { color: var(--green); border-bottom-color: var(--green); font-weight: 800; }
+  .grammar-help {
+    display: flex; align-items: center; gap: 9px; padding: 12px 14px; margin-bottom: 14px;
+    background: rgba(255,200,87,.09); border: 1px solid rgba(255,200,87,.28);
+    border-radius: var(--radius-md); font-size: .88rem; font-weight: 600; color: var(--ink); line-height: 1.5;
+  }
+  .help-flag { font-size: 1.05rem; flex-shrink: 0; }
+  .grammar-explain {
+    margin-top: 12px; padding: 13px 15px; border-radius: var(--radius-md);
+    background: rgba(91,140,255,.1); border-left: 3px solid var(--blue);
+    font-size: .84rem; font-weight: 600; color: var(--ink); line-height: 1.55;
+    animation: fadeSlideIn .3s ease;
+  }
+
+  /* ---- Detyrat e ditës ---- */
+  .hw-header { text-align: center; margin-bottom: 16px; }
+  .hw-date { font-size: .72rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
+  .hw-header h2 { margin: 0 0 6px; font-size: 1.32rem; font-weight: 800; }
+  .hw-header p { margin: 0; color: var(--muted); font-size: .85rem; font-weight: 600; line-height: 1.55; }
+  .hw-overall { margin-bottom: 16px; }
+  .hw-overall-track { height: 10px; background: rgba(255,255,255,.07); border-radius: var(--radius-pill); overflow: hidden; }
+  .hw-overall-fill {
+    height: 100%; border-radius: var(--radius-pill); transition: width .5s cubic-bezier(.2,.8,.2,1);
+    background: linear-gradient(90deg, var(--blue), var(--green)); box-shadow: 0 0 12px rgba(79,201,126,.45);
+  }
+  .hw-overall-label { text-align: center; font-size: .78rem; font-weight: 800; color: var(--muted); margin-top: 7px; }
+  .hw-item {
+    display: flex; align-items: center; gap: 12px; padding: 14px;
+    background: var(--surface); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--line); border-radius: var(--radius-md); margin-bottom: 9px;
+    animation: fadeSlideIn .3s ease;
+  }
+  .hw-item.hw-done { border-color: rgba(79,201,126,.4); background: rgba(79,201,126,.08); }
+  .hw-icon { font-size: 1.5rem; flex-shrink: 0; width: 32px; text-align: center; }
+  .hw-body { flex: 1; min-width: 0; }
+  .hw-title { font-size: .88rem; font-weight: 700; margin-bottom: 7px; line-height: 1.35; }
+  .hw-item.hw-done .hw-title { color: var(--green); }
+  .hw-track { height: 6px; background: rgba(255,255,255,.07); border-radius: var(--radius-pill); overflow: hidden; }
+  .hw-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--green)); border-radius: var(--radius-pill); transition: width .4s ease; }
+  .hw-meta { font-size: .68rem; color: var(--muted); font-weight: 700; margin-top: 5px; }
+  .hw-go {
+    flex-shrink: 0; padding: 9px 13px; border-radius: var(--radius-md); border: none;
+    background: linear-gradient(135deg, var(--blue), #6f97ff); color: #fff;
+    font-family: var(--font); font-weight: 800; font-size: .76rem; cursor: pointer;
+    box-shadow: 0 4px 12px var(--blue-glow);
+  }
+  .hw-go:active { transform: scale(.94); }
+  .hw-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 18px; }
+
   /* ---- Përshtatje për telefon dhe tablet ---- */
 
   /* Telefona të vegjël (iPhone SE, mini) */
@@ -1010,6 +1103,8 @@
   <button class="tab-btn active" data-view="cards"><span class="tab-icon">🗂️</span><span class="tab-label">Karta</span></button>
   <button class="tab-btn" data-view="quiz"><span class="tab-icon">❓</span><span class="tab-label">Kuiz</span></button>
   <button class="tab-btn" data-view="imagequiz"><span class="tab-icon">🖼️</span><span class="tab-label">Foto</span></button>
+  <button class="tab-btn" data-view="grammar"><span class="tab-icon">📐</span><span class="tab-label">Gramatikë</span></button>
+  <button class="tab-btn" data-view="homework"><span class="tab-icon">📋</span><span class="tab-label">Detyra</span></button>
   <button class="tab-btn" data-view="practice"><img src="mascot/eagle-64.png" alt="" class="tab-icon-img"><span class="tab-label">Shpejt</span></button>
   <button class="tab-btn" data-view="exam"><span class="tab-icon">📝</span><span class="tab-label">Provim</span></button>
   <button class="tab-btn" data-view="stats"><span class="tab-icon">🌳</span><span class="tab-label">Rritja</span></button>
@@ -1095,6 +1190,43 @@
   </div>
 </div>
 
+<!-- GRAMATIKË -->
+<div class="view hidden" id="view-grammar">
+  <select class="filter-select" id="grammarCatFilter"></select>
+  <div class="stats-bar">
+    <span id="grammarProgress">Fjalia 0 / 0</span>
+    <span id="grammarScore">Saktë: 0</span>
+  </div>
+  <div class="grammar-cat-tag" id="grammarCatTag"></div>
+  <div class="grammar-sentence" id="grammarSentence">—</div>
+  <div class="grammar-help">
+    <span class="help-flag">🇦🇱</span>
+    <span id="grammarHelp">—</span>
+  </div>
+  <div class="quiz-options" id="grammarOptions"></div>
+  <div class="grammar-explain hidden" id="grammarExplain"></div>
+  <div class="streak-flash" id="grammarFlash"></div>
+  <div class="controls" style="margin-top:10px;">
+    <button class="btn btn-primary hidden" id="btnNextGrammar">Vazhdo →</button>
+    <button class="btn btn-secondary" id="btnRestartGrammar">↺ Fillo nga e para</button>
+  </div>
+</div>
+
+<!-- DETYRAT E DITËS -->
+<div class="view hidden" id="view-homework">
+  <div class="hw-header">
+    <div class="hw-date" id="hwDate"></div>
+    <h2>📋 Detyrat e ditës</h2>
+    <p id="hwIntro">Rreth një orë punë, të ndara në disa ushtrime. Çdo ditë detyra të reja.</p>
+  </div>
+  <div class="hw-overall">
+    <div class="hw-overall-track"><div class="hw-overall-fill" id="hwOverallFill" style="width:0%"></div></div>
+    <div class="hw-overall-label" id="hwOverallLabel">0 / 0 detyra</div>
+  </div>
+  <div id="hwList"></div>
+  <div class="hw-stats" id="hwStats"></div>
+</div>
+
 <!-- SCHNELLÜBUNG MIT DEM ADLER -->
 <div class="view hidden" id="view-practice">
   <div id="practiceIntro">
@@ -1104,7 +1236,7 @@
       <p>Unë të zgjedh ushtrime rastësore: përkthime, foto dhe dëgjim. Sa më shumë radhazi saktë, aq më shumë pikë!</p>
     </div>
     <div class="practice-types">
-      <span>🇦🇱→🇩🇪 Përkthim</span><span>🇩🇪→🇦🇱 Përkthim</span><span>🖼️ Foto</span><span>🔊 Dëgjim</span>
+      <span>🇦🇱→🇩🇪 Përkthim</span><span>🇩🇪→🇦🇱 Përkthim</span><span>🖼️ Foto</span><span>🔊 Dëgjim</span><span>📐 Gramatikë</span>
     </div>
     <button class="btn btn-primary" id="btnStartPractice" style="width:100%;padding:16px;font-size:1rem;">Nisma! Fillo ushtrimin</button>
   </div>
@@ -2812,11 +2944,14 @@ const DEFAULT_STATS = {
   quiz:      { total: 0, correct: 0 },
   imagequiz: { total: 0, correct: 0 },
   practice:  { total: 0, correct: 0 },
+  grammar:   { total: 0, correct: 0 },
   cards:     { known: 0, unknown: 0 },
   exams:     { taken: 0, passed: 0, best: 0, bestModules: {} },
   words:     {},   // "al|de": { c: saktë, w: gabim }
   bestStreak: 0,
   stageLog:  {},    // "idx": { at: ISO-datë, totalAnswers, correctAnswers }
+  homework:  { doneDays: {}, totalDone: 0, streak: 0, bestStreak: 0 },
+  hwProgress:{ date: null, counts: {} },
   grandGift: null   // { at: ISO-datë, score } — dhurata e madhe, vetëm një herë
 };
 let stats = JSON.parse(JSON.stringify(DEFAULT_STATS));
@@ -3134,7 +3269,7 @@ function speak(text) {
 }
 
 /* ============ NAVIGATION ============ */
-const views = ["cards","quiz","imagequiz","practice","exam","stats","list","add","account"];
+const views = ["cards","quiz","imagequiz","grammar","homework","practice","exam","stats","list","add","account"];
 function goToView(t) {
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.view === t));
   views.forEach(v => document.getElementById("view-"+v).classList.toggle("hidden", v !== t));
@@ -3148,6 +3283,8 @@ function goToView(t) {
   if (t === "cards") renderCard();
   if (t === "exam") renderExamMenu();
   if (t === "stats") renderStatsView();
+  if (t === "grammar") { fillGrammarCats(); startGrammar(); }
+  if (t === "homework") renderHomework();
   window.scrollTo(0,0);
 }
 document.querySelectorAll(".tab-btn").forEach(btn => {
@@ -3202,10 +3339,10 @@ flashcard.addEventListener("click", e => {
 });
 document.getElementById("btnSpeak").addEventListener("click", e => {
   e.stopPropagation();
-  if (cardIndex < currentDeck.length) speak(currentDeck[cardIndex].de);
+  if (cardIndex < currentDeck.length) { speak(currentDeck[cardIndex].de); hwTick("listen", 1); }
 });
-document.getElementById("btnKnow").addEventListener("click", () => { if (cardIndex < currentDeck.length){const w=currentDeck[cardIndex];knownCount++;cardIndex++;addPoints(5);feedbackCorrect();recordCard(true);recordStat(null,true,w.al+"|"+w.de);renderCard();} });
-document.getElementById("btnDontKnow").addEventListener("click", () => { if (cardIndex < currentDeck.length){const w=currentDeck[cardIndex];cardIndex++;feedbackWrong();recordCard(false);recordStat(null,false,w.al+"|"+w.de);renderCard();} });
+document.getElementById("btnKnow").addEventListener("click", () => { if (cardIndex < currentDeck.length){const w=currentDeck[cardIndex];knownCount++;cardIndex++;addPoints(5);feedbackCorrect();recordCard(true);recordStat(null,true,w.al+"|"+w.de);hwTick("cards",1);renderCard();} });
+document.getElementById("btnDontKnow").addEventListener("click", () => { if (cardIndex < currentDeck.length){const w=currentDeck[cardIndex];cardIndex++;feedbackWrong();recordCard(false);recordStat(null,false,w.al+"|"+w.de);hwTick("cards",1);renderCard();} });
 document.getElementById("btnShuffle").addEventListener("click", () => { initCardOrder(); renderCard(); });
 document.getElementById("btnResetProgress").addEventListener("click", () => { initCardOrder(); renderCard(); });
 document.getElementById("catFilter").addEventListener("change", () => { initCardOrder(); renderCard(); });
@@ -3260,6 +3397,7 @@ function renderQuiz() {
         awardPoints(10, "quiz");
         registerAnswer(true);
         recordStat("quiz", true, correct.al + "|" + correct.de);
+        hwTick("quiz", 1);
         document.getElementById("streakFlash").textContent = "+10";
       } else {
         registerAnswer(false);
@@ -3768,6 +3906,7 @@ async function renderImageQuiz() {
         awardPoints(10, "imagequiz");
         registerAnswer(true);
         recordStat("imagequiz", true, "|" + correct.de);
+        hwTick("imagequiz", 1);
         document.getElementById("imgQuizStreakFlash").textContent = "+10";
       } else {
         registerAnswer(false);
@@ -3828,14 +3967,52 @@ function nextPracticeRound() {
   document.getElementById("practiceProgress").textContent = "Raundi " + practiceRound;
   document.getElementById("practiceScore").textContent = "Saktë: " + practiceScore;
 
-  // Adler wählt zufällig eine Übungsart
-  const types = ["al-de", "de-al", "listen"];
+  // Urani zgjedh rastësisht një lloj ushtrimi — gjithçka që mëson, e përzier
+  const types = ["al-de", "de-al", "listen", "grammar"];
   if (IMAGE_QUIZ_POOL.length >= 4) types.push("image");
   const type = types[Math.floor(Math.random() * types.length)];
 
   if (type === "image") renderPracticeImage();
   else if (type === "listen") renderPracticeListen();
+  else if (type === "grammar") renderPracticeGrammar();
   else renderPracticeTranslate(type);
+}
+
+function renderPracticeGrammar() {
+  const ex = shuffle(GRAMMAR_EXERCISES)[0];
+  currentPracticeWordKey = null;
+  document.getElementById("practiceTypeBar").textContent = "📐  Plotëso fjalinë · " + ex.cat;
+  document.getElementById("practiceBody").innerHTML = `
+    <div class="practice-prompt">
+      <div class="practice-gram-sentence">${esc(ex.q).replace("___", '<span class="gap">_____</span>')}</div>
+      <div class="practice-gram-help"><span>🇦🇱</span> ${esc(ex.sq)}</div>
+    </div>`;
+
+  const box = document.getElementById("practiceOptions");
+  box.innerHTML = "";
+  const handler = practiceAnswerHandler(box, ex.opts[ex.a], 12);
+  ex.opts.forEach((opt, i) => {
+    const el = document.createElement("button");
+    el.className = "quiz-option";
+    el.textContent = opt;
+    el.addEventListener("click", () => {
+      // Trego fjalinë e plotësuar dhe shpjegimin
+      const sEl = document.querySelector(".practice-gram-sentence");
+      if (sEl) sEl.innerHTML = esc(ex.q).replace("___", `<span class="gap filled">${esc(ex.opts[ex.a])}</span>`);
+      const body = document.getElementById("practiceBody");
+      if (body && !body.querySelector(".grammar-explain")) {
+        const d = document.createElement("div");
+        d.className = "grammar-explain";
+        d.textContent = "💡 " + ex.ex;
+        body.appendChild(d);
+      }
+      recordStat("grammar", i === ex.a, null);
+      if (i === ex.a) hwTick("grammar", 1);
+      handler(el, i === ex.a);
+    });
+    box.appendChild(el);
+  });
+  setActiveHint(ex.opts[ex.a], ex.cat, ".practice-prompt");
 }
 
 function practiceAnswerHandler(box, correctLabel, onCorrectPoints) {
@@ -3853,6 +4030,7 @@ function practiceAnswerHandler(box, correctLabel, onCorrectPoints) {
       awardPoints(onCorrectPoints, "practice");
       registerAnswer(true);
       recordStat("practice", true, currentPracticeWordKey);
+      hwTick("practice", 1);
       flash.textContent = "+" + onCorrectPoints;
       if (practiceRound % 3 === 0) {
         mascotSay(mascotPraise(false), { duration: 4500 });
@@ -3860,6 +4038,7 @@ function practiceAnswerHandler(box, correctLabel, onCorrectPoints) {
     } else {
       registerAnswer(false);
       recordStat("practice", false, currentPracticeWordKey);
+      hwTick("practice", 1);
       flash.textContent = "Saktë: " + correctLabel;
       mascotSay(fmt(pick(ENCOURAGE)) + " Përgjigja ishte: " + correctLabel, { duration: 6000 });
     }
@@ -3985,13 +4164,26 @@ function renderExamMenu() {
   stopTimer();
   runnerEl.classList.add("hidden");
   menuEl.classList.remove("hidden");
+  const levelCards = Object.keys(EXAM_LEVELS).map(key => {
+    const L = EXAM_LEVELS[key];
+    const totalMin = L.modules.reduce((a, m) => a + m.minutes, 0);
+    const info = CEFR_INFO[key] || {};
+    const recommended = (cefrLevel === key || selectedLevel === key);
+    return `<button class="exam-level-card ${recommended ? "recommended" : ""}" data-exam="full" data-level="${key}">
+      <div class="elc-badge" style="color:${info.color || "var(--gold)"};border-color:${(info.color || "#ffc857")}55;background:${(info.color || "#ffc857")}18;">${key}</div>
+      <div class="elc-body">
+        <div class="elc-name">${esc(L.name)}</div>
+        <div class="elc-desc">${esc(L.desc)}</div>
+        <div class="elc-meta">4 module · ${totalMin} min · 400 pikë</div>
+      </div>
+      ${recommended ? '<div class="elc-star">★</div>' : ""}
+    </button>`;
+  }).join("");
+
   menuEl.innerHTML = `
-    <button class="exam-tile exam-tile-full" data-exam="full">
-      <h3>🎓 Provimi i plotë B1</h3>
-      <p>Të katër modulet njëri pas tjetrit, si në provimin e vërtetë. Çdo modul 100 pikë — duhen të paktën 60 në secilin.</p>
-      <div class="meta">4 module · rreth 90 minuta · deri në 400 pikë</div>
-    </button>
-    <div class="exam-section-label">Ose ushtro një modul veç e veç:</div>
+    <div class="exam-section-label">Zgjidh nivelin e provimit</div>
+    ${levelCards}
+    <div class="exam-section-label" style="margin-top:18px;">Ose ushtro një modul B1 veç e veç</div>
     <button class="exam-tile" data-exam="lesen">
       <h3>📖 Lesen (Lexim)</h3>
       <p>Tre tekste me pyetje: email, artikull gazete dhe njoftime.</p>
@@ -4020,6 +4212,8 @@ function renderExamMenu() {
   `;
   menuEl.querySelectorAll(".exam-tile").forEach(t =>
     t.addEventListener("click", () => startExam(t.dataset.exam)));
+  menuEl.querySelectorAll(".exam-level-card").forEach(t =>
+    t.addEventListener("click", () => startFullExam(t.dataset.level)));
 }
 
 function examShell(title, minutes, inner) {
@@ -4373,6 +4567,424 @@ function examSetFor(n) {
 }
 
 /* ===== PROVIMI I PLOTË: struktura reale ===== */
+/* ============ STRUKTURA REALE E PROVIMEVE GOETHE (A1–C1) ============ */
+// Kohëzgjatjet ndjekin formatin zyrtar të Goethe-Institut për çdo nivel.
+const EXAM_LEVELS = {
+  A1: {
+    name: "Start Deutsch 1", cefr: "A1",
+    desc: "Provimi më i thjeshtë: fjalë dhe fjali të përditshme.",
+    modules: [
+      { id:"hoeren",    name:"Hören",     alb:"Dëgjim",      icon:"🎧", minutes:20 },
+      { id:"lesen",     name:"Lesen",     alb:"Lexim",       icon:"📖", minutes:25 },
+      { id:"schreiben", name:"Schreiben", alb:"Shkrim",      icon:"✍️", minutes:20 },
+      { id:"sprechen",  name:"Sprechen",  alb:"Të folurit",  icon:"🗣️", minutes:15 }
+    ],
+    writeMin: 30
+  },
+  A2: {
+    name: "Goethe-Zertifikat A2", cefr: "A2",
+    desc: "Situata të thjeshta të përditshme: familje, blerje, punë.",
+    modules: [
+      { id:"hoeren",    name:"Hören",     alb:"Dëgjim",      icon:"🎧", minutes:30 },
+      { id:"lesen",     name:"Lesen",     alb:"Lexim",       icon:"📖", minutes:30 },
+      { id:"schreiben", name:"Schreiben", alb:"Shkrim",      icon:"✍️", minutes:30 },
+      { id:"sprechen",  name:"Sprechen",  alb:"Të folurit",  icon:"🗣️", minutes:15 }
+    ],
+    writeMin: 40
+  },
+  B1: {
+    name: "Goethe-Zertifikat B1", cefr: "B1",
+    desc: "Niveli i pavarur: punë, udhëtim, mendime personale.",
+    modules: [
+      { id:"lesen",     name:"Lesen",     alb:"Lexim",       icon:"📖", minutes:65 },
+      { id:"hoeren",    name:"Hören",     alb:"Dëgjim",      icon:"🎧", minutes:40 },
+      { id:"schreiben", name:"Schreiben", alb:"Shkrim",      icon:"✍️", minutes:60 },
+      { id:"sprechen",  name:"Sprechen",  alb:"Të folurit",  icon:"🗣️", minutes:15 }
+    ],
+    writeMin: 80
+  },
+  B2: {
+    name: "Goethe-Zertifikat B2", cefr: "B2",
+    desc: "Tekste komplekse, argumentim dhe diskutim.",
+    modules: [
+      { id:"lesen",     name:"Lesen",     alb:"Lexim",       icon:"📖", minutes:65 },
+      { id:"hoeren",    name:"Hören",     alb:"Dëgjim",      icon:"🎧", minutes:40 },
+      { id:"schreiben", name:"Schreiben", alb:"Shkrim",      icon:"✍️", minutes:75 },
+      { id:"sprechen",  name:"Sprechen",  alb:"Të folurit",  icon:"🗣️", minutes:15 }
+    ],
+    writeMin: 150
+  },
+  C1: {
+    name: "Goethe-Zertifikat C1", cefr: "C1",
+    desc: "Nivel i avancuar: tekste abstrakte dhe gjuhë e saktë.",
+    modules: [
+      { id:"lesen",     name:"Lesen",     alb:"Lexim",       icon:"📖", minutes:70 },
+      { id:"hoeren",    name:"Hören",     alb:"Dëgjim",      icon:"🎧", minutes:40 },
+      { id:"schreiben", name:"Schreiben", alb:"Shkrim",      icon:"✍️", minutes:75 },
+      { id:"sprechen",  name:"Sprechen",  alb:"Të folurit",  icon:"🗣️", minutes:15 }
+    ],
+    writeMin: 200
+  }
+};
+
+/* ===== PËRMBAJTJE SIPAS NIVELIT (A1, A2) ===== */
+const LEVEL_CONTENT = {
+A1: {
+  reading: [
+    { head:"SMS nga një shoqe", body:"Hallo Mira,\n\nich bin heute in der Stadt. Kommst du auch?\nWir treffen uns um 15 Uhr am Bahnhof.\nBring bitte Geld mit, wir gehen ins Café.\n\nLiebe Grüße\nLea",
+      questions:[
+        {q:"Wo treffen sich Mira und Lea?", opts:["Am Bahnhof","Im Café","Zu Hause"], a:0, ex:"„Wir treffen uns um 15 Uhr am Bahnhof.“"},
+        {q:"Um wie viel Uhr?", opts:["Um 13 Uhr","Um 15 Uhr","Um 17 Uhr"], a:1, ex:"Um 15 Uhr."},
+        {q:"Was soll Mira mitbringen?", opts:["Geld","Ein Buch","Essen"], a:0, ex:"„Bring bitte Geld mit.“"}
+      ]},
+    { head:"Njoftim në dyqan", body:"SUPERMARKT NORD\n\nÖffnungszeiten:\nMontag bis Freitag: 8–20 Uhr\nSamstag: 8–18 Uhr\nSonntag: geschlossen\n\nHeute im Angebot:\nÄpfel 1 kg — 2 Euro\nMilch 1 Liter — 1 Euro",
+      questions:[
+        {q:"Wann ist der Supermarkt geschlossen?", opts:["Am Samstag","Am Sonntag","Am Montag"], a:1, ex:"Sonntag: geschlossen."},
+        {q:"Wie lange ist er am Samstag offen?", opts:["8–18 Uhr","8–20 Uhr","10–18 Uhr"], a:0, ex:"Samstag: 8–18 Uhr."},
+        {q:"Was kostet 1 Liter Milch?", opts:["1 Euro","2 Euro","3 Euro"], a:0, ex:"Milch 1 Liter — 1 Euro."}
+      ]},
+    { head:"Prezantim i shkurtër", body:"Hallo! Ich heiße Ardit. Ich komme aus Albanien und wohne jetzt in München. Ich bin 24 Jahre alt.\n\nIch arbeite in einem Restaurant. Meine Arbeit beginnt um 16 Uhr. Am Montag habe ich frei.\n\nIch lerne Deutsch. Mein Kurs ist am Abend, von 18 bis 20 Uhr.",
+      questions:[
+        {q:"Wie alt ist Ardit?", opts:["21","24","34"], a:1, ex:"„Ich bin 24 Jahre alt.“"},
+        {q:"Wo arbeitet er?", opts:["In einem Restaurant","In einer Schule","Im Supermarkt"], a:0, ex:"Er arbeitet in einem Restaurant."},
+        {q:"Wann hat er frei?", opts:["Am Montag","Am Sonntag","Am Freitag"], a:0, ex:"„Am Montag habe ich frei.“"}
+      ]},
+    { head:"Njoftime të vogla", body:"A) Zimmer frei! 300 Euro im Monat. Tel: 0176 123456\n\nB) Verkaufe Fahrrad, 50 Euro. Sehr gut.\n\nC) Deutschkurs für Anfänger. Montag und Mittwoch, 18 Uhr. 40 Euro.\n\nD) Suche Katze. Sie ist schwarz und klein. Bitte anrufen!",
+      questions:[
+        {q:"Du suchst ein Zimmer. Welche Anzeige?", opts:["A","B","C"], a:0, ex:"Anzeige A: Zimmer frei."},
+        {q:"Du willst Deutsch lernen. Welche Anzeige?", opts:["B","C","D"], a:1, ex:"Anzeige C: Deutschkurs."},
+        {q:"Was kostet das Fahrrad?", opts:["40 Euro","50 Euro","300 Euro"], a:1, ex:"Fahrrad, 50 Euro."}
+      ]}
+  ],
+  listening: [
+    { title:"Njoftim në stacion", script:"Achtung! Der Zug nach Hamburg fährt heute von Gleis drei. Nicht von Gleis eins. Der Zug fährt um zehn Uhr fünfzehn.",
+      questions:[
+        {q:"Von welchem Gleis fährt der Zug?", opts:["Gleis 1","Gleis 3","Gleis 5"], a:1, ex:"Von Gleis drei."},
+        {q:"Wann fährt er?", opts:["Um 10:15","Um 10:50","Um 11:15"], a:0, ex:"Um zehn Uhr fünfzehn."},
+        {q:"Wohin fährt der Zug?", opts:["Nach Berlin","Nach Hamburg","Nach München"], a:1, ex:"Nach Hamburg."}
+      ]},
+    { title:"Mesazh telefonik", script:"Hallo Ardit, hier ist Frau Klein. Der Termin am Dienstag um vierzehn Uhr geht leider nicht. Können Sie am Mittwoch um zehn Uhr kommen? Bitte rufen Sie mich an. Danke!",
+      questions:[
+        {q:"Wer ruft an?", opts:["Frau Klein","Herr Klein","Ardit"], a:0, ex:"„hier ist Frau Klein“"},
+        {q:"Wann ist der neue Termin?", opts:["Dienstag 14 Uhr","Mittwoch 10 Uhr","Mittwoch 14 Uhr"], a:1, ex:"Mittwoch um zehn Uhr."},
+        {q:"Was soll Ardit tun?", opts:["Anrufen","Kommen","Schreiben"], a:0, ex:"„Bitte rufen Sie mich an.“"}
+      ]},
+    { title:"Në dyqan", script:"Verkäuferin: Guten Tag! Was möchten Sie? Kunde: Ich möchte ein Brot, bitte. Verkäuferin: Gern. Noch etwas? Kunde: Ja, zwei Kaffee zum Mitnehmen. Verkäuferin: Das macht sechs Euro fünfzig.",
+      questions:[
+        {q:"Was kauft der Kunde?", opts:["Brot und Kaffee","Nur Brot","Milch und Brot"], a:0, ex:"Ein Brot und zwei Kaffee."},
+        {q:"Wie viel kostet alles?", opts:["5,50 €","6,50 €","7,50 €"], a:1, ex:"Sechs Euro fünfzig."},
+        {q:"Wie viele Kaffee?", opts:["Einen","Zwei","Drei"], a:1, ex:"Zwei Kaffee."}
+      ]},
+    { title:"Njoftim në shkollë", script:"Liebe Schüler, morgen beginnt der Unterricht um neun Uhr, nicht um acht Uhr. Bitte bringt eure Bücher mit. Der Raum ist Nummer zwölf.",
+      questions:[
+        {q:"Wann beginnt der Unterricht morgen?", opts:["Um 8 Uhr","Um 9 Uhr","Um 10 Uhr"], a:1, ex:"Um neun Uhr."},
+        {q:"Was sollen die Schüler mitbringen?", opts:["Bücher","Geld","Essen"], a:0, ex:"„bringt eure Bücher mit“"},
+        {q:"Welcher Raum?", opts:["Raum 2","Raum 12","Raum 20"], a:1, ex:"Nummer zwölf."}
+      ]}
+  ],
+  writing: [
+    { title:"Formular i thjeshtë", prompt:"Du meldest dich für einen Deutschkurs an. Schreib eine kurze Nachricht an die Schule.",
+      points:["Schreib deinen Namen.","Schreib, woher du kommst.","Frag, wann der Kurs beginnt.","Frag nach dem Preis."],
+      phrases:"Hallo, / Ich heiße … / Ich komme aus … / Wann beginnt …? / Was kostet …?" },
+    { title:"SMS te një shok", prompt:"Du kannst heute nicht kommen. Schreib deinem Freund eine kurze Nachricht.",
+      points:["Sag Hallo.","Sag, dass du nicht kommen kannst.","Schreib warum.","Frag nach einem neuen Termin."],
+      phrases:"Hallo …, / Ich kann heute nicht … / Ich bin krank. / Vielleicht morgen? / Tschüss" },
+    { title:"Kartolinë nga pushimet", prompt:"Du bist im Urlaub. Schreib eine Postkarte an deine Familie.",
+      points:["Wo bist du?","Wie ist das Wetter?","Was machst du?","Wann kommst du zurück?"],
+      phrases:"Liebe Familie, / Ich bin in … / Das Wetter ist … / Ich komme am … zurück." },
+    { title:"Mesazh fqinjit", prompt:"Ein Paket für deinen Nachbarn ist bei dir. Schreib ihm eine Nachricht.",
+      points:["Sag, dass ein Paket da ist.","Sag, wo du wohnst.","Sag, wann du zu Hause bist.","Grüße freundlich."],
+      phrases:"Hallo Herr/Frau …, / Ihr Paket ist bei mir. / Ich wohne … / Ich bin ab … zu Hause." }
+  ],
+  plan: [
+    { title:"Planifikoni bashkë", prompt:"Ihr wollt zusammen einkaufen gehen. Plant das zusammen.",
+      points:["Wann geht ihr?","Wohin geht ihr?","Was kauft ihr?","Wie fahrt ihr?"],
+      phrases:"Wann gehen wir? / Um … Uhr? / Ja, gut. / Wir kaufen …" },
+    { title:"Planifikoni një takim", prompt:"Ihr wollt zusammen Kaffee trinken. Plant das zusammen.",
+      points:["Welcher Tag?","Welche Uhrzeit?","Welches Café?","Wer kommt noch mit?"],
+      phrases:"Am Samstag? / Um 16 Uhr? / Ins Café Sonne? / Einverstanden." }
+  ],
+  present: [
+    { title:"Prezantim: Unë", prompt:"Stell dich vor.",
+      points:["Name","Alter","Land","Wohnort","Sprachen"],
+      phrases:"Ich heiße … / Ich bin … Jahre alt. / Ich komme aus … / Ich wohne in … / Ich spreche …" },
+    { title:"Prezantim: Familja ime", prompt:"Erzähle von deiner Familie.",
+      points:["Wie viele Personen?","Namen","Alter","Beruf","Wo wohnen sie?"],
+      phrases:"Meine Familie hat … Personen. / Mein Vater heißt … / Er arbeitet als …" }
+  ]
+},
+
+A2: {
+  reading: [
+    { head:"E-Mail te një shok", body:"Hallo Blerim,\n\nwie geht es dir? Bei mir ist viel los. Ich habe eine neue Arbeit gefunden! Ich arbeite jetzt in einem Büro, von Montag bis Freitag, immer von 9 bis 17 Uhr. Das gefällt mir besser als vorher, denn am Wochenende habe ich jetzt frei.\n\nLetzte Woche bin ich auch umgezogen. Meine neue Wohnung ist kleiner, aber sie liegt im Zentrum. Ich brauche nur zehn Minuten zur Arbeit.\n\nKommst du mich bald besuchen? Am besten im Mai, dann ist das Wetter schön.\n\nViele Grüße\nEnis",
+      questions:[
+        {q:"Was ist neu bei Enis?", opts:["Eine neue Arbeit","Ein neues Auto","Eine neue Freundin"], a:0, ex:"„Ich habe eine neue Arbeit gefunden!“"},
+        {q:"Warum gefällt ihm die Arbeit besser?", opts:["Mehr Geld","Wochenende frei","Näher an der Wohnung"], a:1, ex:"„am Wochenende habe ich jetzt frei“"},
+        {q:"Wie ist die neue Wohnung?", opts:["Größer, aber weit weg","Kleiner, aber zentral","Größer und zentral"], a:1, ex:"Kleiner, aber im Zentrum."},
+        {q:"Wann soll Blerim kommen?", opts:["Im März","Im Mai","Im Juli"], a:1, ex:"„Am besten im Mai.“"}
+      ]},
+    { head:"Artikull i shkurtër", body:"Immer mehr Menschen in Deutschland machen Sport. Besonders beliebt ist Laufen. Man braucht dafür nur gute Schuhe und kann überall laufen.\n\nEine Studie zeigt: Etwa 40 Prozent der Deutschen machen mindestens einmal pro Woche Sport. Junge Leute machen mehr Sport als ältere Menschen.\n\nViele sagen, sie haben keine Zeit für Sport. Experten meinen aber: Schon 30 Minuten pro Tag sind genug. Man kann auch zu Fuß zur Arbeit gehen oder die Treppe statt den Aufzug nehmen.",
+      questions:[
+        {q:"Welcher Sport ist besonders beliebt?", opts:["Schwimmen","Laufen","Fußball"], a:1, ex:"„Besonders beliebt ist Laufen.“"},
+        {q:"Wie viele Deutsche machen Sport?", opts:["Etwa 20 %","Etwa 40 %","Etwa 60 %"], a:1, ex:"Etwa 40 Prozent."},
+        {q:"Was ist der häufigste Grund gegen Sport?", opts:["Keine Zeit","Kein Geld","Kein Interesse"], a:0, ex:"„sie haben keine Zeit“"},
+        {q:"Was empfehlen Experten?", opts:["30 Minuten pro Tag","2 Stunden pro Tag","Nur am Wochenende"], a:0, ex:"„Schon 30 Minuten pro Tag sind genug.“"}
+      ]},
+    { head:"Njoftime pune", body:"A) Kellner/in gesucht! Abends, 18–23 Uhr. Erfahrung nicht nötig. Tel: 089 445566\n\nB) Reinigungskraft für Büro. Früh morgens, 6–9 Uhr, Montag bis Freitag. 14 Euro/Stunde.\n\nC) Verkäufer/in im Supermarkt. Vollzeit, gute Deutschkenntnisse nötig.\n\nD) Babysitter gesucht. Nachmittags, 2–3 Tage pro Woche. Für zwei Kinder (4 und 7 Jahre).",
+      questions:[
+        {q:"Arta studiert und kann nur abends arbeiten.", opts:["A","B","C"], a:0, ex:"A ist abends von 18–23 Uhr."},
+        {q:"Herr Muça spricht noch nicht so gut Deutsch und will morgens arbeiten.", opts:["A","B","C"], a:1, ex:"B ist früh morgens, ohne Sprachanforderung."},
+        {q:"Wer mag Kinder, hat nachmittags Zeit?", opts:["B","C","D"], a:2, ex:"D: Babysitter, nachmittags."},
+        {q:"Welche Stelle ist Vollzeit?", opts:["A","C","D"], a:1, ex:"C: Verkäufer/in, Vollzeit."}
+      ]},
+    { head:"Udhëzime", body:"So kommen Sie zu uns:\n\nMit der U-Bahn: Nehmen Sie die Linie U2 bis Haltestelle Hauptplatz. Dann gehen Sie zu Fuß etwa fünf Minuten geradeaus. Unser Büro ist im dritten Stock, Zimmer 305.\n\nMit dem Auto: Es gibt Parkplätze hinter dem Gebäude. Die ersten zwei Stunden sind kostenlos, danach kostet jede Stunde zwei Euro.\n\nWichtig: Bitte melden Sie sich zuerst an der Rezeption im Erdgeschoss.",
+      questions:[
+        {q:"Welche U-Bahn-Linie?", opts:["U1","U2","U3"], a:1, ex:"Die Linie U2."},
+        {q:"In welchem Stock ist das Büro?", opts:["Erdgeschoss","Dritter Stock","Fünfter Stock"], a:1, ex:"Im dritten Stock, Zimmer 305."},
+        {q:"Wie lange ist Parken kostenlos?", opts:["Eine Stunde","Zwei Stunden","Drei Stunden"], a:1, ex:"Die ersten zwei Stunden."},
+        {q:"Was muss man zuerst tun?", opts:["Sich an der Rezeption melden","Direkt hochgehen","Anrufen"], a:0, ex:"„melden Sie sich zuerst an der Rezeption“"}
+      ]}
+  ],
+  listening: [
+    { title:"Njoftim në supermarket", script:"Liebe Kunden, wir haben heute ein besonderes Angebot. Frisches Obst und Gemüse sind zwanzig Prozent billiger. Das Angebot gilt nur heute bis achtzehn Uhr. Sie finden alles in der Abteilung zwei, gleich links neben dem Eingang.",
+      questions:[
+        {q:"Was ist im Angebot?", opts:["Obst und Gemüse","Fleisch und Fisch","Brot und Kuchen"], a:0, ex:"Frisches Obst und Gemüse."},
+        {q:"Wie viel billiger?", opts:["10 %","20 %","30 %"], a:1, ex:"Zwanzig Prozent."},
+        {q:"Bis wann gilt das Angebot?", opts:["Bis 16 Uhr","Bis 18 Uhr","Bis 20 Uhr"], a:1, ex:"Bis achtzehn Uhr."}
+      ]},
+    { title:"Bisedë për fundjavën", script:"Anna: Was machst du am Wochenende? Bekim: Am Samstag arbeite ich leider bis vierzehn Uhr. Aber am Sonntag habe ich frei. Anna: Super, wollen wir wandern gehen? Bekim: Gute Idee, aber nur wenn das Wetter gut ist. Anna: Der Wetterbericht sagt Sonne. Treffen wir uns um neun Uhr am Bahnhof? Bekim: Lieber um zehn, ich schlafe sonntags gern länger.",
+      questions:[
+        {q:"Wann arbeitet Bekim?", opts:["Samstag bis 14 Uhr","Sonntag den ganzen Tag","Gar nicht"], a:0, ex:"Samstag bis vierzehn Uhr."},
+        {q:"Was wollen sie machen?", opts:["Ins Kino gehen","Wandern gehen","Einkaufen"], a:1, ex:"„Wollen wir wandern gehen?“"},
+        {q:"Wann treffen sie sich?", opts:["Um 9 Uhr","Um 10 Uhr","Um 11 Uhr"], a:1, ex:"Bekim möchte lieber um zehn."}
+      ]},
+    { title:"Mesazh nga banka", script:"Guten Tag, hier ist die Sparkasse München. Ihre neue Bankkarte ist fertig. Sie können sie ab Montag in unserer Filiale abholen. Bitte bringen Sie Ihren Personalausweis mit. Wir haben von neun bis sechzehn Uhr geöffnet, am Donnerstag bis achtzehn Uhr.",
+      questions:[
+        {q:"Worum geht es?", opts:["Um eine neue Bankkarte","Um einen Kredit","Um ein Problem"], a:0, ex:"Die neue Bankkarte ist fertig."},
+        {q:"Was muss man mitbringen?", opts:["Geld","Personalausweis","Ein Foto"], a:1, ex:"Den Personalausweis."},
+        {q:"Wann ist donnerstags geöffnet?", opts:["Bis 16 Uhr","Bis 18 Uhr","Bis 20 Uhr"], a:1, ex:"Am Donnerstag bis achtzehn Uhr."}
+      ]},
+    { title:"Në restorant", script:"Kellner: Guten Abend, haben Sie reserviert? Gast: Ja, auf den Namen Krasniqi, für zwei Personen. Kellner: Einen Moment… ja, Tisch sieben am Fenster. Möchten Sie schon etwas trinken? Gast: Zweimal Wasser bitte, und die Speisekarte. Kellner: Sehr gern. Heute empfehle ich den Fisch, der ist ganz frisch.",
+      questions:[
+        {q:"Für wie viele Personen ist der Tisch?", opts:["Zwei","Drei","Vier"], a:0, ex:"Für zwei Personen."},
+        {q:"Wo ist der Tisch?", opts:["Am Fenster","An der Tür","Draußen"], a:0, ex:"Tisch sieben am Fenster."},
+        {q:"Was empfiehlt der Kellner?", opts:["Den Fisch","Das Fleisch","Die Suppe"], a:0, ex:"„Heute empfehle ich den Fisch.“"}
+      ]}
+  ],
+  writing: [
+    { title:"Email — ftesë", prompt:"Du hast Geburtstag und möchtest deine Freundin einladen. Schreib eine E-Mail.",
+      points:["Lade sie ein.","Sag wann und wo.","Sag, was es zu essen gibt.","Bitte um Antwort."],
+      phrases:"Liebe …, / ich möchte dich einladen. / Die Feier ist am … / Bitte sag mir Bescheid." },
+    { title:"Email — anulim", prompt:"Du hast einen Termin beim Friseur, kannst aber nicht kommen. Schreib eine E-Mail.",
+      points:["Nenne deinen Termin.","Sag ab.","Erkläre kurz warum.","Frag nach einem neuen Termin."],
+      phrases:"Sehr geehrte Damen und Herren, / ich habe am … einen Termin. / Leider kann ich nicht … / Geht es auch am …?" },
+    { title:"Email — falënderim", prompt:"Deine Nachbarin hat dir geholfen. Bedanke dich per E-Mail.",
+      points:["Bedanke dich.","Sag, wobei sie geholfen hat.","Biete deine Hilfe an.","Grüße freundlich."],
+      phrases:"Liebe Frau …, / vielen Dank für Ihre Hilfe bei … / Wenn Sie mal Hilfe brauchen, … / Viele Grüße" },
+    { title:"Email — kërkesë informacioni", prompt:"Du interessierst dich für einen Sportkurs. Schreib an das Sportzentrum.",
+      points:["Sag, wofür du dich interessierst.","Frag nach Zeiten.","Frag nach dem Preis.","Frag, ob man anmelden muss."],
+      phrases:"Sehr geehrte Damen und Herren, / ich interessiere mich für … / Wann findet … statt? / Was kostet …?" }
+  ],
+  plan: [
+    { title:"Planifikoni një festë", prompt:"Ihr wollt eine kleine Party für einen Freund organisieren.",
+      points:["Wann?","Wo?","Wer kommt?","Was esst ihr?","Wer kauft ein?"],
+      phrases:"Ich schlage vor … / Wollen wir …? / Gute Idee. / Lieber nicht, weil …" },
+    { title:"Planifikoni një udhëtim", prompt:"Ihr wollt zusammen einen Tagesausflug machen.",
+      points:["Wohin?","Wann?","Wie fahrt ihr?","Was nehmt ihr mit?","Wann kommt ihr zurück?"],
+      phrases:"Wie wäre es mit …? / Fahren wir mit …? / Einverstanden. / Ich finde besser …" }
+  ],
+  present: [
+    { title:"Prezantim: Dita ime", prompt:"Erzähle über deinen Tagesablauf.",
+      points:["Wann stehst du auf?","Was machst du am Vormittag?","Was am Nachmittag?","Was am Abend?","Wann gehst du schlafen?"],
+      phrases:"Ich stehe um … auf. / Dann … / Am Nachmittag … / Um … gehe ich schlafen." },
+    { title:"Prezantim: Vendlindja ime", prompt:"Erzähle über deine Heimatstadt.",
+      points:["Wo liegt sie?","Wie groß ist sie?","Was ist dort schön?","Was machen die Leute?","Was fehlt dir?"],
+      phrases:"Meine Heimatstadt liegt in … / Dort leben etwa … / Besonders schön ist … / Mir fehlt …" }
+  ]
+}
+};
+
+/* ===== PËRMBAJTJE SIPAS NIVELIT (B2, C1) ===== */
+const LEVEL_CONTENT_BC = {
+B2: {
+  reading: [
+    { head:"Artikull: Puna me kohë të shkurtuar", body:"Die Vier-Tage-Woche wird in Deutschland zunehmend diskutiert. Befürworter argumentieren, dass Beschäftigte bei gleicher Bezahlung produktiver arbeiten, wenn sie mehr Erholungszeit haben. Mehrere Pilotprojekte in Island und Großbritannien scheinen diese These zu stützen: Die Produktivität blieb dort weitgehend konstant oder stieg sogar leicht an.\n\nKritiker halten dem entgegen, dass sich solche Ergebnisse nicht ohne Weiteres auf alle Branchen übertragen lassen. Insbesondere in der Pflege, im Einzelhandel und im Handwerk sei der Personalmangel bereits jetzt gravierend. Eine Verkürzung der Arbeitszeit würde den Druck auf die verbleibenden Beschäftigten weiter erhöhen.\n\nHinzu kommt ein wirtschaftlicher Aspekt: Kleinere Betriebe verfügen selten über die finanziellen Reserven, um Personal aufzustocken. Was für einen Konzern machbar erscheint, kann für ein Familienunternehmen existenzbedrohend sein.\n\nEinigkeit besteht immerhin darin, dass pauschale Lösungen der Komplexität des Themas nicht gerecht werden. Sinnvoller erscheint eine branchenspezifische Herangehensweise.",
+      questions:[
+        {q:"Was zeigen die Pilotprojekte laut Text?", opts:["Die Produktivität sank deutlich","Die Produktivität blieb konstant oder stieg","Die Ergebnisse waren nicht messbar"], a:1, ex:"„blieb weitgehend konstant oder stieg sogar leicht an“"},
+        {q:"Welches Hauptargument bringen Kritiker?", opts:["Nicht auf alle Branchen übertragbar","Beschäftigte wollen es nicht","Es ist gesetzlich verboten"], a:0, ex:"Kritiker: nicht ohne Weiteres übertragbar, v. a. Pflege/Handel/Handwerk."},
+        {q:"Warum sind kleine Betriebe besonders betroffen?", opts:["Sie haben zu viele Mitarbeiter","Ihnen fehlen finanzielle Reserven","Sie arbeiten nur saisonal"], a:1, ex:"„verfügen selten über die finanziellen Reserven“"},
+        {q:"Worin besteht laut Text Einigkeit?", opts:["Die Vier-Tage-Woche soll kommen","Pauschale Lösungen greifen zu kurz","Das Thema ist unwichtig"], a:1, ex:"„pauschale Lösungen … nicht gerecht werden“"}
+      ]},
+    { head:"Koment: Qytetet dhe gjelbërimi", body:"Wer im Sommer durch eine deutsche Innenstadt läuft, spürt es unmittelbar: Asphalt und Beton speichern Hitze und geben sie noch nachts wieder ab. Fachleute sprechen vom sogenannten Wärmeinseleffekt, der Innenstädte um bis zu zehn Grad wärmer machen kann als das Umland.\n\nDie naheliegende Antwort lautet: mehr Grün. Bäume spenden nicht nur Schatten, sie kühlen ihre Umgebung auch durch Verdunstung. Doch die Umsetzung erweist sich als schwieriger als gedacht. Unter vielen Straßen verlaufen Leitungen, die tiefe Wurzeln unmöglich machen. Zudem benötigen Stadtbäume in den ersten Jahren intensive Pflege — und Personal dafür ist knapp.\n\nManche Kommunen setzen deshalb auf Fassaden- und Dachbegrünung. Diese Lösungen sind allerdings teuer in der Anschaffung, und die Kosten tragen häufig private Eigentümer. Ohne Förderprogramme dürfte sich der Ansatz kaum flächendeckend durchsetzen.\n\nFest steht: Wer Städte lebenswert halten will, wird um Investitionen nicht herumkommen.",
+      questions:[
+        {q:"Was ist der Wärmeinseleffekt?", opts:["Innenstädte sind wärmer als das Umland","Der Sommer wird länger","Häuser speichern Kälte"], a:0, ex:"Innenstädte bis zu zehn Grad wärmer als das Umland."},
+        {q:"Warum ist Baumpflanzen schwierig?", opts:["Bäume wachsen zu schnell","Leitungen und fehlendes Pflegepersonal","Die Bürger sind dagegen"], a:1, ex:"Leitungen verhindern tiefe Wurzeln, Personal ist knapp."},
+        {q:"Was ist das Problem bei Dachbegrünung?", opts:["Sie funktioniert nicht","Hohe Kosten für private Eigentümer","Sie ist verboten"], a:1, ex:"Teuer, Kosten tragen oft private Eigentümer."},
+        {q:"Welche Schlussfolgerung zieht der Text?", opts:["Investitionen sind unvermeidlich","Das Problem löst sich von selbst","Städte sollten schrumpfen"], a:0, ex:"„wird um Investitionen nicht herumkommen“"}
+      ]},
+    { head:"Këndvështrime: Mësimi online", body:"STIMME 1 — Frau Berger, Lehrerin: Digitale Formate haben im Unterricht ihren Platz, aber sie ersetzen die persönliche Begegnung nicht. Gerade schwächere Schüler brauchen die unmittelbare Rückmeldung, die ein Bildschirm nur bedingt liefert.\n\nSTIMME 2 — Herr Aliu, Student: Für mich war das Online-Semester ein Gewinn. Ich konnte Vorlesungen anhalten, zurückspulen und in meinem Tempo arbeiten. Nebenbei habe ich gearbeitet — das wäre in Präsenz unmöglich gewesen.\n\nSTIMME 3 — Frau Novak, Mutter: Zu Hause fehlte meinen Kindern jede Struktur. Ohne feste Abläufe und ohne Mitschüler ließ die Motivation rapide nach. Wir Eltern konnten das nicht auffangen.\n\nSTIMME 4 — Herr Klein, Schulleiter: Man darf nicht so tun, als gäbe es nur eine Wahrheit. Entscheidend ist, wie gut die technische Ausstattung ist und wie souverän die Lehrkräfte damit umgehen.",
+      questions:[
+        {q:"Wer sieht den größten persönlichen Nutzen?", opts:["Frau Berger","Herr Aliu","Frau Novak"], a:1, ex:"Der Student konnte nebenbei arbeiten und im eigenen Tempo lernen."},
+        {q:"Wer betont das Fehlen von Struktur?", opts:["Herr Aliu","Frau Novak","Herr Klein"], a:1, ex:"Frau Novak: „fehlte meinen Kindern jede Struktur“"},
+        {q:"Welche Position vertritt Herr Klein?", opts:["Eindeutig dafür","Eindeutig dagegen","Es kommt auf die Umstände an"], a:2, ex:"„Man darf nicht so tun, als gäbe es nur eine Wahrheit.“"},
+        {q:"Wen sieht Frau Berger besonders benachteiligt?", opts:["Schwächere Schüler","Berufstätige","Lehrkräfte"], a:0, ex:"„Gerade schwächere Schüler brauchen die unmittelbare Rückmeldung.“"}
+      ]},
+    { head:"Udhëzime pune: Kontrata", body:"Hinweise zur Probezeit\n\nDie Probezeit dient beiden Vertragsparteien dazu, die Zusammenarbeit zu erproben. Sie darf maximal sechs Monate betragen. Während dieser Zeit gilt eine verkürzte Kündigungsfrist von zwei Wochen — und zwar für beide Seiten.\n\nZu beachten ist, dass eine Kündigung in der Probezeit grundsätzlich keiner Begründung bedarf. Ausgenommen sind Fälle, in denen die Kündigung gegen geltendes Recht verstößt, etwa bei Diskriminierung.\n\nDer gesetzliche Urlaubsanspruch entsteht auch während der Probezeit anteilig, kann jedoch in den ersten sechs Monaten in der Regel noch nicht vollständig genommen werden.\n\nEndet die Probezeit ohne Kündigung, geht das Arbeitsverhältnis automatisch in ein reguläres über. Eine gesonderte Mitteilung ist hierfür nicht erforderlich.",
+      questions:[
+        {q:"Wie lange darf die Probezeit höchstens dauern?", opts:["Drei Monate","Sechs Monate","Zwölf Monate"], a:1, ex:"Maximal sechs Monate."},
+        {q:"Wie lang ist die Kündigungsfrist in der Probezeit?", opts:["Zwei Wochen","Vier Wochen","Drei Monate"], a:0, ex:"Verkürzte Frist von zwei Wochen, für beide Seiten."},
+        {q:"Braucht eine Kündigung in der Probezeit eine Begründung?", opts:["Ja, immer","Grundsätzlich nicht","Nur bei Vollzeit"], a:1, ex:"„bedarf grundsätzlich keiner Begründung“"},
+        {q:"Was passiert nach der Probezeit ohne Kündigung?", opts:["Der Vertrag endet","Er wird automatisch regulär","Er muss neu unterschrieben werden"], a:1, ex:"„geht automatisch in ein reguläres über“"}
+      ]}
+  ],
+  listening: [
+    { title:"Radio: Intervistë për fjetjen", script:"Moderatorin: Herr Doktor Weber, viele Menschen klagen über Schlafprobleme. Woran liegt das? Dr. Weber: Häufig an unregelmäßigen Zeiten. Der Körper braucht einen festen Rhythmus. Wer am Wochenende drei Stunden später ins Bett geht, bringt die innere Uhr durcheinander. Moderatorin: Was raten Sie konkret? Dr. Weber: Erstens: möglichst immer zur gleichen Zeit aufstehen, auch am Wochenende. Zweitens: mindestens eine Stunde vor dem Schlafengehen keine Bildschirme mehr. Das blaue Licht unterdrückt die Melatoninproduktion. Moderatorin: Und wenn man trotzdem wach liegt? Dr. Weber: Dann sollte man aufstehen und etwas Ruhiges tun, statt sich stundenlang im Bett zu wälzen.",
+      questions:[
+        {q:"Was ist laut Dr. Weber die Hauptursache?", opts:["Unregelmäßige Zeiten","Zu wenig Sport","Falsches Essen"], a:0, ex:"„Häufig an unregelmäßigen Zeiten.“"},
+        {q:"Was rät er als Erstes?", opts:["Immer gleiche Aufstehzeit","Mehr schlafen","Sport am Abend"], a:0, ex:"Immer zur gleichen Zeit aufstehen."},
+        {q:"Was soll man tun, wenn man wach liegt?", opts:["Liegen bleiben","Aufstehen und etwas Ruhiges tun","Fernsehen"], a:1, ex:"Aufstehen statt sich zu wälzen."}
+      ]},
+    { title:"Bisedë: Ndryshim karriere", script:"Lena: Und du willst das wirklich durchziehen? Nach zwölf Jahren im Marketing? Tomás: Ja, ich habe lange gezögert, aber die Entscheidung steht. Ich fange im Herbst die Ausbildung zum Physiotherapeuten an. Lena: Finanziell ist das doch ein herber Einschnitt. Tomás: Absolut. Ich verdiene in den ersten drei Jahren deutlich weniger. Aber ich habe gerechnet: mit meinen Ersparnissen komme ich hin, wenn ich nebenbei am Wochenende arbeite. Lena: Und wenn es dir dann doch nicht gefällt? Tomás: Das Risiko besteht. Aber ich habe zwei Praktika gemacht, bevor ich mich entschieden habe. Das war mir wichtig.",
+      questions:[
+        {q:"Was macht Tomás beruflich bisher?", opts:["Physiotherapie","Marketing","Ausbildung"], a:1, ex:"Zwölf Jahre im Marketing."},
+        {q:"Wie finanziert er die Umschulung?", opts:["Ersparnisse und Wochenendarbeit","Ein Stipendium","Ein Kredit"], a:0, ex:"Ersparnisse plus Nebenjob am Wochenende."},
+        {q:"Was hat er vor der Entscheidung gemacht?", opts:["Zwei Praktika","Einen Kurs","Nichts Besonderes"], a:0, ex:"„ich habe zwei Praktika gemacht“"}
+      ]},
+    { title:"Leksion i shkurtër: Konsumi", script:"Guten Tag. Im heutigen Vortrag geht es um bewussten Konsum. Studien zeigen ein interessantes Phänomen: Viele Menschen geben in Befragungen an, nachhaltig einkaufen zu wollen — im tatsächlichen Kaufverhalten schlägt sich das jedoch kaum nieder. Die Forschung nennt das die Einstellungs-Verhaltens-Lücke. Die Gründe sind vielfältig. Zum einen spielt der Preis eine erhebliche Rolle, zum anderen fehlt oft schlicht die Transparenz: Woran soll man erkennen, ob ein Produkt tatsächlich nachhaltig hergestellt wurde? Siegel gibt es viele, doch ihre Aussagekraft variiert stark. Was also tun? Fachleute plädieren weniger für moralische Appelle als für strukturelle Änderungen — etwa klare gesetzliche Standards.",
+      questions:[
+        {q:"Was beschreibt die Einstellungs-Verhaltens-Lücke?", opts:["Absicht und Handeln stimmen nicht überein","Preise steigen ständig","Menschen kaufen zu wenig"], a:0, ex:"Man will nachhaltig kaufen, tut es aber nicht."},
+        {q:"Welches Problem wird bei Siegeln genannt?", opts:["Es gibt zu wenige","Ihre Aussagekraft variiert stark","Sie sind verboten"], a:1, ex:"„ihre Aussagekraft variiert stark“"},
+        {q:"Was empfehlen Fachleute?", opts:["Moralische Appelle","Strukturelle Änderungen","Höhere Preise"], a:1, ex:"Weniger Appelle, mehr gesetzliche Standards."}
+      ]},
+    { title:"Njoftim në firmë", script:"Liebe Kolleginnen und Kollegen, eine wichtige Mitteilung zur Umstellung unserer Software. Ab dem ersten Oktober arbeiten wir ausschließlich mit dem neuen System. Die Schulungen finden in der letzten Septemberwoche statt, jeweils dienstags und donnerstags von vierzehn bis sechzehn Uhr. Die Teilnahme ist verpflichtend. Wer an beiden Terminen verhindert ist, meldet sich bitte umgehend bei der Personalabteilung, damit ein Ersatztermin gefunden werden kann. Die alten Zugangsdaten verlieren am dreißigsten September ihre Gültigkeit.",
+      questions:[
+        {q:"Ab wann gilt das neue System?", opts:["Ab 1. September","Ab 1. Oktober","Ab 30. Oktober"], a:1, ex:"Ab dem ersten Oktober."},
+        {q:"Wann sind die Schulungen?", opts:["Dienstags und donnerstags","Montags und mittwochs","Nur freitags"], a:0, ex:"Dienstags und donnerstags, 14–16 Uhr."},
+        {q:"Was gilt für die Teilnahme?", opts:["Freiwillig","Verpflichtend","Nur für neue Mitarbeiter"], a:1, ex:"„Die Teilnahme ist verpflichtend.“"}
+      ]}
+  ],
+  writing: [
+    { title:"Forum — argumentim", prompt:"In einem Online-Forum wird diskutiert: „Sollten Unternehmen zur Vier-Tage-Woche verpflichtet werden?“ Verfasse einen argumentativen Beitrag (ca. 150 Wörter).",
+      points:["Formuliere klar deine Position.","Nenne zwei begründete Argumente.","Gehe auf ein Gegenargument ein.","Ziehe ein Fazit."],
+      phrases:"Aus meiner Sicht … / Ein zentrales Argument dafür ist, dass … / Zwar …, jedoch … / Abschließend lässt sich festhalten, dass …" },
+    { title:"Ankesë zyrtare", prompt:"Ein Sprachkurs, den du gebucht hast, wurde ohne Vorankündigung verlegt. Schreib eine formelle Beschwerde (ca. 150 Wörter).",
+      points:["Schildere den Sachverhalt sachlich.","Erkläre, welche Nachteile entstanden sind.","Formuliere eine konkrete Forderung.","Setze eine angemessene Frist."],
+      phrases:"Sehr geehrte Damen und Herren, / mit Bedauern musste ich feststellen, dass … / Hierdurch entstand mir … / Ich fordere Sie daher auf, … bis zum …" },
+    { title:"Letër lexuesi", prompt:"Zu einem Artikel über Autos in Innenstädten schreibst du einen Leserbrief (ca. 150 Wörter).",
+      points:["Beziehe dich auf den Artikel.","Stimme zu oder widersprich begründet.","Bringe ein eigenes Beispiel.","Formuliere einen Appell."],
+      phrases:"In Ihrem Artikel vom … / Dieser Einschätzung kann ich nur teilweise zustimmen, denn … / Ein Beispiel aus meiner Erfahrung: … / Daher plädiere ich dafür, dass …" },
+    { title:"Email — propozim projekti", prompt:"Du schlägst deinem Vorgesetzten eine Verbesserung im Arbeitsablauf vor (ca. 150 Wörter).",
+      points:["Beschreibe das aktuelle Problem.","Erläutere deinen Vorschlag.","Nenne den erwarteten Nutzen.","Bitte um ein Gespräch."],
+      phrases:"Sehr geehrter Herr …, / derzeit stellt sich die Situation so dar, dass … / Ich schlage daher vor, … / Dadurch ließe sich … / Über ein kurzes Gespräch würde ich mich freuen." }
+  ],
+  plan: [
+    { title:"Planifikoni një event", prompt:"Ihr organisiert für eure Firma einen Team-Tag. Plant gemeinsam und einigt euch.",
+      points:["Ziel der Veranstaltung","Termin und Ort","Programm","Budget","Aufgabenverteilung"],
+      phrases:"Ich würde vorschlagen, … / Wäre es nicht sinnvoller, …? / Da bin ich anderer Meinung, weil … / Einigen wir uns auf …" },
+    { title:"Planifikoni një zgjidhje", prompt:"In eurem Kurs gibt es Streit über die Sitzordnung. Findet gemeinsam eine Lösung.",
+      points:["Problem benennen","Vorschläge machen","Auf Einwände reagieren","Kompromiss finden","Ergebnis zusammenfassen"],
+      phrases:"Das Problem besteht darin, dass … / Wie wäre es, wenn … / Das sehe ich anders, weil … / Können wir uns darauf einigen, dass …?" }
+  ],
+  present: [
+    { title:"Prezantim: Media dhe shoqëria", prompt:"Halte einen strukturierten Kurzvortrag zum Thema „Soziale Medien und ihre Wirkung auf die Gesellschaft“.",
+      points:["Einleitung und Gliederung","Aktuelle Situation","Vorteile","Nachteile und Risiken","Eigene Bewertung und Schluss"],
+      phrases:"Ich möchte mein Thema in drei Punkte gliedern. / Zunächst … / Darüber hinaus … / Kritisch anzumerken ist … / Zusammenfassend …" },
+    { title:"Prezantim: Arsimi", prompt:"Halte einen Kurzvortrag zum Thema „Wie sollte Schule sich verändern?“",
+      points:["Einleitung","Ist-Zustand","Konkrete Vorschläge","Mögliche Einwände","Fazit"],
+      phrases:"Mein Vortrag gliedert sich wie folgt: … / Gegenwärtig … / Ich schlage vor, … / Man könnte einwenden, dass … / Mein Fazit lautet …" }
+  ]
+},
+
+C1: {
+  reading: [
+    { head:"Ese: Kujtesa dhe harresa", body:"Dass das menschliche Gedächtnis kein Archiv ist, in dem Erinnerungen unverändert lagern, gilt in der Forschung längst als unstrittig. Weniger geläufig ist die Einsicht, dass jeder Abruf einer Erinnerung diese zugleich verändert. Das Erinnern ist mithin ein rekonstruktiver, kein reproduktiver Vorgang.\n\nDaraus ergeben sich weitreichende Konsequenzen, etwa für die Bewertung von Zeugenaussagen vor Gericht. Was Zeuginnen und Zeugen in bester Absicht schildern, kann durch spätere Gespräche, Medienberichte oder auch nur durch suggestive Fragestellungen unbemerkt überformt worden sein. Die Überzeugung, mit der eine Aussage vorgetragen wird, korreliert dabei keineswegs zuverlässig mit ihrer Genauigkeit.\n\nBemerkenswert ist ferner, dass dem Vergessen lange ausschließlich eine defizitäre Rolle zugeschrieben wurde. Neuere Ansätze deuten es hingegen als aktive Leistung: Nur weil Unwesentliches ausgeblendet wird, bleibt das Wesentliche zugänglich. Vergessen erscheint in dieser Lesart nicht als Versagen des Gedächtnisses, sondern als dessen Voraussetzung.",
+      questions:[
+        {q:"Was gilt in der Forschung als unstrittig?", opts:["Erinnerungen lagern unverändert","Das Gedächtnis ist kein Archiv","Vergessen ist ein Defekt"], a:1, ex:"„kein Archiv, in dem Erinnerungen unverändert lagern“"},
+        {q:"Was geschieht bei jedem Abruf einer Erinnerung?", opts:["Sie wird verändert","Sie wird gelöscht","Sie wird verstärkt gespeichert"], a:0, ex:"„jeder Abruf … verändert diese zugleich“"},
+        {q:"Was sagt der Text über Überzeugung bei Zeugenaussagen?", opts:["Sie garantiert Genauigkeit","Sie korreliert nicht zuverlässig mit Genauigkeit","Sie ist irrelevant vor Gericht"], a:1, ex:"„korreliert keineswegs zuverlässig mit ihrer Genauigkeit“"},
+        {q:"Wie deuten neuere Ansätze das Vergessen?", opts:["Als aktive Leistung","Als reines Versagen","Als Krankheitszeichen"], a:0, ex:"„deuten es hingegen als aktive Leistung“"}
+      ]},
+    { head:"Analizë: Gjuha dhe pushteti", body:"Sprache bildet Wirklichkeit nicht bloß ab, sie strukturiert sie mit. Wer über Sachverhalte spricht, trifft — bewusst oder unbewusst — Vorentscheidungen darüber, was als selbstverständlich, als strittig oder als undenkbar erscheint. Der Kampf um Begriffe ist insofern selten ein bloßer Streit um Worte.\n\nBesonders augenfällig wird dies in politischen Debatten. Ob von „Flüchtlingswelle“ oder von „Schutzsuchenden“ die Rede ist, präjudiziert die Bewertung des Sachverhalts erheblich, noch bevor Argumente ausgetauscht werden. Metaphern sind dabei keineswegs schmückendes Beiwerk, sondern Denkangebote: Wer eine Gesellschaft als Körper beschreibt, legt andere Schlüsse nahe als jemand, der sie als Netzwerk begreift.\n\nDaraus folgt jedoch nicht, dass jede Wortwahl gleichermaßen manipulativ wäre. Entscheidend ist die Bereitschaft, die eigenen sprachlichen Voreinstellungen zu reflektieren — eine Fähigkeit, die sich weniger durch Belehrung als durch Übung einstellt.",
+      questions:[
+        {q:"Welche These vertritt der Text zur Sprache?", opts:["Sie bildet Wirklichkeit nur ab","Sie strukturiert Wirklichkeit mit","Sie ist politisch neutral"], a:1, ex:"„bildet Wirklichkeit nicht bloß ab, sie strukturiert sie mit“"},
+        {q:"Was bewirkt die Wortwahl in Debatten?", opts:["Sie präjudiziert die Bewertung","Sie hat kaum Einfluss","Sie ersetzt Argumente vollständig"], a:0, ex:"„präjudiziert die Bewertung … erheblich“"},
+        {q:"Wie werden Metaphern eingeordnet?", opts:["Als schmückendes Beiwerk","Als Denkangebote","Als Fehler im Ausdruck"], a:1, ex:"„keineswegs schmückendes Beiwerk, sondern Denkangebote“"},
+        {q:"Was ist laut Text entscheidend?", opts:["Reflexion der eigenen Sprache","Vermeidung von Metaphern","Einheitliche Begriffe"], a:0, ex:"„Bereitschaft, die eigenen sprachlichen Voreinstellungen zu reflektieren“"}
+      ]},
+    { head:"Pozicione: Inteligjenca artificiale në punë", body:"POSITION A — Wirtschaftsforscherin: Die Sorge vor massenhaftem Arbeitsplatzverlust verkennt historische Erfahrungen. Technologischer Wandel hat Tätigkeitsprofile stets verschoben, nicht Arbeit als solche beseitigt. Problematisch ist weniger das Verschwinden von Berufen als die Geschwindigkeit der Anpassung.\n\nPOSITION B — Gewerkschaftsvertreter: Genau diese Geschwindigkeit ist das Problem. Wer mit fünfzig seine Tätigkeit verliert, dem nützt der Hinweis auf langfristige Beschäftigungseffekte wenig. Notwendig sind verbindliche Weiterbildungsansprüche, nicht Appelle an Eigenverantwortung.\n\nPOSITION C — Informatiker: Die Debatte krankt daran, dass technische Möglichkeiten mit betrieblicher Realität verwechselt werden. Vieles, was demonstriert wird, scheitert im Alltag an Datenqualität und fehlender Einbindung in bestehende Abläufe.\n\nPOSITION D — Ethikerin: Selbst funktionierende Systeme werfen die Frage auf, wer Verantwortung trägt, wenn Entscheidungen delegiert werden. Diese Frage lässt sich technisch nicht beantworten.",
+      questions:[
+        {q:"Wer relativiert die Angst vor Jobverlusten historisch?", opts:["Position A","Position B","Position D"], a:0, ex:"Die Wirtschaftsforscherin verweist auf historische Erfahrungen."},
+        {q:"Was fordert Position B konkret?", opts:["Verbindliche Weiterbildungsansprüche","Höhere Löhne","Ein Technologieverbot"], a:0, ex:"„Notwendig sind verbindliche Weiterbildungsansprüche“"},
+        {q:"Worauf verweist der Informatiker?", opts:["Auf ethische Fragen","Auf die Lücke zwischen Demo und Alltag","Auf zu hohe Kosten"], a:1, ex:"Scheitert im Alltag an Datenqualität und Einbindung."},
+        {q:"Welche Frage stellt die Ethikerin?", opts:["Wer trägt Verantwortung?","Wie schnell ist die Technik?","Was kostet die Umstellung?"], a:0, ex:"„wer Verantwortung trägt, wenn Entscheidungen delegiert werden“"}
+      ]},
+    { head:"Tekst specialistik: Ndryshimi demografik", body:"Die demografische Entwicklung stellt die sozialen Sicherungssysteme vor strukturelle Herausforderungen, die sich durch Konjunkturprogramme allein nicht bewältigen lassen. Da das umlagefinanzierte Rentensystem darauf beruht, dass Erwerbstätige die laufenden Renten finanzieren, wirkt sich eine Verschiebung des Verhältnisses zwischen Beitragszahlenden und Leistungsempfangenden unmittelbar aus.\n\nDiskutiert werden im Wesentlichen vier Stellschrauben: eine Anhebung des Renteneintrittsalters, eine Erhöhung der Beitragssätze, eine Absenkung des Rentenniveaus sowie eine stärkere Steuerfinanzierung. Jede dieser Optionen verteilt Lasten unterschiedlich — zwischen Generationen, Einkommensgruppen und Erwerbsbiografien.\n\nDass sich politische Mehrheiten hierfür nur schwer organisieren lassen, liegt auf der Hand: Die Kosten fallen unmittelbar an, der Nutzen zeigt sich erst langfristig. Eben deshalb neigen Reformen in diesem Feld dazu, aufgeschoben statt gestaltet zu werden.",
+      questions:[
+        {q:"Worauf beruht das umlagefinanzierte Rentensystem?", opts:["Erwerbstätige finanzieren laufende Renten","Jeder spart für sich selbst","Der Staat zahlt alles"], a:0, ex:"Erwerbstätige finanzieren die laufenden Renten."},
+        {q:"Wie viele Stellschrauben werden genannt?", opts:["Zwei","Drei","Vier"], a:2, ex:"Renteneintrittsalter, Beitragssätze, Rentenniveau, Steuerfinanzierung."},
+        {q:"Warum sind Mehrheiten schwer zu organisieren?", opts:["Kosten sofort, Nutzen erst später","Das Thema ist unbekannt","Es gibt keine Vorschläge"], a:0, ex:"„Die Kosten fallen unmittelbar an, der Nutzen … langfristig.“"},
+        {q:"Welche Tendenz beschreibt der Text?", opts:["Reformen werden aufgeschoben","Reformen kommen zu schnell","Reformen sind abgeschlossen"], a:0, ex:"„aufgeschoben statt gestaltet zu werden“"}
+      ]}
+  ],
+  listening: [
+    { title:"Diskutim në panel", script:"Moderator: Frau Professor Reinhardt, Sie kritisieren den Begriff Digitalisierung als zu unscharf. Warum? Reinhardt: Weil unter diesem Etikett höchst Unterschiedliches verhandelt wird — von der Aktenverwaltung bis zu lernenden Systemen. Wer alles zusammenwirft, kann keine differenzierten Antworten geben. Moderator: Herr Sandner, Sie sehen das anders? Sandner: Nur teilweise. Unschärfe ist in öffentlichen Debatten unvermeidlich, sonst spricht man aneinander vorbei. Entscheidend ist, dass man bei konkreten Maßnahmen präzise wird. Reinhardt: Dem widerspreche ich nicht grundsätzlich. Mein Einwand zielt darauf, dass die Unschärfe hier systematisch genutzt wird, um Zuständigkeiten zu verwischen.",
+      questions:[
+        {q:"Was kritisiert Frau Reinhardt?", opts:["Den unscharfen Begriff Digitalisierung","Die Kosten der Digitalisierung","Die Geschwindigkeit"], a:0, ex:"Der Begriff sei zu unscharf."},
+        {q:"Wie positioniert sich Herr Sandner?", opts:["Er widerspricht vollständig","Er stimmt teilweise zu","Er enthält sich"], a:1, ex:"„Nur teilweise.“"},
+        {q:"Was wirft Reinhardt am Ende vor?", opts:["Unschärfe verwische Zuständigkeiten","Es fehle an Geld","Die Technik sei veraltet"], a:0, ex:"„um Zuständigkeiten zu verwischen“"}
+      ]},
+    { title:"Leksion: Vendimmarrja", script:"Meine Damen und Herren, in der Entscheidungsforschung hat sich die Annahme des durchgehend rational handelnden Menschen als empirisch unhaltbar erwiesen. Menschen entscheiden regelmäßig unter Unsicherheit, mit begrenzter Zeit und begrenzter Aufmerksamkeit. Statt Optionen vollständig zu vergleichen, greifen sie auf Heuristiken zurück — Faustregeln, die häufig zu brauchbaren, gelegentlich aber zu systematisch verzerrten Ergebnissen führen. Wichtig ist hierbei: Diese Verzerrungen sind keine individuellen Schwächen, sondern vorhersagbare Muster. Genau darin liegt ihre praktische Relevanz — sie lassen sich einkalkulieren, etwa bei der Gestaltung von Formularen oder Auswahlprozessen.",
+      questions:[
+        {q:"Was hat sich als unhaltbar erwiesen?", opts:["Der durchgehend rationale Mensch","Die Existenz von Heuristiken","Die Entscheidungsforschung selbst"], a:0, ex:"Die Annahme des rational handelnden Menschen."},
+        {q:"Was sind Heuristiken laut Vortrag?", opts:["Faustregeln","Rechenmodelle","Gesetze"], a:0, ex:"„Faustregeln“"},
+        {q:"Wie werden die Verzerrungen bewertet?", opts:["Als individuelle Schwächen","Als vorhersagbare Muster","Als Zufall"], a:1, ex:"„keine individuellen Schwächen, sondern vorhersagbare Muster“"}
+      ]},
+    { title:"Intervistë: Arkitekturë", script:"Journalistin: Sie sagen, gute Architektur erkenne man nicht am Entwurf, sondern erst nach zwanzig Jahren. Architekt: Richtig. Ein Gebäude, das ausschließlich für eine bestimmte Nutzung konzipiert wurde, wird zum Problem, sobald sich diese Nutzung ändert — und sie ändert sich fast immer. Journalistin: Das klingt nach einem Plädoyer für Beliebigkeit. Architekt: Im Gegenteil. Anpassungsfähigkeit erfordert mehr Präzision, nicht weniger. Man muss die Struktur so klar anlegen, dass spätere Eingriffe möglich sind, ohne das Ganze zu zerstören. Beliebig gebaute Häuser sind meist besonders unflexibel.",
+      questions:[
+        {q:"Woran erkennt man gute Architektur laut Architekt?", opts:["Am Entwurf","Erst nach etwa zwanzig Jahren","Am Preis"], a:1, ex:"Erst nach zwanzig Jahren."},
+        {q:"Was wird zum Problem?", opts:["Gebäude nur für eine Nutzung","Zu große Gebäude","Alte Materialien"], a:0, ex:"Ausschließlich für eine Nutzung konzipiert."},
+        {q:"Was erfordert Anpassungsfähigkeit?", opts:["Mehr Präzision","Weniger Planung","Mehr Beliebigkeit"], a:0, ex:"„erfordert mehr Präzision, nicht weniger“"}
+      ]},
+    { title:"Njoftim akademik", script:"Sehr geehrte Studierende, wir möchten Sie über eine Änderung der Prüfungsordnung informieren. Ab dem kommenden Wintersemester entfällt die bisherige Zwischenprüfung. An ihre Stelle treten zwei studienbegleitende Leistungsnachweise, die jeweils im dritten und im fünften Fachsemester zu erbringen sind. Für Studierende, die ihr Studium vor dem Stichtag aufgenommen haben, gilt Vertrauensschutz: Sie können wählen, nach welcher Ordnung sie geprüft werden. Diese Wahl ist allerdings einmalig und unwiderruflich und muss bis spätestens Ende des zweiten Semesters schriftlich erklärt werden.",
+      questions:[
+        {q:"Was entfällt ab dem Wintersemester?", opts:["Die Zwischenprüfung","Die Abschlussarbeit","Die Anwesenheitspflicht"], a:0, ex:"Die bisherige Zwischenprüfung entfällt."},
+        {q:"Was tritt an ihre Stelle?", opts:["Zwei studienbegleitende Nachweise","Eine mündliche Prüfung","Nichts"], a:0, ex:"Zwei Leistungsnachweise im 3. und 5. Semester."},
+        {q:"Was gilt für die Wahl der Prüfungsordnung?", opts:["Einmalig und unwiderruflich","Jederzeit änderbar","Automatisch"], a:0, ex:"„einmalig und unwiderruflich“"}
+      ]}
+  ],
+  writing: [
+    { title:"Ese argumentuese", prompt:"Verfasse einen argumentativen Text zum Thema „Sollte lebenslanges Lernen verpflichtend gefördert werden?“ (ca. 200 Wörter).",
+      points:["Führe differenziert in das Thema ein.","Entwickle eine klare These.","Argumentiere mit mindestens zwei Belegen.","Berücksichtige eine Gegenposition.","Formuliere ein abwägendes Fazit."],
+      phrases:"Angesichts … stellt sich die Frage, ob … / Für diese Position spricht insbesondere, dass … / Einwenden ließe sich zwar, dass …, allerdings … / Alles in allem erscheint mir …" },
+    { title:"Koment për një grafik", prompt:"Beschreibe und interpretiere die Entwicklung der Studierendenzahlen der letzten zehn Jahre (fiktiv) und ziehe Schlüsse (ca. 200 Wörter).",
+      points:["Beschreibe die Datenlage neutral.","Benenne auffällige Entwicklungen.","Formuliere mögliche Erklärungen.","Grenze Interpretation von Beobachtung ab.","Schließe mit einer Einschätzung."],
+      phrases:"Die Darstellung zeigt … / Auffällig ist insbesondere … / Dies ließe sich damit erklären, dass … / Ob dieser Zusammenhang tatsächlich besteht, lässt sich anhand der Daten nicht abschließend klären." },
+    { title:"Letër formale komplekse", prompt:"Als Kursteilnehmer wendest du dich an die Leitung, weil die Kursqualität nicht den Zusagen entspricht (ca. 200 Wörter).",
+      points:["Schildere den Sachverhalt präzise.","Belege mit konkreten Beispielen.","Formuliere sachlich, aber bestimmt.","Nenne eine konkrete Erwartung.","Halte die Form eines Geschäftsbriefs ein."],
+      phrases:"Sehr geehrte Damen und Herren, / mit diesem Schreiben wende ich mich an Sie, da … / Konkret ist festzustellen, dass … / Ich erwarte daher, dass … / Mit freundlichen Grüßen" },
+    { title:"Kontribut në diskutim", prompt:"Verfasse einen Diskussionsbeitrag zu „Homeoffice: Freiheit oder Entgrenzung?“ (ca. 200 Wörter).",
+      points:["Ordne das Thema ein.","Beleuchte beide Seiten.","Nimm begründet Stellung.","Verwende präzise Konnektoren.","Schließe mit einem Ausblick."],
+      phrases:"Die Diskussion um … wird häufig verkürzt geführt. / Einerseits …, andererseits … / Meines Erachtens überwiegt … / Langfristig dürfte entscheidend sein, ob …" }
+  ],
+  plan: [
+    { title:"Negocioni një zgjidhje", prompt:"Ihr müsst als Team über die Verteilung eines begrenzten Budgets entscheiden. Verhandelt und einigt euch.",
+      points:["Prioritäten benennen","Vorschläge begründen","Einwände sachlich behandeln","Kompromiss aushandeln","Ergebnis festhalten"],
+      phrases:"Aus meiner Sicht sollte Priorität haben, dass … / Ich kann Ihr Argument nachvollziehen, gebe aber zu bedenken … / Könnten wir uns darauf verständigen, dass …?" },
+    { title:"Zgjidhni një konflikt", prompt:"In einem Projekt gibt es unterschiedliche Auffassungen über das Vorgehen. Findet gemeinsam eine tragfähige Lösung.",
+      points:["Standpunkte klären","Interessen von Positionen trennen","Optionen entwickeln","Konsequenzen abwägen","Verbindlich abschließen"],
+      phrases:"Worum es Ihnen im Kern geht, ist offenbar … / Lassen Sie uns zunächst trennen zwischen … / Welche Folgen hätte das für …? / Halten wir also fest: …" }
+  ],
+  present: [
+    { title:"Prezantim: Etika e teknologjisë", prompt:"Halte einen strukturierten Vortrag zum Thema „Verantwortung im Umgang mit neuen Technologien“.",
+      points:["Präzise Einleitung mit Fragestellung","Gliederung nennen","Argumentation mit Beispielen","Gegenpositionen einbeziehen","Pointiertes Fazit"],
+      phrases:"Ich möchte der Frage nachgehen, inwiefern … / Mein Vortrag gliedert sich in drei Teile. / Hier ließe sich einwenden, dass … / Festhalten möchte ich abschließend, dass …" },
+    { title:"Prezantim: Gjuha dhe identiteti", prompt:"Halte einen Vortrag zum Thema „Sprache und Identität in der Migration“.",
+      points:["Themenrelevanz begründen","Begriffe klären","Eigene Erfahrung reflektiert einbringen","Wissenschaftliche Perspektive andeuten","Ausblick formulieren"],
+      phrases:"Das Thema ist deshalb von Bedeutung, weil … / Unter … verstehe ich im Folgenden … / Aus eigener Erfahrung kann ich sagen, dass … / Perspektivisch wäre zu fragen, ob …" }
+  ]
+}
+};
+
 const FULL_MODULES = [
   { id: "lesen",     name: "Lesen",     alb: "Lexim",      icon: "📖", minutes: 65 },
   { id: "hoeren",    name: "Hören",     alb: "Dëgjim",     icon: "🎧", minutes: 40 },
@@ -4395,26 +5007,65 @@ function gradeFor(score) {
   return { label: "nuk u kalua", cls: "grade-f" };
 }
 
-function startFullExam() {
+let currentExamLevel = "B1";
+let activeModules = null;   // modulet e nivelit aktual
+
+function levelContent(levelKey) {
+  if (levelKey === "B1") {
+    return { reading: READING_POOL, listening: LISTENING_POOL, writing: WRITING_POOL,
+             plan: SPEAKING_PLAN_POOL, present: SPEAKING_PRESENT_POOL };
+  }
+  const c = LEVEL_CONTENT[levelKey] || LEVEL_CONTENT_BC[levelKey];
+  return c;
+}
+
+function startFullExam(levelKey) {
+  currentExamLevel = levelKey || currentExamLevel || "B1";
+  const L = EXAM_LEVELS[currentExamLevel];
+  activeModules = L.modules;
   fullExamActive = true;
   fullModuleIndex = 0;
   fullScores = {};
-  currentExamSet = examSetFor(examRunCount);
+  currentExamSet = buildLevelExamSet(currentExamLevel, examRunCount);
   showFullExamIntro();
 }
 
+// Ndërton setin e provimit për nivelin e zgjedhur, me rotacion pa përsëritje
+function buildLevelExamSet(levelKey, n) {
+  const c = levelContent(levelKey);
+  const i = ((n % 20) + 20) % 20;
+  const R = c.reading.length, LI = c.listening.length;
+  const readCount = Math.min(3, R), listenCount = Math.min(3, LI);
+  const pickN = (arr, start, count) => {
+    const out = [], step = Math.max(1, Math.floor(arr.length / count));
+    for (let k = 0; k < count; k++) out.push(arr[(start + k * step) % arr.length]);
+    return out;
+  };
+  return {
+    index: i,
+    reading: pickN(c.reading, i, readCount),
+    listening: pickN(c.listening, i + 1, listenCount),
+    writing: c.writing[i % c.writing.length],
+    plan: c.plan[i % c.plan.length],
+    present: c.present[(i + 1) % c.present.length]
+  };
+}
+
 function showFullExamIntro() {
-  const rows = FULL_MODULES.map(m =>
+  const L = EXAM_LEVELS[currentExamLevel];
+  const mods = activeModules;
+  const totalMin = mods.reduce((a, m) => a + m.minutes, 0);
+  const rows = mods.map(m =>
     `<tr><td>${m.icon} ${m.name} <span class="mod-alb">(${m.alb})</span></td><td>${m.minutes} min</td><td>100</td><td>${PASS_MARK}</td></tr>`
   ).join("");
-  examShell("Provimi i plotë B1", 0, `
+  examShell(`${L.name}`, 0, `
     <div class="full-intro">
-      <h3>🎓 Provimi i plotë B1 — seti nr. ${currentExamSet.index + 1}</h3>
-      <p>Do të kalosh nëpër të katër modulet me radhë, si në provimin e vërtetë të Goethe-Institut. Midis moduleve ka pushim prej ${BREAK_MINUTES} minutash.</p>
+      <h3>🎓 ${esc(L.name)} — seti nr. ${currentExamSet.index + 1}</h3>
+      <p>${esc(L.desc)} Do të kalosh nëpër të katër modulet me radhë, si në provimin e vërtetë të Goethe-Institut. Midis moduleve ka pushim prej ${BREAK_MINUTES} minutash.</p>
       <table class="full-table">
         <thead><tr><th>Moduli</th><th>Kohë</th><th>Maks.</th><th>Kalon me</th></tr></thead>
         <tbody>${rows}
-          <tr class="total-row"><td><strong>Gjithsej</strong></td><td><strong>180 min</strong></td><td><strong>400</strong></td><td><strong>240</strong></td></tr>
+          <tr class="total-row"><td><strong>Gjithsej</strong></td><td><strong>${totalMin} min</strong></td><td><strong>400</strong></td><td><strong>240</strong></td></tr>
         </tbody>
       </table>
       <div class="full-warning">
@@ -4429,7 +5080,8 @@ function showFullExamIntro() {
 }
 
 function fullProgressBar() {
-  return `<div class="full-progress">` + FULL_MODULES.map((m, i) => {
+  const mods = activeModules || FULL_MODULES;
+  return `<div class="full-progress">` + mods.map((m, i) => {
     const state = i < fullModuleIndex ? "done" : i === fullModuleIndex ? "current" : "";
     return `<span class="full-step ${state}">${m.icon}</span>`;
   }).join("") + `</div>`;
@@ -4437,8 +5089,9 @@ function fullProgressBar() {
 
 function runFullModule(index) {
   fullModuleIndex = index;
-  if (index >= FULL_MODULES.length) { showFullExamResult(); return; }
-  const mod = FULL_MODULES[index];
+  const mods = activeModules || FULL_MODULES;
+  if (index >= mods.length) { showFullExamResult(); return; }
+  const mod = mods[index];
   if (mod.id === "lesen") runFullLesen(mod);
   else if (mod.id === "hoeren") runFullHoeren(mod);
   else if (mod.id === "schreiben") runFullSchreiben(mod);
@@ -4457,13 +5110,15 @@ function onModuleTimeUp() {
 }
 
 function finishModule(score) {
-  const mod = FULL_MODULES[fullModuleIndex];
+  const mod = (activeModules || FULL_MODULES)[fullModuleIndex];
+  if (mod.id === "lesen" || mod.id === "hoeren") hwTick("exammod", 1);
+  if (mod.id === "schreiben") hwTick("writing", 1);
   fullScores[mod.id] = Math.max(0, Math.min(100, Math.round(score)));
   window.__currentModuleProgress = null;
   const g = gradeFor(fullScores[mod.id]);
   const passed = fullScores[mod.id] >= PASS_MARK;
   stopTimer();
-  const isLast = fullModuleIndex + 1 >= FULL_MODULES.length;
+  const isLast = fullModuleIndex + 1 >= (activeModules || FULL_MODULES).length;
   examShell(`${mod.icon} ${mod.name} — përfundoi`, 0, `
     ${fullProgressBar()}
     <div class="result-box">
@@ -4486,7 +5141,7 @@ function finishModule(score) {
 
 /* --- Pushimi midis moduleve --- */
 function showBreak(nextIndex) {
-  const next = FULL_MODULES[nextIndex];
+  const next = (activeModules || FULL_MODULES)[nextIndex];
   let left = BREAK_MINUTES * 60;
   examShell("Pushim", 0, `
     ${fullProgressBar()}
@@ -4524,7 +5179,7 @@ function runFullLesen(mod) {
     html += `<div class="reading-text"><h4>${esc(part.head)}</h4>${esc(part.body).replace(/\n/g,"<br>")}</div>`;
     part.questions.forEach(q => { html += buildQuestionHtml(q, n); n++; });
   });
-  examShell(`${mod.icon} Moduli 1/4 — ${mod.name}`, mod.minutes, html);
+  examShell(`${mod.icon} ${currentExamLevel} · Moduli ${fullModuleIndex+1}/4 — ${mod.name}`, mod.minutes, html);
   wireModuleQuestions(document.getElementById("examBody"), n);
 }
 
@@ -4543,7 +5198,7 @@ function runFullHoeren(mod) {
     </div>`;
     part.questions.forEach(q => { html += buildQuestionHtml(q, n); n++; });
   });
-  examShell(`${mod.icon} Moduli 2/4 — ${mod.name}`, mod.minutes, html);
+  examShell(`${mod.icon} ${currentExamLevel} · Moduli ${fullModuleIndex+1}/4 — ${mod.name}`, mod.minutes, html);
   const body = document.getElementById("examBody");
   const plays = {};
   body.querySelectorAll("[data-play]").forEach(b => {
@@ -4592,7 +5247,7 @@ function wireModuleQuestions(container, allQ) {
 function runFullSchreiben(mod) {
   const task = currentExamSet.writing;
   window.__currentModuleProgress = () => ({ correct: 0, total: 0 });
-  examShell(`${mod.icon} Moduli 3/4 — ${mod.name}`, mod.minutes, `
+  examShell(`${mod.icon} ${currentExamLevel} · Moduli ${fullModuleIndex+1}/4 — ${mod.name}`, mod.minutes, `
     ${fullProgressBar()}
     <div class="speak-card">
       <h4>${esc(task.title)}</h4>
@@ -4601,7 +5256,7 @@ function runFullSchreiben(mod) {
       <div class="phrase-box"><strong>Shprehje ndihmëse:</strong><br>${esc(task.phrases)}</div>
     </div>
     <textarea class="writing-area" id="fullWriteArea" placeholder="Shkruaj tekstin tënd këtu..."></textarea>
-    <div class="word-counter" id="fullWordCount">0 fjalë (min. 80)</div>
+    <div class="word-counter" id="fullWordCount">0 fjalë (min. ${EXAM_LEVELS[currentExamLevel].writeMin})</div>
     <div class="checklist">
       <div style="font-weight:600;margin-bottom:10px;font-size:.9rem;">Vetëkontroll — shëno çfarë ke bërë</div>
       ${WRITING_CHECKLIST.map((c, i) => `<label><input type="checkbox" class="fchk" data-i="${i}"><span>${esc(c)}</span></label>`).join("")}
@@ -4611,18 +5266,19 @@ function runFullSchreiben(mod) {
   const area = document.getElementById("fullWriteArea");
   const counter = document.getElementById("fullWordCount");
   const countWords = () => area.value.trim().split(/\s+/).filter(Boolean).length;
+  const minW = EXAM_LEVELS[currentExamLevel].writeMin;
   const scoreNow = () => {
     const w = countWords();
     const checked = document.querySelectorAll(".fchk:checked").length;
-    const lengthScore = w >= 80 ? 50 : Math.round((w / 80) * 50);
+    const lengthScore = w >= minW ? 50 : Math.round((w / minW) * 50);
     const checkScore = Math.round((checked / WRITING_CHECKLIST.length) * 50);
     return lengthScore + checkScore;
   };
   window.__currentModuleProgress = () => ({ correct: scoreNow(), total: 100 });
   area.addEventListener("input", () => {
     const w = countWords();
-    counter.textContent = w + " fjalë" + (w >= 80 ? " ✓" : " (min. 80)");
-    counter.style.color = w >= 80 ? "var(--green)" : "var(--muted)";
+    counter.textContent = w + " fjalë" + (w >= minW ? " ✓" : " (min. " + minW + ")");
+    counter.style.color = w >= minW ? "var(--green)" : "var(--muted)";
   });
   document.getElementById("btnFinishFullWrite").addEventListener("click", () => {
     if (countWords() < 20) { alert("Teksti është shumë i shkurtër. Shkruaj të paktën disa fjali."); return; }
@@ -4681,7 +5337,7 @@ function runFullSprechen(mod) {
     </div>`;
 
   html += `<button class="btn btn-primary" id="btnFinishFullSpeak" style="width:100%;padding:15px;margin-top:6px;">Përfundo modulin →</button>`;
-  examShell(`${mod.icon} Moduli 4/4 — ${mod.name}`, mod.minutes, html);
+  examShell(`${mod.icon} ${currentExamLevel} · Moduli ${fullModuleIndex+1}/4 — ${mod.name}`, mod.minutes, html);
 
   const ratings = {};
   document.querySelectorAll(".self-rate-btn").forEach(btn => {
@@ -4708,13 +5364,14 @@ function showFullExamResult() {
   examRunCount++;                 // provimi tjetër do të jetë set tjetër
   queueSave();
 
-  const total = FULL_MODULES.reduce((sum, m) => sum + (fullScores[m.id] || 0), 0);
-  const allModulesPassed = FULL_MODULES.every(m => (fullScores[m.id] || 0) >= PASS_MARK);
+  const mods = activeModules || FULL_MODULES;
+  const total = mods.reduce((sum, m) => sum + (fullScores[m.id] || 0), 0);
+  const allModulesPassed = mods.every(m => (fullScores[m.id] || 0) >= PASS_MARK);
   const totalEnough = total >= 240;
   const passed = allModulesPassed && totalEnough;
   recordExam(total, passed, fullScores);
 
-  const rows = FULL_MODULES.map(m => {
+  const rows = mods.map(m => {
     const s = fullScores[m.id] || 0;
     const g = gradeFor(s);
     const ok = s >= PASS_MARK;
@@ -4725,7 +5382,7 @@ function showFullExamResult() {
     </tr>`;
   }).join("");
 
-  const failedMods = FULL_MODULES.filter(m => (fullScores[m.id] || 0) < PASS_MARK);
+  const failedMods = mods.filter(m => (fullScores[m.id] || 0) < PASS_MARK);
   let verdict;
   if (passed) {
     verdict = `<div class="verdict verdict-pass">✅ URIME — PROVIMI U KALUA!</div>
@@ -4979,6 +5636,7 @@ function runSchreiben() {
     else if (words >= 50) pts += 20;
     pts += checked * 5;
     addPoints(pts);
+    hwTick("writing", 1);
     alert("Teksti: " + words + " fjalë\nVetëkontrolli: " + checked + " nga " + e.checklist.length + "\n\n+" + pts + " pikë!\n\nKëshillë: Lexoje tekstin me zë të lartë — kështu i gjen gabimet më lehtë.");
   });
 }
@@ -5767,12 +6425,16 @@ function renderStatsView() {
     <div class="stat-box"><div class="stat-num">${allAnswers}</div><div class="stat-lbl">Përgjigje gjithsej</div></div>
     <div class="stat-box"><div class="stat-num stat-gold">${pct(allCorrect, allAnswers)}%</div><div class="stat-lbl">Saktësia mesatare</div></div>
     <div class="stat-box"><div class="stat-num stat-gold">${stats.bestStreak || 0}</div><div class="stat-lbl">Seria më e gjatë</div></div>
+    <div class="stat-box"><div class="stat-num stat-green">${(stats.homework && stats.homework.totalDone) || 0}</div><div class="stat-lbl">Detyra të kryera</div></div>
+    <div class="stat-box"><div class="stat-num stat-gold">${(stats.homework && stats.homework.streak) || 0}</div><div class="stat-lbl">Seria e detyrave</div></div>
+    <div class="stat-box"><div class="stat-num">${(stats.homework && stats.homework.bestStreak) || 0}</div><div class="stat-lbl">Rekordi i detyrave</div></div>
   `;
 
   // Saktësia sipas ushtrimit
   const rows = [
     { name: "Kuiz", icon: "❓", d: stats.quiz },
     { name: "Kuiz me foto", icon: "🖼️", d: stats.imagequiz },
+    { name: "Gramatikë", icon: "📐", d: stats.grammar || { total: 0, correct: 0 } },
     { name: "Ushtrim i shpejtë", icon: "🦅", d: stats.practice }
   ];
   document.getElementById("accuracyList").innerHTML = rows.map(r => {
@@ -5833,6 +6495,331 @@ function renderStatsView() {
       <div><span class="sq">${esc(w.al || "—")}</span> — <span class="de">${esc(w.de)}</span></div>
       <div class="word-score stat-red">${w.w}✗</div>
     </div>`).join("");
+}
+
+/* ============ USHTRIME GRAMATIKE: fjali me boshllëk ============ */
+// q = fjalia gjermanisht me ___ , sq = përkthimi shqip (ndihmë),
+// opts = zgjedhjet, a = indeksi i saktë, ex = shpjegimi shqip, cat = tema
+const GRAMMAR_EXERCISES = [
+  // --- Nyjat (der/die/das) ---
+  { cat:"Nyjat", q:"Ich sehe ___ Hund im Garten.", sq:"Unë shoh qenin në kopsht.", opts:["der","den","dem"], a:1, ex:"„sehen“ kërkon Akkusativ. Mashkullore: der → den." },
+  { cat:"Nyjat", q:"Ich gebe ___ Kind einen Apfel.", sq:"I jap fëmijës një mollë.", opts:["das","dem","des"], a:1, ex:"„geben“ kërkon Dativ për marrësin. das Kind → dem Kind." },
+  { cat:"Nyjat", q:"___ Frau dort ist meine Lehrerin.", sq:"Gruaja atje është mësuesja ime.", opts:["Die","Der","Den"], a:0, ex:"Femërore në Nominativ: die Frau." },
+  { cat:"Nyjat", q:"Das ist das Auto ___ Vaters.", sq:"Kjo është makina e babait.", opts:["der","des","dem"], a:1, ex:"Genitiv mashkullore: des Vaters (pronësi)." },
+  { cat:"Nyjat", q:"Ich helfe ___ Frau mit den Taschen.", sq:"E ndihmoj gruan me çantat.", opts:["die","der","den"], a:1, ex:"„helfen“ gjithmonë me Dativ. die Frau → der Frau." },
+
+  // --- Parafjalët ---
+  { cat:"Parafjalë", q:"Ich warte ___ den Bus.", sq:"Po pres autobusin.", opts:["für","auf","an"], a:1, ex:"warten AUF + Akkusativ — gjithmonë kështu." },
+  { cat:"Parafjalë", q:"Ich interessiere mich ___ Musik.", sq:"Interesohem për muzikë.", opts:["für","auf","über"], a:0, ex:"sich interessieren FÜR + Akkusativ." },
+  { cat:"Parafjalë", q:"Wir sprechen ___ das Wetter.", sq:"Po flasim për motin.", opts:["von","über","auf"], a:1, ex:"sprechen ÜBER + Akkusativ (ose: von + Dativ)." },
+  { cat:"Parafjalë", q:"Ich fahre ___ Bus zur Arbeit.", sq:"Shkoj në punë me autobus.", opts:["mit dem","mit den","mit der"], a:0, ex:"„mit“ gjithmonë Dativ. der Bus → dem Bus." },
+  { cat:"Parafjalë", q:"Das Buch liegt ___ Tisch.", sq:"Libri ndodhet mbi tavolinë.", opts:["auf den","auf dem","auf der"], a:1, ex:"Pa lëvizje (ku?) → Dativ: auf dem Tisch." },
+  { cat:"Parafjalë", q:"Ich lege das Buch ___ Tisch.", sq:"E vendos librin mbi tavolinë.", opts:["auf den","auf dem","auf der"], a:0, ex:"Me lëvizje (ku drejt?) → Akkusativ: auf den Tisch." },
+  { cat:"Parafjalë", q:"Ich freue mich ___ das Wochenende.", sq:"Gëzohem për fundjavën (që vjen).", opts:["über","auf","für"], a:1, ex:"sich freuen AUF = diçka në të ardhmen." },
+  { cat:"Parafjalë", q:"Ich freue mich ___ dein Geschenk.", sq:"Gëzohem për dhuratën tënde.", opts:["über","auf","an"], a:0, ex:"sich freuen ÜBER = diçka që ka ndodhur tashmë." },
+  { cat:"Parafjalë", q:"Er wohnt ___ Berlin.", sq:"Ai jeton në Berlin.", opts:["in","nach","zu"], a:0, ex:"Për qytete pa lëvizje: in + Dativ." },
+  { cat:"Parafjalë", q:"Wir fahren morgen ___ Italien.", sq:"Nesër shkojmë në Itali.", opts:["in","nach","zu"], a:1, ex:"Për shtete pa nyjë: nach Italien." },
+  { cat:"Parafjalë", q:"Ich gehe ___ Arzt.", sq:"Po shkoj te mjeku.", opts:["zum","nach","in"], a:0, ex:"Te një person: zu + Dativ → zum Arzt." },
+
+  // --- Fjali të nënrenditura ---
+  { cat:"Fjali të nënrenditura", q:"Ich lerne Deutsch, ___ ich hier arbeiten will.", sq:"Mësoj gjermanisht, sepse dua të punoj këtu.", opts:["weil","denn","obwohl"], a:0, ex:"„weil“ = sepse; folja shkon në fund." },
+  { cat:"Fjali të nënrenditura", q:"Er kam nicht, ___ er krank war.", sq:"Ai nuk erdhi, sepse ishte i sëmurë.", opts:["weil","aber","damit"], a:0, ex:"Arsyeja → weil." },
+  { cat:"Fjali të nënrenditura", q:"Ich gehe früh schlafen, ___ ich morgen fit bin.", sq:"Shkoj herët të fle, që të jem në formë nesër.", opts:["damit","weil","obwohl"], a:0, ex:"Qëllimi → damit." },
+  { cat:"Fjali të nënrenditura", q:"___ es regnete, gingen wir spazieren.", sq:"Megjithëse binte shi, dolëm shëtitje.", opts:["Obwohl","Weil","Damit"], a:0, ex:"Kundërshti → obwohl." },
+  { cat:"Fjali të nënrenditura", q:"Ich weiß nicht, ___ er heute kommt.", sq:"Nuk e di nëse ai vjen sot.", opts:["ob","wenn","dass"], a:0, ex:"Pyetje e tërthortë po/jo → ob." },
+  { cat:"Fjali të nënrenditura", q:"___ ich Zeit habe, besuche ich dich.", sq:"Kur/nëse kam kohë, të vizitoj.", opts:["Wenn","Als","Ob"], a:0, ex:"Kusht ose përsëritje → wenn." },
+  { cat:"Fjali të nënrenditura", q:"___ ich klein war, wohnten wir in Tirana.", sq:"Kur isha i vogël, jetonim në Tiranë.", opts:["Als","Wenn","Ob"], a:0, ex:"Një herë në të kaluarën → als." },
+  { cat:"Fjali të nënrenditura", q:"Er sagt, ___ er müde ist.", sq:"Ai thotë se është i lodhur.", opts:["dass","ob","weil"], a:0, ex:"Fjali plotësuese → dass." },
+  { cat:"Fjali të nënrenditura", q:"___ ich gegessen hatte, ging ich schlafen.", sq:"Pasi kisha ngrënë, shkova të fle.", opts:["Nachdem","Bevor","Während"], a:0, ex:"„Nachdem“ = pasi; veprimi i parë në kohë." },
+  { cat:"Fjali të nënrenditura", q:"___ du gehst, ruf mich bitte an.", sq:"Para se të shkosh, të lutem më merr në telefon.", opts:["Bevor","Nachdem","Seitdem"], a:0, ex:"„Bevor“ = para se." },
+
+  // --- Foljet & kohët ---
+  { cat:"Foljet", q:"Gestern ___ ich ins Kino gegangen.", sq:"Dje kam shkuar në kinema.", opts:["habe","bin","war"], a:1, ex:"Foljet e lëvizjes (gehen) bëjnë Perfekt me „sein“." },
+  { cat:"Foljet", q:"Ich ___ gestern einen Film gesehen.", sq:"Dje pashë një film.", opts:["bin","habe","war"], a:1, ex:"„sehen“ bën Perfekt me „haben“." },
+  { cat:"Foljet", q:"Er ___ jeden Morgen um 7 Uhr auf.", sq:"Ai zgjohet çdo mëngjes në orën 7.", opts:["steht","stehet","aufsteht"], a:0, ex:"Folje e ndashme: aufstehen → er steht … auf." },
+  { cat:"Foljet", q:"Wir ___ nächstes Jahr nach Berlin ziehen.", sq:"Vitin e ardhshëm do të zhvendosemi në Berlin.", opts:["werden","wollen","sind"], a:0, ex:"E ardhmja: werden + infinitiv." },
+  { cat:"Foljet", q:"Sie ___ als Kind sehr gern gemalt.", sq:"Si fëmijë ajo pikturonte me shumë dëshirë.", opts:["hat","ist","war"], a:0, ex:"„malen“ → Perfekt me haben." },
+  { cat:"Foljet", q:"Ich ___ dir helfen, wenn du willst.", sq:"Mund të të ndihmoj, nëse dëshiron.", opts:["kann","können","kannst"], a:0, ex:"1. veta njëjës: ich kann." },
+  { cat:"Foljet", q:"Man ___ hier nicht rauchen.", sq:"Këtu nuk lejohet të pihet duhan.", opts:["darf","kann","will"], a:0, ex:"Ndalim/leje → dürfen." },
+  { cat:"Foljet", q:"Du ___ mehr Wasser trinken.", sq:"Ti duhet të pish më shumë ujë.", opts:["solltest","willst","darfst"], a:0, ex:"Këshillë → sollen (Konjunktiv: solltest)." },
+  { cat:"Foljet", q:"Das Fenster ___ jeden Morgen geöffnet.", sq:"Dritarja hapet çdo mëngjes.", opts:["wird","ist","hat"], a:0, ex:"Pasiv: werden + Partizip II." },
+  { cat:"Foljet", q:"Der Brief ___ gestern geschrieben.", sq:"Letra u shkrua dje.", opts:["wurde","wird","hat"], a:0, ex:"Pasiv në të kaluarën: wurde + Partizip II." },
+
+  // --- Konjunktiv II ---
+  { cat:"Konjunktiv II", q:"Wenn ich Zeit ___, würde ich mehr lesen.", sq:"Nëse do të kisha kohë, do të lexoja më shumë.", opts:["habe","hätte","hatte"], a:1, ex:"Kusht joreal → hätte." },
+  { cat:"Konjunktiv II", q:"An deiner Stelle ___ ich das nicht machen.", sq:"Në vendin tënd nuk do ta bëja këtë.", opts:["würde","werde","will"], a:0, ex:"Këshillë e sjellshme → würde." },
+  { cat:"Konjunktiv II", q:"___ Sie mir bitte helfen?", sq:"A mund të më ndihmoni, ju lutem?", opts:["Könnten","Können","Konnten"], a:0, ex:"Kërkesë e sjellshme → könnten." },
+  { cat:"Konjunktiv II", q:"Ich ___ gern einen Kaffee, bitte.", sq:"Do të doja një kafe, ju lutem.", opts:["hätte","habe","hatte"], a:0, ex:"Porosi e sjellshme: ich hätte gern." },
+  { cat:"Konjunktiv II", q:"Wenn er früher gekommen ___, hätten wir ihn gesehen.", sq:"Nëse do të kishte ardhur më herët, do ta kishim parë.", opts:["wäre","hätte","würde"], a:0, ex:"Kusht joreal i së shkuarës, folje lëvizjeje → wäre." },
+
+  // --- Përemrat lidhorë ---
+  { cat:"Përemrat lidhorë", q:"Das ist der Mann, ___ mir geholfen hat.", sq:"Ky është burri që më ndihmoi.", opts:["der","den","dem"], a:0, ex:"Kryefjalë e fjalisë lidhore → Nominativ: der." },
+  { cat:"Përemrat lidhorë", q:"Das ist das Buch, ___ ich gekauft habe.", sq:"Ky është libri që bleva.", opts:["das","dem","des"], a:0, ex:"Asnjanëse Akkusativ → das." },
+  { cat:"Përemrat lidhorë", q:"Die Frau, ___ ich geschrieben habe, antwortet nicht.", sq:"Gruaja së cilës i shkrova nuk përgjigjet.", opts:["die","der","den"], a:1, ex:"„schreiben“ + Dativ → der (femërore Dativ)." },
+  { cat:"Përemrat lidhorë", q:"Der Mann, ___ Auto kaputt ist, wartet draußen.", sq:"Burri, makina e të cilit është prishur, pret jashtë.", opts:["dessen","deren","der"], a:0, ex:"Genitiv mashkullore → dessen." },
+
+  // --- Mbiemrat ---
+  { cat:"Mbiemrat", q:"Ich habe einen ___ Hund.", sq:"Kam një qen të vogël.", opts:["kleinen","kleiner","kleines"], a:0, ex:"ein + Akkusativ mashkullore → -en." },
+  { cat:"Mbiemrat", q:"Das ist eine ___ Idee.", sq:"Kjo është një ide e mirë.", opts:["gute","guten","gutes"], a:0, ex:"eine + femërore Nominativ → -e." },
+  { cat:"Mbiemrat", q:"Er trinkt ___ Kaffee.", sq:"Ai pi kafe të nxehtë.", opts:["heißen","heißer","heiße"], a:1, ex:"Pa nyjë, mashkullore Akkusativ… këtu Nominativ-si-lëndë → heißer Kaffee." },
+  { cat:"Mbiemrat", q:"Berlin ist ___ als München.", sq:"Berlini është më i madh se Mynihu.", opts:["größer","am größten","groß"], a:0, ex:"Krahasim me „als“ → Komparativ." },
+  { cat:"Mbiemrat", q:"Das ist ___ Restaurant in der Stadt.", sq:"Ky është restoranti më i mirë në qytet.", opts:["das beste","besser","am besten"], a:0, ex:"Superlativ me nyjë: das beste." },
+
+  // --- Përemrat & rendi i fjalëve ---
+  { cat:"Rendi i fjalëve", q:"Morgen ___ ich meine Oma.", sq:"Nesër vizitoj gjyshen time.", opts:["besuche","ich besuche","besuchen"], a:0, ex:"Kur fjalia nis me kohë, folja mbetet e dyta." },
+  { cat:"Rendi i fjalëve", q:"Ich gebe ___ das Buch.", sq:"Ia jap librin atij.", opts:["ihm","ihn","er"], a:0, ex:"Marrësi → Dativ: ihm." },
+  { cat:"Rendi i fjalëve", q:"Kennst du ___ ?", sq:"A e njeh atë (burrin)?", opts:["ihn","ihm","er"], a:0, ex:"Objekt i drejtë → Akkusativ: ihn." },
+  { cat:"Rendi i fjalëve", q:"Ich habe ___ gestern im Park gesehen.", sq:"E pashë atë (gruan) dje në park.", opts:["sie","ihr","ihnen"], a:0, ex:"Akkusativ femërore → sie." },
+  { cat:"Rendi i fjalëve", q:"Er hat mir ___ Geschichte erzählt.", sq:"Ai më tregoi historinë.", opts:["die","der","den"], a:0, ex:"Akkusativ femërore → die Geschichte." },
+
+  // --- Infinitiv me zu / lidhëza të tjera ---
+  { cat:"Infinitiv me zu", q:"Ich habe vergessen, dich ___.", sq:"Kam harruar të të marr në telefon.", opts:["anzurufen","anrufen","zu anrufen"], a:0, ex:"Folje e ndashme: an|rufen → anzurufen." },
+  { cat:"Infinitiv me zu", q:"Es ist wichtig, jeden Tag ___.", sq:"Është e rëndësishme të ushtrosh çdo ditë.", opts:["zu üben","üben","geübt"], a:0, ex:"Infinitiv me „zu“ pas shprehjeve si „es ist wichtig“." },
+  { cat:"Infinitiv me zu", q:"Ich lerne Deutsch, ___ eine Arbeit zu finden.", sq:"Mësoj gjermanisht, për të gjetur një punë.", opts:["um","damit","dass"], a:0, ex:"Qëllim me të njëjtën kryefjalë → um … zu." },
+  { cat:"Lidhëzat", q:"Ich bin müde, ___ ich arbeite weiter.", sq:"Jam i lodhur, megjithatë vazhdoj të punoj.", opts:["trotzdem","weil","damit"], a:0, ex:"„trotzdem“ nuk e ndryshon rendin: folja mbetet e dyta." },
+  { cat:"Lidhëzat", q:"Es regnet, ___ nehme ich den Schirm mit.", sq:"Po bie shi, prandaj marr çadrën.", opts:["deshalb","weil","obwohl"], a:0, ex:"Pasojë → deshalb (folja pas tij)." },
+  { cat:"Lidhëzat", q:"Ich mag Tee, ___ mein Bruder trinkt lieber Kaffee.", sq:"Më pëlqen çaji, ndërsa vëllai im pi më shumë kafe.", opts:["aber","weil","dass"], a:0, ex:"Kundërvënie e thjeshtë → aber (rendi nuk ndryshon)." },
+  { cat:"Lidhëzat", q:"Je mehr ich übe, ___ besser werde ich.", sq:"Sa më shumë ushtroj, aq më i mirë bëhem.", opts:["desto","als","wie"], a:0, ex:"Shprehje fikse: je … desto." }
+];
+
+/* ============ DETYRAT E DITËS (Hausaufgaben, ~1 orë, ndryshojnë çdo ditë) ============ */
+// Çdo detyrë ka: id, ikonë, titull, sasi, njësi, minuta të përafërta, dhe tabin ku bëhet.
+const HW_TEMPLATES = [
+  { id:"cards",     icon:"🗂️", tab:"cards",     unit:"karta",        title:(n)=>`Përsërit ${n} karta fjalori`,          mins:12, amounts:[20,25,30] },
+  { id:"quiz",      icon:"❓", tab:"quiz",      unit:"përgjigje",    title:(n)=>`Përgjigju saktë ${n} herë në Kuiz`,     mins:12, amounts:[15,20,25] },
+  { id:"imagequiz", icon:"🖼️", tab:"imagequiz", unit:"foto",         title:(n)=>`Njih ${n} fjalë nga fotot`,            mins:10, amounts:[10,12,15] },
+  { id:"practice",  icon:"🦅", tab:"practice",  unit:"raunde",       title:(n)=>`Bëj ${n} raunde Ushtrim i shpejtë`,     mins:12, amounts:[10,15,20] },
+  { id:"grammar",   icon:"📐", tab:"grammar",   unit:"fjali",        title:(n)=>`Plotëso ${n} fjali gramatike`,          mins:14, amounts:[10,12,15] },
+  { id:"listen",    icon:"🔊", tab:"cards",     unit:"fjalë",        title:(n)=>`Dëgjo shqiptimin e ${n} fjalëve (🔊)`,   mins:8,  amounts:[10,12,15] },
+  { id:"exammod",   icon:"📝", tab:"exam",      unit:"modul",        title:(n)=>`Bëj ${n} modul provimi (Lexim/Dëgjim)`, mins:20, amounts:[1] },
+  { id:"writing",   icon:"✍️", tab:"exam",      unit:"tekst",        title:(n)=>`Shkruaj ${n} tekst (min. 80 fjalë)`,    mins:20, amounts:[1] }
+];
+
+// Gjenerator i qëndrueshëm sipas datës: e njëjta ditë = të njëjtat detyra për të gjithë
+function dateSeed(dateStr) {
+  let h = 0;
+  for (let i = 0; i < dateStr.length; i++) h = (h * 31 + dateStr.charCodeAt(i)) >>> 0;
+  return h;
+}
+function seededPick(seed, arr, offset) {
+  return arr[(seed + (offset || 0) * 7919) % arr.length];
+}
+
+// Ndërton detyrat e ditës: ~60 minuta gjithsej, gjithmonë të larmishme
+function buildHomework(dateStr) {
+  const seed = dateSeed(dateStr);
+  const pool = HW_TEMPLATES.slice();
+  // Përziej listën në mënyrë të qëndrueshme sipas datës
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = (seed + i * 2654435761) % (i + 1);
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  const chosen = [];
+  let mins = 0;
+  for (const t of pool) {
+    if (mins >= 60) break;
+    const amount = seededPick(seed, t.amounts, chosen.length);
+    chosen.push({ id: t.id, icon: t.icon, tab: t.tab, unit: t.unit, target: amount, mins: t.mins, title: t.title(amount) });
+    mins += t.mins;
+  }
+  return { date: dateStr, tasks: chosen, totalMins: mins };
+}
+
+let todayHomework = null;      // { date, tasks, totalMins }
+let hwProgress = { date: null, counts: {} };
+
+function initHomework() {
+  ensureStats();
+  const today = todayStr();
+  todayHomework = buildHomework(today);
+  if (!stats.homework) stats.homework = { doneDays: {}, totalDone: 0, streak: 0, bestStreak: 0 };
+  if (!stats.hwProgress || stats.hwProgress.date !== today) {
+    stats.hwProgress = { date: today, counts: {} };
+  }
+  hwProgress = stats.hwProgress;
+}
+
+// Regjistro përparim te detyrat (thirret nga kuizet, kartat, gramatika…)
+function hwTick(taskId, amount) {
+  if (!todayHomework) return;
+  ensureStats();
+  const today = todayStr();
+  if (!stats.hwProgress || stats.hwProgress.date !== today) stats.hwProgress = { date: today, counts: {} };
+  hwProgress = stats.hwProgress;
+  const task = todayHomework.tasks.find(t => t.id === taskId);
+  if (!task) return;
+  const before = hwProgress.counts[taskId] || 0;
+  if (before >= task.target) return;             // tashmë e plotësuar
+  const after = Math.min(task.target, before + (amount || 1));
+  hwProgress.counts[taskId] = after;
+  if (before < task.target && after >= task.target) {
+    // detyrë e vetme e përfunduar
+    spawnConfetti();
+    playMilestoneFanfare();
+    mascotSay(fmt(`Detyra „${task.title}" u krye{name}! Edhe pak dhe e mbyllim ditën.`), { duration: 6000 });
+    checkHomeworkComplete();
+  }
+  queueSave();
+  if (!document.getElementById("view-homework").classList.contains("hidden")) renderHomework();
+}
+
+function homeworkAllDone() {
+  if (!todayHomework) return false;
+  return todayHomework.tasks.every(t => (hwProgress.counts[t.id] || 0) >= t.target);
+}
+
+function checkHomeworkComplete() {
+  const today = todayStr();
+  if (!homeworkAllDone()) return;
+  if (stats.homework.doneDays[today]) return;    // tashmë e shënuar sot
+  stats.homework.doneDays[today] = true;
+  stats.homework.totalDone = (stats.homework.totalDone || 0) + 1;
+
+  // Seri ditësh me detyra të plotësuara
+  const y = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  stats.homework.streak = stats.homework.doneDays[y] ? (stats.homework.streak || 0) + 1 : 1;
+  if (stats.homework.streak > (stats.homework.bestStreak || 0)) stats.homework.bestStreak = stats.homework.streak;
+
+  addPoints(150);
+  spawnConfetti(); setTimeout(spawnConfetti, 350); setTimeout(spawnConfetti, 700);
+  playFanfare();
+  vibrate([40, 60, 40, 60, 120]);
+  setTimeout(() => mascotSay(
+    fmt(`Të gjitha detyrat e ditës u kryen{name}! +150 pikë. Dita ${stats.homework.totalDone} e plotësuar — seri ${stats.homework.streak} ditë.`),
+    { duration: 11000 }), 900);
+  queueSave();
+}
+
+/* ============ TABI GRAMATIKË ============ */
+let grammarPool = [], grammarIndex = 0, grammarScore = 0, grammarAnswered = false;
+
+function fillGrammarCats() {
+  const sel = document.getElementById("grammarCatFilter");
+  if (!sel) return;
+  const cats = [...new Set(GRAMMAR_EXERCISES.map(e => e.cat))];
+  const cur = sel.value;
+  sel.innerHTML = `<option value="">Të gjitha temat (${GRAMMAR_EXERCISES.length} fjali)</option>` +
+    cats.map(c => `<option value="${esc(c)}">${esc(c)} (${GRAMMAR_EXERCISES.filter(e=>e.cat===c).length})</option>`).join("");
+  if (cur) sel.value = cur;
+}
+
+function startGrammar() {
+  const cat = document.getElementById("grammarCatFilter").value;
+  const source = cat ? GRAMMAR_EXERCISES.filter(e => e.cat === cat) : GRAMMAR_EXERCISES;
+  grammarPool = shuffle(source).slice(0, 20);
+  grammarIndex = 0; grammarScore = 0;
+  renderGrammar();
+}
+
+function renderGrammar() {
+  const nextBtn = document.getElementById("btnNextGrammar");
+  nextBtn.classList.add("hidden");
+  document.getElementById("grammarFlash").textContent = "";
+  document.getElementById("grammarExplain").classList.add("hidden");
+  grammarAnswered = false;
+
+  if (!grammarPool.length) { document.getElementById("grammarSentence").textContent = "—"; return; }
+
+  if (grammarIndex >= grammarPool.length) {
+    document.getElementById("grammarSentence").innerHTML = "🎉 U krye!";
+    document.getElementById("grammarHelp").textContent = "";
+    document.getElementById("grammarCatTag").textContent = "";
+    document.getElementById("grammarOptions").innerHTML = "";
+    document.getElementById("grammarProgress").textContent = grammarPool.length + " / " + grammarPool.length;
+    document.getElementById("grammarScore").textContent = "Saktë: " + grammarScore + " / " + grammarPool.length;
+    return;
+  }
+
+  const ex = grammarPool[grammarIndex];
+  document.getElementById("grammarCatTag").textContent = ex.cat;
+  document.getElementById("grammarSentence").innerHTML = esc(ex.q).replace("___", '<span class="gap">_____</span>');
+  document.getElementById("grammarHelp").textContent = ex.sq;
+  document.getElementById("grammarProgress").textContent = "Fjalia " + (grammarIndex + 1) + " / " + grammarPool.length;
+  document.getElementById("grammarScore").textContent = "Saktë: " + grammarScore;
+
+  const box = document.getElementById("grammarOptions");
+  box.innerHTML = "";
+  ex.opts.forEach((opt, i) => {
+    const el = document.createElement("button");
+    el.className = "quiz-option";
+    el.textContent = opt;
+    el.addEventListener("click", () => {
+      if (grammarAnswered) return;
+      grammarAnswered = true;
+      const correct = i === ex.a;
+      box.querySelectorAll(".quiz-option").forEach((o, j) => {
+        if (j === ex.a) o.classList.add("correct");
+        else if (o === el) o.classList.add("wrong");
+      });
+      // Trego fjalinë e plotë me përgjigjen e saktë
+      document.getElementById("grammarSentence").innerHTML =
+        esc(ex.q).replace("___", `<span class="gap filled">${esc(ex.opts[ex.a])}</span>`);
+      const expl = document.getElementById("grammarExplain");
+      expl.textContent = "💡 " + ex.ex;
+      expl.classList.remove("hidden");
+      if (correct) {
+        grammarScore++;
+        awardPoints(12, "grammar");
+        registerAnswer(true);
+        recordStat("grammar", true, null);
+        hwTick("grammar", 1);
+        document.getElementById("grammarFlash").textContent = "+12";
+      } else {
+        registerAnswer(false);
+        recordStat("grammar", false, null);
+        document.getElementById("grammarFlash").textContent = "Saktë: " + ex.opts[ex.a];
+      }
+      document.getElementById("grammarScore").textContent = "Saktë: " + grammarScore;
+      nextBtn.classList.remove("hidden");
+    });
+    box.appendChild(el);
+  });
+  window.scrollTo(0, 0);
+}
+
+document.getElementById("btnNextGrammar").addEventListener("click", () => { grammarIndex++; renderGrammar(); });
+document.getElementById("btnRestartGrammar").addEventListener("click", startGrammar);
+document.getElementById("grammarCatFilter").addEventListener("change", startGrammar);
+
+/* ============ TABI DETYRAT E DITËS ============ */
+function renderHomework() {
+  initHomework();
+  const dateObj = new Date();
+  document.getElementById("hwDate").textContent =
+    dateObj.toLocaleDateString("sq-AL", { weekday: "long", day: "numeric", month: "long" });
+  document.getElementById("hwIntro").textContent =
+    `Rreth ${todayHomework.totalMins} minuta punë, të ndara në ${todayHomework.tasks.length} ushtrime. Nesër detyra krejt të reja.`;
+
+  const doneCount = todayHomework.tasks.filter(t => (hwProgress.counts[t.id] || 0) >= t.target).length;
+  const totalCount = todayHomework.tasks.length;
+  document.getElementById("hwOverallFill").style.width = Math.round((doneCount / totalCount) * 100) + "%";
+  document.getElementById("hwOverallLabel").textContent =
+    doneCount + " / " + totalCount + " detyra" + (doneCount === totalCount ? " ✓ E mbarove ditën!" : "");
+
+  document.getElementById("hwList").innerHTML = todayHomework.tasks.map(t => {
+    const cur = Math.min(hwProgress.counts[t.id] || 0, t.target);
+    const done = cur >= t.target;
+    const pctDone = Math.round((cur / t.target) * 100);
+    return `<div class="hw-item ${done ? "hw-done" : ""}" data-tab="${t.tab}">
+      <div class="hw-icon">${done ? "✅" : t.icon}</div>
+      <div class="hw-body">
+        <div class="hw-title">${esc(t.title)}</div>
+        <div class="hw-track"><div class="hw-fill" style="width:${pctDone}%"></div></div>
+        <div class="hw-meta">${cur} / ${t.target} ${esc(t.unit)} · rreth ${t.mins} min</div>
+      </div>
+      ${done ? "" : `<button class="hw-go" data-goto="${t.tab}">Shko →</button>`}
+    </div>`;
+  }).join("");
+
+  document.getElementById("hwList").querySelectorAll("[data-goto]").forEach(b =>
+    b.addEventListener("click", () => goToView(b.dataset.goto)));
+
+  const hw = stats.homework || { totalDone: 0, streak: 0, bestStreak: 0 };
+  document.getElementById("hwStats").innerHTML = `
+    <div class="stat-box"><div class="stat-num stat-green">${hw.totalDone || 0}</div><div class="stat-lbl">Ditë të plotësuara</div></div>
+    <div class="stat-box"><div class="stat-num stat-gold">${hw.streak || 0}</div><div class="stat-lbl">Seria aktuale</div></div>
+    <div class="stat-box"><div class="stat-num">${hw.bestStreak || 0}</div><div class="stat-lbl">Rekordi i serisë</div></div>
+  `;
 }
 
 /* ============ START ============ */
