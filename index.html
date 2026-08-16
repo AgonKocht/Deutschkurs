@@ -108,11 +108,75 @@
     background: linear-gradient(135deg, var(--blue), #7aa2ff); color: #fff;
     padding: 7px 13px; border-radius: var(--radius-pill); font-weight: 800; font-size: .76rem;
     box-shadow: 0 0 16px var(--blue-glow), inset 0 1px 0 rgba(255,255,255,.3); flex-shrink: 0;
+    border: none; font-family: var(--font); cursor: pointer;
   }
+  .hud-profile-row { margin-top: 10px; }
+  .hud-profile-btn {
+    display: flex; align-items: center; gap: 9px; width: 100%; padding: 9px 12px;
+    background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: var(--radius-md);
+    cursor: pointer; font-family: var(--font); color: var(--ink); text-align: left;
+    transition: background .15s ease, border-color .2s ease;
+  }
+  .hud-profile-btn:active { background: rgba(255,255,255,.08); }
+  .hpb-avatar { font-size: 1.15rem; flex-shrink: 0; }
+  .hpb-name { flex: 1; font-size: .84rem; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hpb-arrow { color: var(--muted); font-size: 1.1rem; flex-shrink: 0; }
+
+  /* ---- Profili: karta, statistika, prestige ---- */
+  .profile-hero { text-align: center; }
+  .profile-avatar {
+    width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 10px;
+    background: linear-gradient(135deg, var(--blue), #7aa2ff);
+    display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
+    box-shadow: 0 0 24px var(--blue-glow);
+  }
+  .profile-name-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px; }
+  .profile-name-row span:first-child { font-size: 1.15rem; font-weight: 800; }
+  .profile-edit-btn { background: none; border: none; cursor: pointer; font-size: .95rem; opacity: .7; padding: 4px; }
+  .profile-edit-btn:active { opacity: 1; }
+  .profile-since { font-size: .78rem; color: var(--muted); font-weight: 700; margin-top: 4px; }
+  #usernameEditBox { margin-top: 12px; text-align: left; }
+  #usernameEditBox input {
+    width: 100%; padding: 12px 14px; border-radius: var(--radius-md); border: 1px solid var(--line);
+    background: rgba(255,255,255,.05); color: var(--ink); font-family: var(--font); font-size: .92rem;
+  }
+
+  .prestige-progress-row { display: flex; align-items: center; gap: 10px; }
+  .prestige-progress-track { flex: 1; height: 9px; background: rgba(255,255,255,.07); border-radius: var(--radius-pill); overflow: hidden; }
+  .prestige-progress-fill {
+    height: 100%; border-radius: var(--radius-pill); transition: width .5s ease;
+    background: linear-gradient(90deg, #4caf7d, var(--gold)); box-shadow: 0 0 10px rgba(76,175,125,.5);
+  }
+  #prestigeAccProgLabel { font-size: .78rem; font-weight: 800; color: var(--gold); flex-shrink: 0; width: 40px; text-align: right; }
+
+  /* ---- Ndriçim i artë: shfaqet kur prestige-i është gati ---- */
+  body.prestige-ready .hud {
+    animation: prestigeGlowPulse 2.4s ease-in-out infinite;
+    border-color: rgba(255,200,87,.55) !important;
+  }
+  body.prestige-ready::before {
+    content: ""; position: fixed; top: 0; left: 0; right: 0; height: 120px; z-index: 5;
+    pointer-events: none; background: linear-gradient(180deg, rgba(255,200,87,.22), transparent);
+    animation: prestigeTopGlow 2.4s ease-in-out infinite;
+  }
+  @keyframes prestigeGlowPulse {
+    0%,100% { box-shadow: 0 10px 32px rgba(0,0,0,.38), 0 0 0 rgba(255,200,87,0); }
+    50% { box-shadow: 0 10px 32px rgba(0,0,0,.38), 0 0 32px rgba(255,200,87,.5); }
+  }
+  @keyframes prestigeTopGlow { 0%,100% { opacity: .6; } 50% { opacity: 1; } }
+  body.prestige-ready .hud-profile-btn { border-color: rgba(255,200,87,.5); box-shadow: 0 0 14px rgba(255,200,87,.2); }
+
   .hud-bars { display: flex; flex-direction: column; gap: 7px; margin-top: 14px; }
   .hud-bar-row { display: flex; align-items: center; gap: 10px; }
   .hud-bar-label { font-size: .64rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; width: 68px; flex-shrink: 0; }
   .hud-bar-track { flex: 1; height: 7px; background: rgba(255,255,255,.07); border-radius: var(--radius-pill); overflow: hidden; }
+  .hud-bar-clickable { cursor: pointer; padding: 3px 4px; margin: 0 -4px; border-radius: 10px; transition: background .15s ease; }
+  .hud-bar-clickable:active { background: rgba(255,255,255,.06); }
+  .hud-farm-fill {
+    height: 100%; border-radius: var(--radius-pill); transition: width .5s cubic-bezier(.2,.8,.2,1);
+    background: linear-gradient(90deg, #4caf7d, var(--gold)); box-shadow: 0 0 8px rgba(76,175,125,.5);
+  }
+  .hud-bar-goto { font-size: .62rem; font-weight: 800; color: var(--blue); white-space: nowrap; margin-left: 4px; }
   .level-progress-bar {
     height: 100%; border-radius: var(--radius-pill); transition: width .5s cubic-bezier(.2,.8,.2,1);
     background: linear-gradient(90deg, var(--gold), #ffe08a, var(--gold));
@@ -1173,7 +1237,15 @@
         <span class="hud-stat-label">Seri</span>
       </div>
     </div>
-    <div class="level-badge" id="levelBadge">Niv. 1</div>
+    <button class="level-badge profile-chip" id="levelBadge" data-view-target="account">Niv. 1</button>
+  </div>
+
+  <div class="hud-profile-row">
+    <button class="hud-profile-btn" id="hudProfileBtn" data-view-target="account">
+      <span class="hpb-avatar">👤</span>
+      <span class="hpb-name" id="hudProfileName">Identifikohu</span>
+      <span class="hpb-arrow">›</span>
+    </button>
   </div>
 
   <div class="hud-bars">
@@ -1184,6 +1256,11 @@
     <div class="hud-bar-row">
       <span class="hud-bar-label" id="answerStreakGoal">Synimi: 5</span>
       <div class="hud-bar-track"><div class="answer-streak-fill" id="answerStreakFill" style="width:0%"></div></div>
+    </div>
+    <div class="hud-bar-row hud-bar-clickable" id="hudFarmRow">
+      <span class="hud-bar-label">🪙 <span id="hudFarmCoins">0</span></span>
+      <div class="hud-bar-track"><div class="hud-farm-fill" id="hudFarmFill" style="width:0%"></div></div>
+      <span class="hud-bar-goto">Fshati →</span>
     </div>
   </div>
 
@@ -1409,6 +1486,41 @@
 <!-- HINZUFÜGEN -->
 <!-- KONTO -->
 <div class="view hidden" id="view-account">
+  <div class="hidden" id="profileCard">
+    <div class="auth-card profile-hero">
+      <div class="profile-avatar">🧑</div>
+      <div class="profile-name-row">
+        <span id="profileNameDisplay">—</span>
+        <button class="profile-edit-btn" id="btnEditUsername" title="Ndrysho emrin">✏️</button>
+      </div>
+      <div class="hidden" id="usernameEditBox">
+        <input type="text" id="usernameInput" placeholder="Emri i ri" maxlength="24">
+        <div class="controls" style="margin-top:8px;">
+          <button class="btn btn-primary" id="btnSaveUsername" style="flex:1;">Ruaj</button>
+          <button class="btn btn-secondary" id="btnCancelUsername" style="flex:1;">Anulo</button>
+        </div>
+      </div>
+      <div class="profile-since" id="profileSince"></div>
+    </div>
+
+    <div class="stats-grid" id="profileStatsGrid"></div>
+
+    <div class="auth-card" id="prestigeAccountCard">
+      <h3>🏝️ Prestigo</h3>
+      <div class="sub" id="prestigeAccountSub">Plotëso fshatin për të kaluar në ishullin tjetër.</div>
+      <div class="prestige-progress-row">
+        <div class="prestige-progress-track"><div class="prestige-progress-fill" id="prestigeAccProgFill" style="width:0%"></div></div>
+        <span id="prestigeAccProgLabel">0%</span>
+      </div>
+      <button class="btn btn-primary hidden" id="btnPrestigeAccount" style="width:100%;margin-top:12px;padding:14px;"></button>
+    </div>
+
+    <div class="auth-card">
+      <h3>📚 Si ke mësuar</h3>
+      <div id="profileLearnList"></div>
+    </div>
+  </div>
+
   <div class="auth-card">
     <div id="authLoggedOut">
       <h3 id="authTitle">Identifikohu</h3>
@@ -3244,6 +3356,21 @@ function renderPoints(animateFrom) {
   document.getElementById("levelProgressBar").style.width = (totalPoints % 100) + "%";
   renderBadges();
   renderStreak();
+  renderHudFarmRow();
+}
+
+function renderHudFarmRow() {
+  if (typeof ensureFarmCoins !== "function") return;
+  ensureFarmCoins();
+  const coinsEl = document.getElementById("hudFarmCoins");
+  const fillEl = document.getElementById("hudFarmFill");
+  if (!coinsEl || !fillEl) return;
+  coinsEl.textContent = stats.farmCoins || 0;
+  const totalCost = FARM_ITEMS.reduce((a, i) => a + itemCost(i), 0);
+  const spent = FARM_ITEMS.filter(i => stats.farmBuilt && stats.farmBuilt[i.id])
+    .reduce((a, i) => a + itemCost(i), 0);
+  const have = spent + (stats.farmCoins || 0);
+  fillEl.style.width = Math.min(100, Math.round((have / totalCost) * 100)) + "%";
 }
 
 function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -3397,6 +3524,7 @@ function goToView(t) {
   if (t === "cards") renderCard();
   if (t === "exam") renderExamMenu();
   if (t === "stats") renderStatsView();
+  if (t === "account") renderProfileView();
   if (t === "grammar") { fillGrammarCats(); startGrammar(); }
   if (t === "homework") renderHomework();
   window.scrollTo(0,0);
@@ -3405,6 +3533,8 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
   btn.addEventListener("click", () => goToView(btn.dataset.view));
 });
 document.getElementById("btnAccountAction").addEventListener("click", () => goToView("account"));
+document.querySelectorAll('[data-view-target="account"]').forEach(el =>
+  el.addEventListener("click", () => goToView("account")));
 
 /* ============ KATEGORIE-FILTER ============ */
 function fillCatSelects() {
@@ -5875,14 +6005,20 @@ try {
 function setAccountBar(loggedIn, email) {
   const status = document.getElementById("accountStatus");
   const action = document.getElementById("btnAccountAction");
+  const hpbName = document.getElementById("hudProfileName");
+  const hpbAvatar = document.querySelector(".hpb-avatar");
   if (loggedIn) {
     status.textContent = "✓ I identifikuar si " + email;
     status.classList.add("online");
     action.textContent = "Llogaria";
+    if (hpbName) hpbName.textContent = userFirstName() || email;
+    if (hpbAvatar) hpbAvatar.textContent = "🧑";
   } else {
     status.textContent = "👤 I paidentifikuar — përparimi ruhet vetëm në këtë pajisje";
     status.classList.remove("online");
     action.textContent = "Identifikohu";
+    if (hpbName) hpbName.textContent = "Identifikohu";
+    if (hpbAvatar) hpbAvatar.textContent = "👤";
   }
 }
 
@@ -5990,6 +6126,7 @@ async function loadProgress() {
       selectedLevel = data.selected_level || cefrLevel || null;
       examRunCount = data.exam_runs || 0;
       if (data.stats && typeof data.stats === "object") { stats = data.stats; ensureStats(); }
+      if (typeof ensureFarmCoins === "function") ensureFarmCoins();
       lastSeenTreeStage = treeStageFor(Math.floor(totalPoints / 100) + 1).idx;
       const custom = Array.isArray(data.custom_vocab) ? data.custom_vocab : [];
       custom.forEach(w => {
@@ -6078,6 +6215,7 @@ if (sb) {
       loadProgress();
       loadLeaderboard();
       mascotGreet();
+      setTimeout(() => { if (typeof renderPrestigeAccountCard === "function") { ensureStats(); ensurePrestige(); updatePrestigeGlow(FARM_ITEMS.every(i => stats.farmBuilt && stats.farmBuilt[i.id]) && stats.prestige < MAX_PRESTIGE); } }, 800);
     } else {
       setAccountBar(false);
       showAuthView(false);
@@ -6984,7 +7122,7 @@ const FARM_ITEMS = [
   { id:"dog",      group:"single", name:"Qeni rojë",          emoji:"🐕", cost:45,  x:18, y:44, size:1.6 },
   { id:"sheep",    group:"single", name:"Delja",              emoji:"🐑", cost:60,  x:52, y:60, size:1.7 },
   { id:"cow",      group:"single", name:"Lopa",               emoji:"🐄", cost:85,  x:62, y:58, size:1.9 },
-  { id:"pig",      group:"single", name:"Derri",              emoji:"🐖", cost:70,  x:46, y:63, size:1.6 },
+  { id:"goat",     group:"single", name:"Dhia",               emoji:"🐐", cost:70,  x:46, y:63, size:1.6 },
   { id:"cart",     group:"single", name:"Karroca",            emoji:"🛒", cost:50,  x:8,  y:52, size:1.7 },
   { id:"barrel",   group:"single", name:"Fuçitë e verës",     emoji:"🛢️", cost:55,  x:20, y:76, size:1.5 },
   { id:"beehive",  group:"single", name:"Zgjoi i bletëve",     emoji:"🐝", cost:60,  x:88, y:78, size:1.4 },
@@ -6995,6 +7133,19 @@ const FARM_ITEMS = [
 function ensureFarmCoins() {
   if (typeof stats.farmCoins !== "number") stats.farmCoins = 0;
   if (!stats.farmBuilt) stats.farmBuilt = {};      // { itemId: ISO-datë kur u ndërtua }
+  // Përdoruesit që tashmë kishin nivel të lartë PARA se të ekzistonte fshati:
+  // marrin një herë monedha për pikët që kishin fituar tashmë, që të mos fillojnë bosh.
+  if (!stats.farmMigrated) {
+    stats.farmMigrated = true;
+    if (totalPoints > 0) {
+      stats.farmCoins += totalPoints;
+      queueSave();
+      setTimeout(() => mascotSay(
+        fmt(`Për punën që ke bërë deri tani{name}, të kalova ${totalPoints} monedha në fshat. Shiko te „Fshati" ç'mund të ndërtosh!`),
+        { duration: 12000 }
+      ), 1500);
+    }
+  }
 }
 
 // Nivelet e mëparshme te një grup (house/field) duhen ndërtuar para tjetrës
@@ -7174,6 +7325,127 @@ function renderFarmView() {
   renderFarmShop();
 }
 
+/* ============ PROFILI: statistika, emri, prestige ============ */
+function formatMemberDuration(createdAt) {
+  if (!createdAt) return "";
+  const days = Math.max(0, Math.floor((Date.now() - new Date(createdAt)) / 86400000));
+  if (days === 0) return "Sot u regjistrove";
+  if (days === 1) return "1 ditë si anëtar";
+  if (days < 30) return days + " ditë si anëtar";
+  const months = Math.floor(days / 30);
+  if (months < 12) return months + (months === 1 ? " muaj" : " muaj") + " si anëtar";
+  const years = Math.floor(months / 12);
+  return years + (years === 1 ? " vit" : " vjet") + " si anëtar";
+}
+
+function renderProfileView() {
+  ensureStats(); ensureFarmCoins(); ensurePrestige();
+  const card = document.getElementById("profileCard");
+  const loggedIn = !!currentUser;
+  card.classList.toggle("hidden", !loggedIn);
+  if (!loggedIn) { updatePrestigeGlow(false); return; }
+
+  document.getElementById("profileNameDisplay").textContent = userFirstName() || (currentUser.email || "").split("@")[0];
+  document.getElementById("profileSince").textContent = formatMemberDuration(currentUser.created_at);
+
+  // --- Statistika kryesore ---
+  const totalAns = stats.quiz.total + stats.imagequiz.total + stats.practice.total + (stats.grammar ? stats.grammar.total : 0);
+  const totalCorrect = stats.quiz.correct + stats.imagequiz.correct + stats.practice.correct + (stats.grammar ? stats.grammar.correct : 0);
+  const acc = totalAns ? Math.round((totalCorrect / totalAns) * 100) : 0;
+  const hw = stats.homework || { totalDone: 0, streak: 0 };
+  const ex = stats.exams || { taken: 0, passed: 0 };
+
+  document.getElementById("profileStatsGrid").innerHTML = `
+    <div class="stat-box"><div class="stat-num stat-gold">${totalPoints}</div><div class="stat-lbl">Pikë aktuale</div></div>
+    <div class="stat-box"><div class="stat-num">${totalAns}</div><div class="stat-lbl">Pyetje gjithsej</div></div>
+    <div class="stat-box"><div class="stat-num stat-green">${acc}%</div><div class="stat-lbl">Saktësia</div></div>
+    <div class="stat-box"><div class="stat-num stat-gold">🔥 ${streakDays}</div><div class="stat-lbl">Seria e ditëve</div></div>
+    <div class="stat-box"><div class="stat-num">${hw.totalDone || 0}</div><div class="stat-lbl">Detyra ditore</div></div>
+    <div class="stat-box"><div class="stat-num stat-green">${ex.passed || 0}/${ex.taken || 0}</div><div class="stat-lbl">Provime kaluar</div></div>
+  `;
+
+  // --- Si ke mësuar (ndarje sipas aktivitetit) ---
+  const rows = [
+    { name: "Karta", icon: "🗂️", d: { total: stats.cards.known + stats.cards.unknown, correct: stats.cards.known } },
+    { name: "Kuiz", icon: "❓", d: stats.quiz },
+    { name: "Kuiz me foto", icon: "🖼️", d: stats.imagequiz },
+    { name: "Gramatikë", icon: "📐", d: stats.grammar || { total: 0, correct: 0 } },
+    { name: "Ushtrim i shpejtë", icon: "🦅", d: stats.practice }
+  ];
+  document.getElementById("profileLearnList").innerHTML = rows.map(r => {
+    const p = r.d.total ? Math.round((r.d.correct / r.d.total) * 100) : 0;
+    const color = p >= 80 ? "var(--green)" : p >= 60 ? "var(--gold)" : "var(--red)";
+    return `<div class="acc-row">
+      <div class="acc-name">${r.icon} ${r.name}</div>
+      <div class="acc-bar"><div class="acc-fill" style="width:${p}%;background:${color}"></div></div>
+      <div class="acc-val">${r.d.total ? p + "%" : "—"}<span>${r.d.total} herë</span></div>
+    </div>`;
+  }).join("");
+
+  renderPrestigeAccountCard();
+}
+
+function renderPrestigeAccountCard() {
+  const built = FARM_ITEMS.filter(i => stats.farmBuilt && stats.farmBuilt[i.id]).length;
+  const total = FARM_ITEMS.length;
+  const pct = Math.round((built / total) * 100);
+  document.getElementById("prestigeAccProgFill").style.width = pct + "%";
+  document.getElementById("prestigeAccProgLabel").textContent = pct + "%";
+
+  const btn = document.getElementById("btnPrestigeAccount");
+  const sub = document.getElementById("prestigeAccountSub");
+  const ready = built === total && stats.prestige < MAX_PRESTIGE;
+  const maxed = stats.prestige >= MAX_PRESTIGE;
+
+  if (maxed) {
+    sub.textContent = `Të gjithë ${MAX_PRESTIGE + 1} ishujt u arritën! Je Prestige Master. 🏆`;
+    btn.classList.add("hidden");
+  } else if (ready) {
+    sub.textContent = `Fshati i ishullit ${currentIslandNumber()} u plotësua! Gati për ishullin tjetër.`;
+    btn.innerHTML = `${islandMedalHtml(stats.prestige + 1, 64, "medal-img medal-img-btn")} Kalo në ishullin ${currentIslandNumber() + 1} →`;
+    btn.classList.remove("hidden");
+    btn.onclick = () => { confirmPrestige(); setTimeout(renderProfileView, 300); };
+  } else {
+    sub.textContent = `${built} / ${total} ndërtime deri sa të hapet ishulli tjetër. Shiko te „Fshati".`;
+    btn.classList.add("hidden");
+  }
+
+  updatePrestigeGlow(ready);
+}
+
+function updatePrestigeGlow(active) {
+  document.body.classList.toggle("prestige-ready", !!active);
+}
+
+/* --- Ndryshimi i emrit të përdoruesit --- */
+document.getElementById("btnEditUsername").addEventListener("click", () => {
+  document.getElementById("usernameInput").value = userFirstName() || "";
+  document.getElementById("usernameEditBox").classList.remove("hidden");
+});
+document.getElementById("btnCancelUsername").addEventListener("click", () => {
+  document.getElementById("usernameEditBox").classList.add("hidden");
+});
+document.getElementById("btnSaveUsername").addEventListener("click", async () => {
+  const val = document.getElementById("usernameInput").value.trim();
+  if (!val || val.length < 2) { alert("Shkruaj një emër me të paktën 2 shkronja."); return; }
+  if (!sb || !currentUser) return;
+  const btn = document.getElementById("btnSaveUsername");
+  btn.disabled = true; btn.textContent = "Duke ruajtur…";
+  try {
+    const { data, error } = await sb.auth.updateUser({ data: { username: val } });
+    if (error) throw error;
+    currentUser = data.user;
+    document.getElementById("usernameEditBox").classList.add("hidden");
+    renderProfileView();
+    setAccountBar(true, currentUser.email);
+    mascotSay(fmt(`Tani quhesh ${val}! Më pëlqen.`), { duration: 4000 });
+  } catch (e) {
+    alert("Gabim gjatë ruajtjes: " + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = "Ruaj";
+  }
+});
+
 /* ============ START ============ */
 const defaultVocabSet = new Set(vocab.map(w => w.al + "|" + w.de));
 fillCatSelects();
@@ -7182,6 +7454,9 @@ renderPoints();
 renderCard();
 renderStreakBar();
 if (lastSeenTreeStage === null) lastSeenTreeStage = treeStageFor(Math.floor(totalPoints / 100) + 1).idx;
+
+const hudFarmRowEl = document.getElementById("hudFarmRow");
+if (hudFarmRowEl) hudFarmRowEl.addEventListener("click", () => goToView("stats"));
 
 // PWA: Service Worker registrieren, damit die App installierbar ist
 // und auch ohne Internet weiter funktioniert (Karten, Quiz, Prüfung).
