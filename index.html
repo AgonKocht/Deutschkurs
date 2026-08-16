@@ -79,6 +79,15 @@
     background: rgba(91,140,255,.16); border: 1px solid rgba(91,140,255,.4); color: var(--blue);
     letter-spacing: .03em;
   }
+  .prestige-pill {
+    padding: 5px 12px 5px 6px; border-radius: var(--radius-pill); font-size: .78rem; font-weight: 800;
+    background: rgba(255,200,87,.16); border: 1px solid rgba(255,200,87,.4); color: var(--gold);
+    letter-spacing: .02em; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .medal-img { display: inline-block; vertical-align: middle; object-fit: contain; }
+  .medal-img-pill { width: 22px; height: 22px; }
+  .medal-img-big { width: 84px; height: 84px; filter: drop-shadow(0 6px 16px rgba(0,0,0,.5)); }
+  .medal-img-btn { width: 24px; height: 24px; vertical-align: middle; margin-right: 2px; }
 
   /* ---- HUD ---- */
   .hud {
@@ -124,28 +133,37 @@
 
   /* ---- nav / header tab bar ---- */
   nav {
-    display: flex; gap: 8px; margin: 4px 0 20px; flex-wrap: nowrap; justify-content: center;
+    display: flex; gap: 6px; margin: 4px 0 20px; flex-wrap: nowrap; justify-content: flex-start;
     width: 100%; max-width: 520px; position: sticky; top: calc(8px + env(safe-area-inset-top)); z-index: 50;
-    background: rgba(14,17,32,.55); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
-    border: 1px solid var(--line); border-radius: 24px; padding: 8px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.4);
+    background: rgba(14,17,32,.72); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+    border: 1px solid var(--line); border-radius: 22px; padding: 7px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.45);
+    overflow-x: auto; overflow-y: hidden;
+    scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
+  nav::-webkit-scrollbar { display: none; }
   nav button {
-    position: relative; overflow: hidden; flex: 1;
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-    background: transparent; border: 1px solid transparent; padding: 12px 6px 10px;
-    border-radius: 18px; cursor: pointer; font-size: .74rem; font-weight: 800;
+    position: relative; overflow: hidden; flex: 0 0 auto; scroll-snap-align: center;
+    min-width: 62px; max-width: 84px;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    background: transparent; border: 1px solid transparent; padding: 10px 8px 9px;
+    border-radius: 16px; cursor: pointer; font-size: .66rem; font-weight: 800;
     color: var(--muted); font-family: var(--font);
     transition: transform .12s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease, color .18s ease;
   }
-  nav button .tab-icon { font-size: 1.35rem; line-height: 1; transition: transform .18s ease; }
-  nav button .tab-label { letter-spacing: .01em; }
+  nav button .tab-icon { font-size: 1.28rem; line-height: 1; transition: transform .18s ease; }
+  nav button .tab-label {
+    letter-spacing: 0; line-height: 1.15; text-align: center;
+    max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
   nav button:active { transform: scale(.92); }
   nav button.active {
     background: linear-gradient(160deg, var(--blue), #6f97ff); color: #fff; border-color: transparent;
     box-shadow: 0 6px 20px var(--blue-glow), inset 0 1px 0 rgba(255,255,255,.35);
   }
-  nav button.active .tab-icon { transform: scale(1.12) translateY(-1px); }
+  nav button.active .tab-icon { transform: scale(1.14) translateY(-1px); }
+  nav button.active .tab-label { color: #fff; }
   .view { width: 100%; max-width: 520px; }
   .hidden { display: none !important; }
 
@@ -278,8 +296,25 @@
     font-family: var(--font); color: var(--ink);
   }
   .quiz-option:active { transform: scale(.98); }
-  .quiz-option.correct { border-color: var(--green); background: rgba(53,220,156,.14); box-shadow: 0 0 20px var(--green-glow); color: #baffe0; }
-  .quiz-option.wrong { border-color: var(--red); background: rgba(255,95,109,.14); box-shadow: 0 0 20px var(--red-glow); color: #ffd0d3; }
+  .quiz-option { position: relative; }
+  .quiz-option.correct { border-color: var(--green); background: rgba(53,220,156,.16); box-shadow: 0 0 20px var(--green-glow); color: #baffe0; }
+  .quiz-option.wrong { border-color: var(--red); background: rgba(255,95,109,.16); box-shadow: 0 0 20px var(--red-glow); color: #ffd0d3; }
+  /* Përgjigjet e pazgjedhura zbehen, që të dallohet qartë çfarë preke */
+  .quiz-option.faded { opacity: .35; }
+  /* Shenjë e qartë: kjo ishte zgjedhja jote */
+  .quiz-option.picked::after {
+    content: "Zgjedhja jote"; position: absolute; top: 50%; right: 12px; transform: translateY(-50%);
+    font-size: .6rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: var(--radius-pill); white-space: nowrap;
+  }
+  .quiz-option.picked.correct::after { background: rgba(53,220,156,.25); color: #baffe0; }
+  .quiz-option.picked.wrong::after { background: rgba(255,95,109,.25); color: #ffd0d3; }
+  .quiz-option.correct::before, .quiz-option.wrong::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    border-radius: var(--radius-md) 0 0 var(--radius-md);
+  }
+  .quiz-option.correct::before { background: var(--green); }
+  .quiz-option.wrong::before { background: var(--red); }
   .streak-flash { text-align: center; color: var(--gold); font-weight: 800; font-size: .86rem; margin-top: 8px; min-height: 1.2em; text-shadow: 0 0 12px var(--gold-glow); }
   .stats-bar { display: flex; justify-content: space-between; width: 100%; margin-bottom: 12px; font-size: .82rem; color: var(--muted); font-weight: 700; }
 
@@ -325,6 +360,8 @@
   }
   .exam-q .opt:active { transform: scale(.98); }
   .exam-q .opt.selected { border-color: var(--blue); background: rgba(91,140,255,.14); }
+  .exam-q .opt.faded { opacity: .38; }
+  .exam-q .opt.picked { font-weight: 800; }
   .exam-q .opt.correct { border-color: var(--green); background: rgba(53,220,156,.14); box-shadow: 0 0 16px var(--green-glow); }
   .exam-q .opt.wrong { border-color: var(--red); background: rgba(255,95,109,.14); box-shadow: 0 0 16px var(--red-glow); }
   .exam-q .explain { font-size: .8rem; color: var(--muted); margin-top: 8px; line-height: 1.45; border-left: 3px solid rgba(91,140,255,.3); padding-left: 10px; font-weight: 600; }
@@ -783,6 +820,64 @@
     box-shadow: 0 4px 14px var(--blue-glow);
   }
 
+  /* ---- Fshati im (ferma që ndërtohet) ---- */
+  .farm-card {
+    background: var(--surface); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.35); margin-bottom: 14px;
+  }
+  .farm-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .farm-header h3 { margin: 0; font-size: 1.05rem; font-weight: 800; }
+  .farm-coins {
+    display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: var(--radius-pill);
+    background: rgba(255,200,87,.14); border: 1px solid rgba(255,200,87,.35);
+    font-weight: 800; font-size: .88rem; color: var(--gold);
+  }
+  .fc-icon { font-size: .95rem; }
+  .farm-scene {
+    position: relative; width: 100%; aspect-ratio: 16 / 11; border-radius: var(--radius-md);
+    background: linear-gradient(180deg, #bfe9ff 0%, #bfe9ff 22%, #8fd98f 22%, #6fc76f 100%);
+    overflow: hidden; margin-bottom: 12px; border: 1px solid var(--line);
+  }
+  .farm-piece {
+    position: absolute; transform: translate(-50%, -50%); line-height: 1; user-select: none;
+    filter: drop-shadow(0 3px 6px rgba(0,0,0,.35));
+    animation: farmPop .4s cubic-bezier(.3,1.4,.4,1);
+  }
+  @keyframes farmPop { from { transform: translate(-50%,-50%) scale(0); opacity: 0; } to { transform: translate(-50%,-50%) scale(1); opacity: 1; } }
+  .farm-empty {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 20px; font-size: .85rem; font-weight: 700; color: #1a3d1a;
+  }
+  .farm-progress-track { height: 9px; background: rgba(255,255,255,.08); border-radius: var(--radius-pill); overflow: hidden; margin-bottom: 6px; }
+  .farm-progress-fill {
+    height: 100%; border-radius: var(--radius-pill); transition: width .5s cubic-bezier(.2,.8,.2,1);
+    background: linear-gradient(90deg, #4caf7d, var(--gold)); box-shadow: 0 0 10px rgba(76,175,125,.5);
+  }
+  .farm-progress-label { text-align: center; font-size: .76rem; font-weight: 800; color: var(--muted); }
+
+  .farm-shop { margin-bottom: 14px; }
+  .farm-shop-group { margin-bottom: 14px; }
+  .farm-shop-group h4 { margin: 0 0 8px; font-size: .84rem; font-weight: 800; color: var(--ink); padding-left: 2px; }
+  .farm-shop-item {
+    display: flex; align-items: center; gap: 12px; padding: 11px 13px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md);
+    margin-bottom: 7px;
+  }
+  .farm-shop-item.built { border-color: rgba(76,175,125,.4); background: rgba(76,175,125,.08); }
+  .fsi-emoji { font-size: 1.5rem; flex-shrink: 0; width: 30px; text-align: center; }
+  .fsi-body { flex: 1; min-width: 0; }
+  .fsi-name { font-size: .84rem; font-weight: 700; margin-bottom: 2px; }
+  .fsi-cost { font-size: .72rem; color: var(--gold); font-weight: 800; }
+  .farm-shop-item.built .fsi-cost { color: var(--green); }
+  .fsi-btn {
+    flex-shrink: 0; padding: 8px 14px; border-radius: var(--radius-md); border: none;
+    background: linear-gradient(135deg, var(--gold), #ffe08a); color: #241a03;
+    font-family: var(--font); font-weight: 800; font-size: .78rem; cursor: pointer;
+  }
+  .fsi-btn:disabled { background: rgba(255,255,255,.08); color: var(--muted); cursor: not-allowed; }
+  .fsi-btn:not(:disabled):active { transform: scale(.94); }
+
   /* ---- Pema e niveleve + statistika ---- */
   .tree-card {
     background: var(--surface); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
@@ -957,9 +1052,9 @@
     h1 { font-size: 1.18rem; }
     .subtitle { font-size: .76rem; }
     nav { gap: 4px; padding: 6px; border-radius: 20px; }
-    nav button { padding: 9px 2px 8px; font-size: .64rem; border-radius: 15px; gap: 3px; }
-    nav button .tab-icon { font-size: 1.15rem; }
-    .tab-icon-img { width: 24px; height: 24px; }
+    nav button { padding: 9px 5px 8px; font-size: .6rem; border-radius: 15px; gap: 2px; min-width: 54px; max-width: 72px; }
+    nav button .tab-icon { font-size: 1.12rem; }
+    .tab-icon-img { width: 22px; height: 22px; }
     .hud { padding: 12px 13px; }
     .hud-stat-value { font-size: 1.02rem; }
     .hud-stat-icon { font-size: 1rem; }
@@ -1048,6 +1143,7 @@
   <div class="header-row">
     <h1>Shqip–Gjermanisht</h1>
     <div class="cefr-pill hidden" id="cefrPill">B1</div>
+    <div class="prestige-pill hidden" id="prestigeBadge">🥉 Ishulli 2/10</div>
   </div>
   <div class="subtitle">Fjalor &amp; përgatitje provimi</div>
 </header>
@@ -1104,10 +1200,10 @@
   <button class="tab-btn" data-view="quiz"><span class="tab-icon">❓</span><span class="tab-label">Kuiz</span></button>
   <button class="tab-btn" data-view="imagequiz"><span class="tab-icon">🖼️</span><span class="tab-label">Foto</span></button>
   <button class="tab-btn" data-view="grammar"><span class="tab-icon">📐</span><span class="tab-label">Gramatikë</span></button>
-  <button class="tab-btn" data-view="homework"><span class="tab-icon">📋</span><span class="tab-label">Detyra</span></button>
+  <button class="tab-btn" data-view="homework"><span class="tab-icon">📋</span><span class="tab-label">Detyrat</span></button>
   <button class="tab-btn" data-view="practice"><img src="mascot/eagle-64.png" alt="" class="tab-icon-img"><span class="tab-label">Shpejt</span></button>
   <button class="tab-btn" data-view="exam"><span class="tab-icon">📝</span><span class="tab-label">Provim</span></button>
-  <button class="tab-btn" data-view="stats"><span class="tab-icon">🌳</span><span class="tab-label">Rritja</span></button>
+  <button class="tab-btn" data-view="stats"><span class="tab-icon">🏡</span><span class="tab-label">Fshati</span></button>
 </nav>
 
 <!-- KARTEN -->
@@ -1257,18 +1353,19 @@
   </div>
 </div>
 
-<!-- RRITJA: PEMA E NIVELEVE + STATISTIKA -->
+<!-- RRITJA: FSHATI IM + STATISTIKA -->
 <div class="view hidden" id="view-stats">
-  <div class="tree-card">
-    <div class="tree-stage-label" id="treeStageLabel">Fara</div>
-    <div id="treeCanvas"></div>
-    <div class="tree-level-line">
-      <span class="tree-level-now" id="treeLevelNow">Niveli 1</span>
-      <span class="tree-level-next" id="treeLevelNext"></span>
+  <div class="farm-card">
+    <div class="farm-header">
+      <h3>🏡 Fshati im</h3>
+      <div class="farm-coins"><span class="fc-icon">🪙</span><span id="farmCoinsValue">0</span></div>
     </div>
-    <div class="tree-progress-track"><div class="tree-progress-fill" id="treeProgressFill" style="width:0%"></div></div>
-    <div class="tree-message" id="treeMessage"></div>
+    <div class="farm-scene" id="farmScene"></div>
+    <div class="farm-progress-track"><div class="farm-progress-fill" id="farmProgressFill" style="width:0%"></div></div>
+    <div class="farm-progress-label" id="farmProgressLabel">0 / 0 ndërtime</div>
   </div>
+
+  <div class="farm-shop" id="farmShop"></div>
 
   <div class="stats-grid" id="statsGrid"></div>
 
@@ -2423,9 +2520,13 @@ function renderPlacementQuestion(index) {
     el.className = "quiz-option";
     el.textContent = opt;
     el.addEventListener("click", () => {
-      box.querySelectorAll(".quiz-option").forEach(o => o.disabled = true);
+      box.querySelectorAll(".quiz-option").forEach((o, j) => {
+        o.disabled = true;
+        if (j !== q.a && o !== el) o.classList.add("faded");
+      });
       const correct = i === q.a;
       el.classList.add(correct ? "correct" : "wrong");
+      el.classList.add("picked");
       if (!correct) box.children[q.a].classList.add("correct");
       correct ? feedbackCorrect() : feedbackWrong();
       placementAnswers.push({ level: q.level, correct, type: q.type });
@@ -2493,6 +2594,7 @@ async function finishPlacementTest() {
   vibrate([40, 60, 40, 60, 120]);
 
   renderLevelCard();
+      if (typeof renderPrestigeBadge === "function") renderPrestigeBadge();
   await saveProgress();
   document.getElementById("btnClosePlacement").addEventListener("click", () => {
     closePlacementOverlay();
@@ -2511,6 +2613,7 @@ function skipPlacementTest() {
   selectedLevel = null;
   saveProgress();
   renderLevelCard();
+      if (typeof renderPrestigeBadge === "function") renderPrestigeBadge();
   closePlacementOverlay();
   goToView("cards");
 }
@@ -3097,9 +3200,12 @@ function showLevelUp(level) {
 }
 
 function renderBadges() {
+  ensureStats();
+  // Abzeichet mbeten të hapura përgjithmonë, edhe nëse pikët rikthehen te zero me prestigen
+  if (!stats.maxPointsEver || totalPoints > stats.maxPointsEver) stats.maxPointsEver = totalPoints;
   const row = document.getElementById("badgesRow");
   row.innerHTML = BADGES.map(b =>
-    `<div class="badge ${totalPoints >= b.threshold ? "unlocked" : ""}" title="${esc(b.name)} (${b.threshold} pikë)">${b.icon}</div>`
+    `<div class="badge ${stats.maxPointsEver >= b.threshold ? "unlocked" : ""}" title="${esc(b.name)} (${b.threshold} pikë)">${b.icon}</div>`
   ).join("");
 }
 
@@ -3111,8 +3217,9 @@ function addPoints(n) {
   renderPoints(from);
   renderBadges();
   touchStreak();
+  ensureStats();
+  stats.farmCoins = (stats.farmCoins || 0) + n;   // monedhat për fshatin rriten njësoj si pikët
   if (typeof queueSave === "function") queueSave();
-  if (typeof checkTreeStageAdvance === "function") checkTreeStageAdvance();
   if (newLevel > prevLevel) showLevelUp(newLevel);
 }
 
@@ -3271,7 +3378,14 @@ function speak(text) {
 /* ============ NAVIGATION ============ */
 const views = ["cards","quiz","imagequiz","grammar","homework","practice","exam","stats","list","add","account"];
 function goToView(t) {
-  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.view === t));
+  document.querySelectorAll(".tab-btn").forEach(b => {
+    const isActive = b.dataset.view === t;
+    b.classList.toggle("active", isActive);
+    // Tabi aktiv rrëshqet vetë në pamje, që të mos mbetet i fshehur jashtë ekranit
+    if (isActive && b.scrollIntoView) {
+      try { b.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" }); } catch (e) {}
+    }
+  });
   views.forEach(v => document.getElementById("view-"+v).classList.toggle("hidden", v !== t));
   window.speechSynthesis && window.speechSynthesis.cancel();
   stopTimer();
@@ -3391,7 +3505,9 @@ function renderQuiz() {
       box.querySelectorAll(".quiz-option").forEach(o => {
         if (o.textContent === correct[ansField]) o.classList.add("correct");
         else if (o === el) o.classList.add("wrong");
+        else o.classList.add("faded");
       });
+      el.classList.add("picked");
       if (opt[ansField] === correct[ansField]) {
         quizScore++;
         awardPoints(10, "quiz");
@@ -3900,7 +4016,9 @@ async function renderImageQuiz() {
       box.querySelectorAll(".quiz-option").forEach(o => {
         if (o.textContent === correct.de) o.classList.add("correct");
         else if (o === el) o.classList.add("wrong");
+        else o.classList.add("faded");
       });
+      el.classList.add("picked");
       if (opt.de === correct.de) {
         imgQuizScore++;
         awardPoints(10, "imagequiz");
@@ -4023,7 +4141,9 @@ function practiceAnswerHandler(box, correctLabel, onCorrectPoints) {
     box.querySelectorAll(".quiz-option").forEach(o => {
       if (o.textContent === correctLabel) o.classList.add("correct");
       else if (o === el) o.classList.add("wrong");
+      else o.classList.add("faded");
     });
+    el.classList.add("picked");
     const flash = document.getElementById("practiceFlash");
     if (isCorrect) {
       practiceScore++;
@@ -5231,7 +5351,9 @@ function wireModuleQuestions(container, allQ) {
         qEl.querySelectorAll(".opt").forEach((o, i) => {
           if (i === right) o.classList.add("correct");
           else if (o === btn) o.classList.add("wrong");
+          else o.classList.add("faded");
         });
+        btn.classList.add("picked");
         const ex = qEl.querySelector(".explain");
         if (ex) ex.classList.remove("hidden");
         answered++;
@@ -5504,7 +5626,9 @@ function wireQuestions(container, onFinish, allQ) {
         qEl.querySelectorAll(".opt").forEach((o,i) => {
           if (i === right) o.classList.add("correct");
           else if (o === btn) o.classList.add("wrong");
+          else o.classList.add("faded");
         });
+        btn.classList.add("picked");
         qEl.querySelector(".explain").classList.remove("hidden");
         answered++;
         if (parseInt(btn.dataset.opt) === right) { correct++; awardPoints(10, "exam"); registerAnswer(true); } else { registerAnswer(false); }
@@ -5877,12 +6001,14 @@ async function loadProgress() {
       fillCatSelects(); initCardOrder(); renderCard(); renderList();
       touchStreak();
       renderLevelCard();
+      if (typeof renderPrestigeBadge === "function") renderPrestigeBadge();
       document.getElementById("syncMsg").textContent = "Përparimi u ngarkua: " + totalPoints + " pikë, " + custom.length + " fjalë të shtuara vetë.";
     } else {
       document.getElementById("syncMsg").textContent = "Llogari e re — përparimi yt ruhet tani e tutje.";
       placementTaken = false;
       touchStreak();
       renderLevelCard();
+      if (typeof renderPrestigeBadge === "function") renderPrestigeBadge();
       await saveProgress();
     }
     // Einstufungstest zeigen, solange er für dieses Konto noch nie gemacht
@@ -6411,7 +6537,7 @@ function pct(part, total) { return total ? Math.round((part / total) * 100) : 0;
 
 function renderStatsView() {
   ensureStats();
-  renderTree();
+  renderFarmView();
 
   const buckets = wordBuckets();
   const allAnswers = stats.quiz.total + stats.imagequiz.total + stats.practice.total;
@@ -6750,7 +6876,9 @@ function renderGrammar() {
       box.querySelectorAll(".quiz-option").forEach((o, j) => {
         if (j === ex.a) o.classList.add("correct");
         else if (o === el) o.classList.add("wrong");
+        else o.classList.add("faded");
       });
+      el.classList.add("picked");
       // Trego fjalinë e plotë me përgjigjen e saktë
       document.getElementById("grammarSentence").innerHTML =
         esc(ex.q).replace("___", `<span class="gap filled">${esc(ex.opts[ex.a])}</span>`);
@@ -6820,6 +6948,230 @@ function renderHomework() {
     <div class="stat-box"><div class="stat-num stat-gold">${hw.streak || 0}</div><div class="stat-lbl">Seria aktuale</div></div>
     <div class="stat-box"><div class="stat-num">${hw.bestStreak || 0}</div><div class="stat-lbl">Rekordi i serisë</div></div>
   `;
+}
+
+/* ============ FSHATI IM: fermë që ndërtohet copë-copë me pikë ============ */
+// Çdo artikull kushton monedha (fitohen njësoj si pikët, por shpenzohen këtu).
+// Shtëpia dhe ara kanë disa faza; pjesa tjetër blihen njëherë. Gjithmonë ka
+// diçka të re për të blerë — asnjë "fund" i fiksuar si te pema.
+// Çdo fshat kushton afërsisht sa niveli 1-100 (rreth 9900 pikë), që të mos plotësohet shumë shpejt
+const FARM_COST_SCALE = 5;
+function itemCost(item) { return item.cost * FARM_COST_SCALE; }
+
+const FARM_ITEMS = [
+  // --- Shtëpia (4 faza) ---
+  { id:"house1", group:"house", stage:1, name:"Themeli i shtëpisë", emoji:"🧱", cost:35, x:14, y:32, size:2.0 },
+  { id:"house2", group:"house", stage:2, name:"Muret e shtëpisë",   emoji:"🏚️", cost:60, x:14, y:32, size:2.3 },
+  { id:"house3", group:"house", stage:3, name:"Çatia e shtëpisë",   emoji:"🏠", cost:95, x:14, y:32, size:2.6 },
+  { id:"house4", group:"house", stage:4, name:"Dekori i shtëpisë",  emoji:"🏡", cost:140, x:14, y:32, size:2.9 },
+
+  // --- Ara (3 faza) ---
+  { id:"field1", group:"field", stage:1, name:"Ara e lëruar",   emoji:"🟫", cost:28, x:70, y:30, size:2.2 },
+  { id:"field2", group:"field", stage:2, name:"Ara e mbjellë",  emoji:"🌱", cost:48, x:70, y:30, size:2.2 },
+  { id:"field3", group:"field", stage:3, name:"Domatet piqen",  emoji:"🍅", cost:75, x:70, y:30, size:2.2 },
+
+  // --- Ndërtesa dhe elemente të tjera (nga një blerje) ---
+  { id:"barn",     group:"single", name:"Hambari",           emoji:"🛖", cost:85,  x:32, y:55, size:2.2 },
+  { id:"silo",     group:"single", name:"Depozita e grurit",  emoji:"🏗️", cost:130, x:46, y:52, size:2.0 },
+  { id:"well",     group:"single", name:"Pusi",               emoji:"🪣", cost:55,  x:26, y:66, size:1.6 },
+  { id:"pond",     group:"single", name:"Pellgu me ujë",      emoji:"💧", cost:65,  x:82, y:62, size:1.8 },
+  { id:"haybale",  group:"single", name:"Bale sanoje",        emoji:"🌾", cost:32,  x:38, y:68, size:1.7 },
+  { id:"tractor",  group:"single", name:"Traktori",           emoji:"🚜", cost:150, x:58, y:70, size:2.2 },
+  { id:"tree1",    group:"single", name:"Pemë",               emoji:"🌳", cost:30,  x:4,  y:18, size:1.9 },
+  { id:"tree2",    group:"single", name:"Pemë e dytë",        emoji:"🌳", cost:30,  x:92, y:12, size:1.9 },
+  { id:"flowers",  group:"single", name:"Kopshti me lule",    emoji:"🌻", cost:40,  x:22, y:20, size:1.6 },
+  { id:"chicken",  group:"single", name:"Pula",               emoji:"🐔", cost:38,  x:40, y:60, size:1.5 },
+  { id:"dog",      group:"single", name:"Qeni rojë",          emoji:"🐕", cost:45,  x:18, y:44, size:1.6 },
+  { id:"sheep",    group:"single", name:"Delja",              emoji:"🐑", cost:60,  x:52, y:60, size:1.7 },
+  { id:"cow",      group:"single", name:"Lopa",               emoji:"🐄", cost:85,  x:62, y:58, size:1.9 },
+  { id:"pig",      group:"single", name:"Derri",              emoji:"🐖", cost:70,  x:46, y:63, size:1.6 },
+  { id:"cart",     group:"single", name:"Karroca",            emoji:"🛒", cost:50,  x:8,  y:52, size:1.7 },
+  { id:"barrel",   group:"single", name:"Fuçitë e verës",     emoji:"🛢️", cost:55,  x:20, y:76, size:1.5 },
+  { id:"beehive",  group:"single", name:"Zgjoi i bletëve",     emoji:"🐝", cost:60,  x:88, y:78, size:1.4 },
+  { id:"sun",      group:"single", name:"Dita me diell",      emoji:"☀️", cost:200, x:88, y:6,  size:2.2 },
+  { id:"rainbow",  group:"single", name:"Ylberi mbi fshat",   emoji:"🌈", cost:260, x:50, y:4,  size:3.2 }
+];
+
+function ensureFarmCoins() {
+  if (typeof stats.farmCoins !== "number") stats.farmCoins = 0;
+  if (!stats.farmBuilt) stats.farmBuilt = {};      // { itemId: ISO-datë kur u ndërtua }
+}
+
+// Nivelet e mëparshme te një grup (house/field) duhen ndërtuar para tjetrës
+function farmItemUnlocked(item) {
+  if (item.group === "single" || item.stage === 1) return true;
+  const prevId = item.group + (item.stage - 1);
+  return !!stats.farmBuilt[prevId];
+}
+
+function farmCanAfford(item) { return stats.farmCoins >= itemCost(item); }
+
+function buildFarmItem(id) {
+  ensureFarmCoins();
+  const item = FARM_ITEMS.find(i => i.id === id);
+  if (!item || stats.farmBuilt[id]) return;
+  if (!farmItemUnlocked(item) || !farmCanAfford(item)) return;
+  stats.farmCoins -= itemCost(item);
+  stats.farmBuilt[id] = new Date().toISOString();
+  queueSave();
+  spawnConfetti();
+  playMilestoneFanfare();
+  vibrate([25, 30, 25, 30, 70]);
+  mascotSay(fmt(`„${item.name}" u shtua në fshat{name}! ${item.emoji}`), { duration: 4500 });
+  renderFarmView();
+}
+
+function renderFarmScene() {
+  ensureFarmCoins();
+  const built = FARM_ITEMS.filter(i => stats.farmBuilt[i.id]);
+  const scene = document.getElementById("farmScene");
+  if (!scene) return;
+  if (!built.length) {
+    scene.innerHTML = `<div class="farm-empty">🌱 Fshati yt është ende bosh — blej ndërtimin e parë më poshtë!</div>`;
+    return;
+  }
+  scene.innerHTML = built.map(i =>
+    `<div class="farm-piece" style="left:${i.x}%;top:${i.y}%;font-size:${i.size}rem;" title="${esc(i.name)}">${i.emoji}</div>`
+  ).join("");
+}
+
+function renderFarmShop() {
+  ensureFarmCoins();
+  const shop = document.getElementById("farmShop");
+  if (!shop) return;
+
+  const groupsOrder = ["house", "field", "single"];
+  const groupLabel = { house: "🏠 Shtëpia", field: "🌾 Ara", single: "🎁 Të tjera" };
+  let html = "";
+  groupsOrder.forEach(g => {
+    const items = FARM_ITEMS.filter(i => i.group === g);
+    html += `<div class="farm-shop-group"><h4>${groupLabel[g]}</h4>`;
+    items.forEach(item => {
+      const built = !!stats.farmBuilt[item.id];
+      const unlocked = farmItemUnlocked(item);
+      const afford = farmCanAfford(item);
+      const disabled = built || !unlocked || !afford;
+      let stateLabel = "";
+      if (built) stateLabel = "✓ E ndërtuar";
+      else if (!unlocked) stateLabel = "🔒 Kërkon fazën e mëparshme";
+      else if (!afford) stateLabel = `Mungojnë ${itemCost(item) - stats.farmCoins} 🪙`;
+      html += `<div class="farm-shop-item ${built ? "built" : ""}">
+        <div class="fsi-emoji">${item.emoji}</div>
+        <div class="fsi-body">
+          <div class="fsi-name">${esc(item.name)}</div>
+          <div class="fsi-cost">${built ? stateLabel : (unlocked ? itemCost(item) + " 🪙" : stateLabel)}</div>
+        </div>
+        <button class="fsi-btn" data-id="${item.id}" ${disabled ? "disabled" : ""}>${built ? "✓" : "Ndërto"}</button>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  shop.innerHTML = html;
+  shop.querySelectorAll(".fsi-btn:not([disabled])").forEach(b =>
+    b.addEventListener("click", () => buildFarmItem(b.dataset.id)));
+}
+
+/* ============ PRESTIGE: nga ishulli në ishull (deri në 10) ============ */
+const MAX_PRESTIGE = 9;  // Ishulli 1 (fillestar) + 9 herë prestige = 10 ishuj gjithsej
+const ISLAND_MEDALS = ["🥉","🥈","🥇","🏅","🎖️","💎","👑","⭐","🌟","🏆"]; // rezervë nëse mungon fotoja
+function islandMedalImg(n, size) { return `prestige/badge${n}${size === 64 ? "-64" : ""}.png`; }
+function islandMedalHtml(n, size, cls) {
+  size = size || 64;
+  return `<img src="${islandMedalImg(n, size)}" alt="" class="${cls || "medal-img"}" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';"><span style="display:none;">${ISLAND_MEDALS[n-1] || "🏆"}</span>`;
+}
+
+function ensurePrestige() {
+  ensureStats();
+  if (typeof stats.prestige !== "number") stats.prestige = 0;
+}
+
+function currentIslandNumber() { ensurePrestige(); return stats.prestige + 1; }
+
+function villageFullyBuilt() { return FARM_ITEMS.every(i => stats.farmBuilt[i.id]); }
+
+function renderPrestigeBadge() {
+  ensurePrestige();
+  let el = document.getElementById("prestigeBadge");
+  if (stats.prestige <= 0) { if (el) el.classList.add("hidden"); return; }
+  if (!el) return;
+  el.classList.remove("hidden");
+  el.innerHTML = `${islandMedalHtml(stats.prestige, 64, "medal-img medal-img-pill")} Ishulli ${currentIslandNumber()}/${MAX_PRESTIGE + 1}`;
+}
+
+function doPrestige() {
+  ensurePrestige();
+  if (!villageFullyBuilt() || stats.prestige >= MAX_PRESTIGE) return;
+  stats.prestige++;
+  totalPoints = 0;
+  stats.farmCoins = 0;
+  stats.farmBuilt = {};
+  renderPoints(0);
+  renderBadges();
+  queueSave();
+
+  const overlay = document.createElement("div");
+  overlay.className = "checkpoint-overlay";
+  overlay.innerHTML = `
+    <div class="checkpoint-card">
+      <div class="checkpoint-icon">${islandMedalHtml(stats.prestige, 160, "medal-img medal-img-big")}</div>
+      <h3>Ishulli ${currentIslandNumber()}!</h3>
+      <div class="checkpoint-date">Fshati i mëparshëm u plotësua tërësisht</div>
+      <div class="grandgift-msg" style="margin-top:10px;">Fillon një ishull i ri, bosh, gati për t'u ndërtuar nga e para. Pikët fillojnë sërish nga zero — por medalja jote mbetet përgjithmonë.</div>
+      <button class="btn btn-primary" id="btnClosePrestige" style="width:100%;margin-top:16px;">Fillojmë ishullin e ri →</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  spawnConfetti(); setTimeout(spawnConfetti, 300); setTimeout(spawnConfetti, 650);
+  playFanfare();
+  vibrate([40, 50, 40, 50, 150]);
+  setTimeout(() => mascotSay(fmt(`Ishulli ${currentIslandNumber()}{name}! Ti fillon nga zero, por unë e di se ku ke qenë. Vazhdojmë bashkë.`), { duration: 11000 }), 1200);
+
+  document.getElementById("btnClosePrestige").addEventListener("click", () => {
+    overlay.remove();
+    renderPrestigeBadge();
+    renderFarmView();
+  });
+}
+
+function confirmPrestige() {
+  if (!villageFullyBuilt()) return;
+  if (stats.prestige >= MAX_PRESTIGE) return;
+  const ok = confirm(
+    "Fshati u plotësua! Kalo në ishullin tjetër?\n\n" +
+    "Pikët dhe monedhat rifillojnë nga zero, dhe fshati bëhet bosh përsëri.\n" +
+    "Medalja e ishullit mbetet përgjithmonë e jotja.\n\n" +
+    "Vazhdo?"
+  );
+  if (ok) doPrestige();
+}
+
+function renderFarmView() {
+  ensureFarmCoins();
+  ensurePrestige();
+  document.getElementById("farmCoinsValue").textContent = stats.farmCoins;
+  const builtCount = FARM_ITEMS.filter(i => stats.farmBuilt[i.id]).length;
+  document.getElementById("farmProgressFill").style.width =
+    Math.round((builtCount / FARM_ITEMS.length) * 100) + "%";
+
+  const full = builtCount === FARM_ITEMS.length;
+  if (full && stats.prestige < MAX_PRESTIGE) {
+    document.getElementById("farmProgressLabel").innerHTML =
+      `${builtCount} / ${FARM_ITEMS.length} ndërtime — fshati u plotësua! 🎉<br>
+       <button class="btn btn-primary" id="btnGoPrestige" style="width:100%;margin-top:10px;padding:13px;">
+         ${islandMedalHtml(stats.prestige + 1, 64, "medal-img medal-img-btn")} Kalo në ishullin ${currentIslandNumber() + 1} →
+       </button>`;
+    const btn = document.getElementById("btnGoPrestige");
+    if (btn) btn.addEventListener("click", confirmPrestige);
+  } else if (full && stats.prestige >= MAX_PRESTIGE) {
+    document.getElementById("farmProgressLabel").textContent =
+      `${builtCount} / ${FARM_ITEMS.length} ndërtime — të gjitha ${MAX_PRESTIGE + 1} ishujt u plotësuan! 🏆`;
+  } else {
+    document.getElementById("farmProgressLabel").textContent = builtCount + " / " + FARM_ITEMS.length + " ndërtime";
+  }
+
+  renderPrestigeBadge();
+  renderFarmScene();
+  renderFarmShop();
 }
 
 /* ============ START ============ */
