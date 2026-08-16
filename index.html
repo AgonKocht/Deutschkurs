@@ -1184,12 +1184,15 @@
     .card-word { font-size: 2.2rem; }
     .practice-hero-img { width: 190px; height: 190px; }
     #wordList { grid-template-columns: 1fr 1fr 1fr; }
-    /* Llogaria: fshati dhe dyqani në dy kolona krah për krah */
+    /* Llogaria: karta e profilit dhe kartat e statistikave në rrjet */
     #view-account { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-content: start; }
-    #profileCard, .farm-card, .stats-card, #leaderboardCard, #levelCard,
+    #profileCard, .stats-card, #leaderboardCard, #levelCard,
     #view-account > .auth-card { grid-column: 1 / -1; }
-    .farm-shop { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
     .stats-grid#statsGrid { grid-column: 1 / -1; grid-template-columns: repeat(6, 1fr); }
+    /* Fshati: fshati dhe dyqani në dy kolona krah për krah */
+    #view-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-content: start; }
+    .farm-card { grid-column: 1 / -1; }
+    .farm-shop { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
   }
 
   /* Telefon në pozicion horizontal: kursej lartësi */
@@ -1301,6 +1304,7 @@
   <button class="tab-btn" data-view="homework"><span class="tab-icon">📋</span><span class="tab-label">Detyrat</span></button>
   <button class="tab-btn" data-view="practice"><img src="mascot/eagle-64.png" alt="" class="tab-icon-img"><span class="tab-label">Shpejt</span></button>
   <button class="tab-btn" data-view="exam"><span class="tab-icon">📝</span><span class="tab-label">Provim</span></button>
+  <button class="tab-btn" data-view="stats"><span class="tab-icon">🏡</span><span class="tab-label">Fshati</span></button>
   <button class="tab-btn" data-view="account"><span class="tab-icon">👤</span><span class="tab-label">Llogaria</span></button>
 </nav>
 
@@ -1503,19 +1507,6 @@
     </div>
   </div>
 
-  <!-- FSHATI IM: ndërtohet me pikë -->
-  <div class="farm-card">
-    <div class="farm-header">
-      <h3>🏡 Fshati im</h3>
-      <div class="farm-coins"><span class="fc-icon">🪙</span><span id="farmCoinsValue">0</span></div>
-    </div>
-    <div class="farm-scene" id="farmScene"></div>
-    <div class="farm-progress-track"><div class="farm-progress-fill" id="farmProgressFill" style="width:0%"></div></div>
-    <div class="farm-progress-label" id="farmProgressLabel">0 / 0 ndërtime</div>
-  </div>
-
-  <div class="farm-shop" id="farmShop"></div>
-
   <div class="stats-grid" id="statsGrid"></div>
 
   <div class="stats-card">
@@ -1581,6 +1572,21 @@
       <button class="btn btn-secondary" id="btnRetakePlacement" style="width:100%;margin-top:14px;font-size:.82rem;">↺ Përsërit testin e vlerësimit</button>
     </div>
   </div>
+</div>
+
+<!-- FSHATI IM: ndërtohet me pikë, tab i vetin -->
+<div class="view hidden" id="view-stats">
+  <div class="farm-card">
+    <div class="farm-header">
+      <h3>🏡 Fshati im</h3>
+      <div class="farm-coins"><span class="fc-icon">🪙</span><span id="farmCoinsValue">0</span></div>
+    </div>
+    <div class="farm-scene" id="farmScene"></div>
+    <div class="farm-progress-track"><div class="farm-progress-fill" id="farmProgressFill" style="width:0%"></div></div>
+    <div class="farm-progress-label" id="farmProgressLabel">0 / 0 ndërtime</div>
+  </div>
+
+  <div class="farm-shop" id="farmShop"></div>
 </div>
 
 <!-- EINSTUFUNGSTEST: VOLLBILD-OVERLAY -->
@@ -3522,7 +3528,7 @@ function speak(text) {
 }
 
 /* ============ NAVIGATION ============ */
-const views = ["cards","quiz","imagequiz","grammar","homework","practice","exam","list","add","account"];
+const views = ["cards","quiz","imagequiz","grammar","homework","practice","exam","stats","list","add","account"];
 function goToView(t) {
   document.querySelectorAll(".tab-btn").forEach(b => {
     const isActive = b.dataset.view === t;
@@ -3542,6 +3548,7 @@ function goToView(t) {
   if (t !== "practice") { practiceActive = false; }
   if (t === "cards") renderCard();
   if (t === "exam") renderExamMenu();
+  if (t === "stats") renderFarmView();
   if (t === "account") { renderProfileView(); renderStatsView(); }
   if (t === "grammar") { fillGrammarCats(); startGrammar(); }
   if (t === "homework") renderHomework();
@@ -6693,7 +6700,6 @@ function pct(part, total) { return total ? Math.round((part / total) * 100) : 0;
 
 function renderStatsView() {
   ensureStats();
-  renderFarmView();
 
   const buckets = wordBuckets();
   const allAnswers = stats.quiz.total + stats.imagequiz.total + stats.practice.total;
@@ -7474,7 +7480,7 @@ renderStreakBar();
 if (lastSeenTreeStage === null) lastSeenTreeStage = treeStageFor(Math.floor(totalPoints / 100) + 1).idx;
 
 const hudFarmRowEl = document.getElementById("hudFarmRow");
-if (hudFarmRowEl) hudFarmRowEl.addEventListener("click", () => goToView("account"));
+if (hudFarmRowEl) hudFarmRowEl.addEventListener("click", () => goToView("stats"));
 
 // PWA: Service Worker registrieren, damit die App installierbar ist
 // und auch ohne Internet weiter funktioniert (Karten, Quiz, Prüfung).
