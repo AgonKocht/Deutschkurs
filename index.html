@@ -899,19 +899,24 @@
   }
   .fc-icon { font-size: .95rem; }
   .farm-scene {
-    position: relative; width: 100%; aspect-ratio: 16 / 11; border-radius: var(--radius-md);
-    background: linear-gradient(180deg, #bfe9ff 0%, #bfe9ff 22%, #8fd98f 22%, #6fc76f 100%);
+    position: relative; width: 100%; border-radius: var(--radius-md);
     overflow: hidden; margin-bottom: 12px; border: 1px solid var(--line);
+    box-shadow: 0 10px 28px rgba(0,0,0,.35); line-height: 0;
+    background: #8fd3f4; min-height: 180px;
   }
-  .farm-piece {
-    position: absolute; transform: translate(-50%, -50%); line-height: 1; user-select: none;
-    filter: drop-shadow(0 3px 6px rgba(0,0,0,.35));
-    animation: farmPop .4s cubic-bezier(.3,1.4,.4,1);
-  }
-  @keyframes farmPop { from { transform: translate(-50%,-50%) scale(0); opacity: 0; } to { transform: translate(-50%,-50%) scale(1); opacity: 1; } }
-  .farm-empty {
-    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    text-align: center; padding: 20px; font-size: .85rem; font-weight: 700; color: #1a3d1a;
+  .village-3d { width: 100%; display: block; cursor: grab; }
+  .village-3d:active { cursor: grabbing; }
+  .village-3d canvas { display: block; width: 100% !important; }
+  .village-svg { width: 100%; height: auto; display: block; }
+  /* Çdo ndërtesë e re shfaqet butësisht kur blihet.
+     Vetëm opaciteti animohet — transform-i mban pozicionin e truallit. */
+  .vg-item { animation: vgFadeIn .5s ease-out; }
+  @keyframes vgFadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .farm-stage-badge, .farm-empty-badge {
+    position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
+    padding: 6px 14px; border-radius: var(--radius-pill); font-size: .74rem; font-weight: 800;
+    background: rgba(10,14,10,.6); backdrop-filter: blur(6px); color: #fff; white-space: nowrap;
+    box-shadow: 0 4px 14px rgba(0,0,0,.4);
   }
   .farm-progress-track { height: 9px; background: rgba(255,255,255,.08); border-radius: var(--radius-pill); overflow: hidden; margin-bottom: 6px; }
   .farm-progress-fill {
@@ -1304,7 +1309,7 @@
   <button class="tab-btn" data-view="homework"><span class="tab-icon">📋</span><span class="tab-label">Detyrat</span></button>
   <button class="tab-btn" data-view="practice"><img src="mascot/eagle-64.png" alt="" class="tab-icon-img"><span class="tab-label">Shpejt</span></button>
   <button class="tab-btn" data-view="exam"><span class="tab-icon">📝</span><span class="tab-label">Provim</span></button>
-  <button class="tab-btn" data-view="stats"><span class="tab-icon">🏡</span><span class="tab-label">Fshati</span></button>
+  <button class="tab-btn" data-view="stats"><span class="tab-icon">🏡</span><span class="tab-label">Kalaja</span></button>
   <button class="tab-btn" data-view="account"><span class="tab-icon">👤</span><span class="tab-label">Llogaria</span></button>
 </nav>
 
@@ -1578,7 +1583,7 @@
 <div class="view hidden" id="view-stats">
   <div class="farm-card">
     <div class="farm-header">
-      <h3>🏡 Fshati im</h3>
+      <h3>🏰 Kalaja ime</h3>
       <div class="farm-coins"><span class="fc-icon">🪙</span><span id="farmCoinsValue">0</span></div>
     </div>
     <div class="farm-scene" id="farmScene"></div>
@@ -7122,36 +7127,36 @@ function itemCost(item) { return item.cost * FARM_COST_SCALE; }
 
 const FARM_ITEMS = [
   // --- Shtëpia (4 faza) ---
-  { id:"house1", group:"house", stage:1, name:"Themeli i shtëpisë", emoji:"🧱", cost:35, x:14, y:32, size:2.0 },
-  { id:"house2", group:"house", stage:2, name:"Muret e shtëpisë",   emoji:"🏚️", cost:60, x:14, y:32, size:2.3 },
-  { id:"house3", group:"house", stage:3, name:"Çatia e shtëpisë",   emoji:"🏠", cost:95, x:14, y:32, size:2.6 },
-  { id:"house4", group:"house", stage:4, name:"Dekori i shtëpisë",  emoji:"🏡", cost:140, x:14, y:32, size:2.9 },
+  { id:"house1", group:"house", stage:1, name:"Themeli i kullës", emoji:"🧱", cost:35, x:14, y:32, size:2.0 },
+  { id:"house2", group:"house", stage:2, name:"Trupi i kullës",   emoji:"🏛️", cost:60, x:14, y:32, size:2.3 },
+  { id:"house3", group:"house", stage:3, name:"Kati i sipërm",   emoji:"🗼", cost:95, x:14, y:32, size:2.6 },
+  { id:"house4", group:"house", stage:4, name:"Çatia e lartë",  emoji:"🏰", cost:140, x:14, y:32, size:2.9 },
 
   // --- Ara (3 faza) ---
-  { id:"field1", group:"field", stage:1, name:"Ara e lëruar",   emoji:"🟫", cost:28, x:70, y:30, size:2.2 },
-  { id:"field2", group:"field", stage:2, name:"Ara e mbjellë",  emoji:"🌱", cost:48, x:70, y:30, size:2.2 },
-  { id:"field3", group:"field", stage:3, name:"Domatet piqen",  emoji:"🍅", cost:75, x:70, y:30, size:2.2 },
+  { id:"field1", group:"field", stage:1, name:"Themeli gjashtëkëndor",   emoji:"⬡", cost:28, x:70, y:30, size:2.2 },
+  { id:"field2", group:"field", stage:2, name:"Trupi gjashtëkëndor",  emoji:"🛕", cost:48, x:70, y:30, size:2.2 },
+  { id:"field3", group:"field", stage:3, name:"Çatia gjashtëkëndore",  emoji:"⛩️", cost:75, x:70, y:30, size:2.2 },
 
   // --- Ndërtesa dhe elemente të tjera (nga një blerje) ---
-  { id:"barn",     group:"single", name:"Hambari",           emoji:"🛖", cost:85,  x:32, y:55, size:2.2 },
-  { id:"silo",     group:"single", name:"Depozita e grurit",  emoji:"🏗️", cost:130, x:46, y:52, size:2.0 },
-  { id:"well",     group:"single", name:"Pusi",               emoji:"🪣", cost:55,  x:26, y:66, size:1.6 },
-  { id:"pond",     group:"single", name:"Pellgu me ujë",      emoji:"💧", cost:65,  x:82, y:62, size:1.8 },
-  { id:"haybale",  group:"single", name:"Bale sanoje",        emoji:"🌾", cost:32,  x:38, y:68, size:1.7 },
-  { id:"tractor",  group:"single", name:"Traktori",           emoji:"🚜", cost:150, x:58, y:70, size:2.2 },
-  { id:"tree1",    group:"single", name:"Pemë",               emoji:"🌳", cost:30,  x:4,  y:18, size:1.9 },
-  { id:"tree2",    group:"single", name:"Pemë e dytë",        emoji:"🌳", cost:30,  x:92, y:12, size:1.9 },
-  { id:"flowers",  group:"single", name:"Kopshti me lule",    emoji:"🌻", cost:40,  x:22, y:20, size:1.6 },
-  { id:"chicken",  group:"single", name:"Pula",               emoji:"🐔", cost:38,  x:40, y:60, size:1.5 },
-  { id:"dog",      group:"single", name:"Qeni rojë",          emoji:"🐕", cost:45,  x:18, y:44, size:1.6 },
-  { id:"sheep",    group:"single", name:"Delja",              emoji:"🐑", cost:60,  x:52, y:60, size:1.7 },
-  { id:"cow",      group:"single", name:"Lopa",               emoji:"🐄", cost:85,  x:62, y:58, size:1.9 },
-  { id:"goat",     group:"single", name:"Dhia",               emoji:"🐐", cost:70,  x:46, y:63, size:1.6 },
-  { id:"cart",     group:"single", name:"Karroca",            emoji:"🛒", cost:50,  x:8,  y:52, size:1.7 },
-  { id:"barrel",   group:"single", name:"Fuçitë e verës",     emoji:"🛢️", cost:55,  x:20, y:76, size:1.5 },
-  { id:"beehive",  group:"single", name:"Zgjoi i bletëve",     emoji:"🐝", cost:60,  x:88, y:78, size:1.4 },
-  { id:"sun",      group:"single", name:"Dita me diell",      emoji:"☀️", cost:200, x:88, y:6,  size:2.2 },
-  { id:"rainbow",  group:"single", name:"Ylberi mbi fshat",   emoji:"🌈", cost:260, x:50, y:4,  size:3.2 }
+  { id:"barn",     group:"single", name:"Porta kryesore",           emoji:"🚪", cost:85,  x:32, y:55, size:2.2 },
+  { id:"silo",     group:"single", name:"Harku i kullës",  emoji:"🏗️", cost:130, x:46, y:52, size:2.0 },
+  { id:"well",     group:"single", name:"Shkallët e gurta",               emoji:"🪜", cost:55,  x:26, y:66, size:1.6 },
+  { id:"pond",     group:"single", name:"Ura e gurtë",      emoji:"🌉", cost:65,  x:82, y:62, size:1.8 },
+  { id:"haybale",  group:"single", name:"Trungu i prerë",        emoji:"🪵", cost:32,  x:38, y:68, size:1.7 },
+  { id:"tractor",  group:"single", name:"Katapulti",           emoji:"🎯", cost:150, x:58, y:70, size:2.2 },
+  { id:"tree1",    group:"single", name:"Pemë e madhe",               emoji:"🌳", cost:30,  x:4,  y:18, size:1.9 },
+  { id:"tree2",    group:"single", name:"Pemë e vogël",        emoji:"🌲", cost:30,  x:92, y:12, size:1.9 },
+  { id:"flowers",  group:"single", name:"Qoshja e murit",    emoji:"🧱", cost:40,  x:22, y:20, size:1.6 },
+  { id:"chicken",  group:"single", name:"Flamuri i kalasë",               emoji:"🚩", cost:38,  x:40, y:60, size:1.5 },
+  { id:"dog",      group:"single", name:"Flamuri i vogël",          emoji:"🏴", cost:45,  x:18, y:44, size:1.6 },
+  { id:"sheep",    group:"single", name:"Gardhi prej druri",              emoji:"🪵", cost:60,  x:52, y:60, size:1.7 },
+  { id:"cow",      group:"single", name:"Balista",               emoji:"🏹", cost:85,  x:62, y:58, size:1.9 },
+  { id:"goat",     group:"single", name:"Shkëmbinjtë",               emoji:"🪨", cost:70,  x:46, y:63, size:1.6 },
+  { id:"cart",     group:"single", name:"Deshi i luftës",            emoji:"🛡️", cost:50,  x:8,  y:52, size:1.7 },
+  { id:"barrel",   group:"single", name:"Muri i kalasë",     emoji:"🧱", cost:55,  x:20, y:76, size:1.5 },
+  { id:"beehive",  group:"single", name:"Muri me derë",     emoji:"🚪", cost:60,  x:88, y:78, size:1.4 },
+  { id:"sun",      group:"single", name:"Trebusheti",      emoji:"⚔️", cost:200, x:88, y:6,  size:2.2 },
+  { id:"rainbow",  group:"single", name:"Ura e lëvizshme",   emoji:"🌉", cost:260, x:50, y:4,  size:3.2 }
 ];
 
 function ensureFarmCoins() {
@@ -7186,28 +7191,432 @@ function buildFarmItem(id) {
   const item = FARM_ITEMS.find(i => i.id === id);
   if (!item || stats.farmBuilt[id]) return;
   if (!farmItemUnlocked(item) || !farmCanAfford(item)) return;
+
+  const before = FARM_ITEMS.filter(i => stats.farmBuilt[i.id]).length;
+  const stageBefore = villageStageFor(before, FARM_ITEMS.length);
+
   stats.farmCoins -= itemCost(item);
   stats.farmBuilt[id] = new Date().toISOString();
   queueSave();
-  spawnConfetti();
-  playMilestoneFanfare();
-  vibrate([25, 30, 25, 30, 70]);
-  mascotSay(fmt(`„${item.name}" u shtua në fshat{name}! ${item.emoji}`), { duration: 4500 });
+
+  const after = before + 1;
+  const stageAfter = villageStageFor(after, FARM_ITEMS.length);
+
+  if (stageAfter > stageBefore) {
+    // Faza e re e fshatit u zbulua — festë më e madhe se një blerje e zakonshme
+    spawnConfetti(); setTimeout(spawnConfetti, 300); setTimeout(spawnConfetti, 600);
+    playFanfare();
+    vibrate([35, 45, 35, 45, 120]);
+    mascotSay(fmt(`Fshati po merr formë{name}! Tashmë ${after} ndërtime — shiko sa bukur po duket.`), { duration: 8000 });
+  } else {
+    spawnConfetti();
+    playMilestoneFanfare();
+    vibrate([25, 30, 25, 30, 70]);
+    mascotSay(fmt(`„${item.name}" u shtua në fshat{name}! ${item.emoji}`), { duration: 4500 });
+  }
   renderFarmView();
 }
+
+const VILLAGE_STAGE_COUNT = 10;
+
+// Sa ndërtime duhen për secilën fazë (progresive, jo lineare — fillimi lëviz shpejt,
+// fazat e fundit kërkojnë më shumë, si në foto: fillon bosh, mbaron fshat i plotë)
+function villageStageFor(builtCount, totalCount) {
+  if (builtCount <= 0) return 1;
+  if (builtCount >= totalCount) return VILLAGE_STAGE_COUNT;
+  const pct = builtCount / totalCount;
+  return Math.min(VILLAGE_STAGE_COUNT, Math.max(1, Math.ceil(pct * VILLAGE_STAGE_COUNT)));
+}
+
+/* ============ SKENA E FSHATIT: çdo ndërtesë vizatohet veç, në truallin e vet ============ */
+// Ndryshe nga emojit: këto janë forma vektoriale, secila me pozicionin dhe madhësinë e vet.
+// Ndërtesat e mëdha vizatohen para atyre të voglave, që të mos mbulojnë njëra-tjetrën gabimisht.
+
+function svgHouse(stage) {
+  // stage 1=themel, 2=mure, 3=çati, 4=i zbukuruar
+  let s = `<g>`;
+  s += `<ellipse cx="0" cy="34" rx="52" ry="9" fill="rgba(0,0,0,.18)"/>`;
+  s += `<rect x="-46" y="18" width="92" height="16" rx="2" fill="#9a8873"/>`;      // themeli
+  if (stage >= 2) {
+    s += `<rect x="-42" y="-18" width="84" height="38" fill="#f0e2c8"/>`;          // muret
+    s += `<rect x="-42" y="-18" width="84" height="38" fill="none" stroke="#6b4f30" stroke-width="3"/>`;
+    s += `<path d="M-42 -18 L0 -6 L42 -18" stroke="#6b4f30" stroke-width="3" fill="none"/>`; // trarë
+    s += `<rect x="-8" y="2" width="16" height="18" fill="#7d5a38"/>`;             // dera
+  }
+  if (stage >= 3) {
+    s += `<path d="M-52 -18 L0 -52 L52 -18 Z" fill="#c1502e"/>`;                   // çatia
+    s += `<path d="M-52 -18 L0 -52 L52 -18 Z" fill="none" stroke="#8f3a20" stroke-width="3" stroke-linejoin="round"/>`;
+    s += `<rect x="-30" y="-8" width="14" height="13" fill="#8fd0e8" stroke="#6b4f30" stroke-width="2.5"/>`;
+    s += `<rect x="16" y="-8" width="14" height="13" fill="#8fd0e8" stroke="#6b4f30" stroke-width="2.5"/>`;
+  }
+  if (stage >= 4) {
+    s += `<rect x="20" y="-46" width="11" height="20" fill="#a8563a" stroke="#7a3a26" stroke-width="2"/>`; // oxhaku
+    s += `<circle cx="0" cy="-30" r="7" fill="#ffe08a" stroke="#6b4f30" stroke-width="2.5"/>`;             // dritare rrethore
+    s += `<rect x="-46" y="20" width="92" height="5" fill="#c98b4b"/>`;
+    s += `<circle cx="-38" cy="26" r="5" fill="#e8607a"/><circle cx="38" cy="26" r="5" fill="#e8607a"/>`;  // lule
+  }
+  return s + `</g>`;
+}
+
+function svgField(stage) {
+  // 1=lëruar, 2=mbjellë, 3=domate të pjekura
+  let s = `<g>`;
+  s += `<rect x="-56" y="-26" width="112" height="52" rx="4" fill="${stage>=1?"#8a6a44":"#7fa34f"}" stroke="#6b4f30" stroke-width="3"/>`;
+  for (let i = 0; i < 4; i++) {
+    const y = -18 + i * 12;
+    s += `<line x1="-50" y1="${y}" x2="50" y2="${y}" stroke="#6b4f30" stroke-width="2" opacity=".45"/>`;
+  }
+  if (stage >= 2) {
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 7; c++) {
+      s += `<circle cx="${-42 + c * 14}" cy="${-18 + r * 12}" r="3.4" fill="#4caf7d"/>`;
+    }
+  }
+  if (stage >= 3) {
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 7; c++) {
+      s += `<circle cx="${-42 + c * 14}" cy="${-20 + r * 12}" r="3" fill="#e8503a"/>`;
+    }
+  }
+  return s + `</g>`;
+}
+
+function svgBarn() {
+  return `<g>
+    <ellipse cx="0" cy="26" rx="42" ry="7" fill="rgba(0,0,0,.18)"/>
+    <rect x="-34" y="-8" width="68" height="34" fill="#b5482f" stroke="#7a2f1e" stroke-width="3"/>
+    <path d="M-40 -8 Q0 -44 40 -8 Z" fill="#c1502e" stroke="#7a2f1e" stroke-width="3" stroke-linejoin="round"/>
+    <rect x="-12" y="6" width="24" height="20" fill="#f0e2c8" stroke="#7a2f1e" stroke-width="2.5"/>
+    <line x1="0" y1="6" x2="0" y2="26" stroke="#7a2f1e" stroke-width="2.5"/>
+    <circle cx="0" cy="-16" r="6" fill="#ffe08a" stroke="#7a2f1e" stroke-width="2.5"/>
+  </g>`;
+}
+
+function svgSilo() {
+  return `<g>
+    <ellipse cx="0" cy="30" rx="20" ry="6" fill="rgba(0,0,0,.18)"/>
+    <rect x="-16" y="-30" width="32" height="60" rx="4" fill="#cfd6dd" stroke="#8a949e" stroke-width="3"/>
+    <path d="M-20 -30 Q0 -52 20 -30 Z" fill="#8a949e" stroke="#6d757d" stroke-width="3" stroke-linejoin="round"/>
+    <line x1="-16" y1="-10" x2="16" y2="-10" stroke="#8a949e" stroke-width="2.5"/>
+    <line x1="-16" y1="8" x2="16" y2="8" stroke="#8a949e" stroke-width="2.5"/>
+  </g>`;
+}
+
+function svgTower() {
+  return `<g>
+    <ellipse cx="0" cy="40" rx="26" ry="8" fill="rgba(0,0,0,.2)"/>
+    <rect x="-20" y="-40" width="40" height="80" fill="#e8e0d0" stroke="#6b4f30" stroke-width="3"/>
+    <path d="M-27 -40 L0 -78 L27 -40 Z" fill="#3f6fb5" stroke="#2b4d80" stroke-width="3" stroke-linejoin="round"/>
+    <rect x="-7" y="-26" width="14" height="16" fill="#8fd0e8" stroke="#6b4f30" stroke-width="2.5"/>
+    <rect x="-8" y="10" width="16" height="30" fill="#7d5a38" stroke="#5a3f28" stroke-width="2.5"/>
+    <path d="M0 -78 L0 -90 L18 -84 L0 -78" fill="#e8503a"/>
+  </g>`;
+}
+
+function svgWell() {
+  return `<g>
+    <ellipse cx="0" cy="20" rx="24" ry="6" fill="rgba(0,0,0,.18)"/>
+    <path d="M-18 4 Q0 -4 18 4 L16 20 Q0 26 -16 20 Z" fill="#9aa3ab" stroke="#6d757d" stroke-width="3"/>
+    <ellipse cx="0" cy="4" rx="18" ry="7" fill="#4aa3d6" stroke="#6d757d" stroke-width="3"/>
+    <line x1="-14" y1="2" x2="-14" y2="-24" stroke="#7d5a38" stroke-width="4"/>
+    <line x1="14" y1="2" x2="14" y2="-24" stroke="#7d5a38" stroke-width="4"/>
+    <path d="M-20 -24 L0 -36 L20 -24 Z" fill="#c1502e" stroke="#8f3a20" stroke-width="3" stroke-linejoin="round"/>
+    <rect x="-5" y="-20" width="10" height="9" fill="#7d5a38"/>
+  </g>`;
+}
+
+function svgMill() {
+  return `<g>
+    <ellipse cx="0" cy="36" rx="30" ry="8" fill="rgba(0,0,0,.2)"/>
+    <path d="M-22 36 L-14 -24 L14 -24 L22 36 Z" fill="#e8e0d0" stroke="#6b4f30" stroke-width="3"/>
+    <path d="M-18 -24 L0 -44 L18 -24 Z" fill="#8f6a45" stroke="#5a3f28" stroke-width="3" stroke-linejoin="round"/>
+    <rect x="-7" y="10" width="14" height="26" fill="#7d5a38" stroke="#5a3f28" stroke-width="2.5"/>
+    <g stroke="#7d5a38" stroke-width="4" stroke-linecap="round">
+      <line x1="0" y1="-32" x2="0" y2="-70"/><line x1="0" y1="-32" x2="34" y2="-32"/>
+      <line x1="0" y1="-32" x2="0" y2="4"/><line x1="0" y1="-32" x2="-34" y2="-32"/>
+    </g>
+    <circle cx="0" cy="-32" r="5" fill="#c98b4b" stroke="#6b4f30" stroke-width="2.5"/>
+  </g>`;
+}
+
+function svgMarket() {
+  return `<g>
+    <ellipse cx="0" cy="22" rx="34" ry="7" fill="rgba(0,0,0,.18)"/>
+    <rect x="-28" y="2" width="56" height="20" fill="#c98b4b" stroke="#6b4f30" stroke-width="3"/>
+    <path d="M-34 2 L-34 -10 L34 -10 L34 2 Z" fill="#e8503a" stroke="#8f3a20" stroke-width="3"/>
+    <path d="M-34 -10 L-24 -10 L-24 2 L-34 2 Z" fill="#f5f0e6"/>
+    <path d="M-10 -10 L0 -10 L0 2 L-10 2 Z" fill="#f5f0e6"/>
+    <path d="M14 -10 L24 -10 L24 2 L14 2 Z" fill="#f5f0e6"/>
+    <line x1="-28" y1="-10" x2="-28" y2="22" stroke="#6b4f30" stroke-width="3"/>
+    <line x1="28" y1="-10" x2="28" y2="22" stroke="#6b4f30" stroke-width="3"/>
+    <circle cx="-14" cy="8" r="4" fill="#e8503a"/><circle cx="0" cy="8" r="4" fill="#ffc857"/><circle cx="14" cy="8" r="4" fill="#4caf7d"/>
+  </g>`;
+}
+
+function svgFence() {
+  let s = `<g>`;
+  for (let i = 0; i < 6; i++) s += `<rect x="${-46 + i * 18}" y="-14" width="6" height="28" rx="2" fill="#a8794a" stroke="#7a5533" stroke-width="2"/>`;
+  s += `<rect x="-48" y="-8" width="98" height="5" fill="#a8794a" stroke="#7a5533" stroke-width="2"/>`;
+  s += `<rect x="-48" y="4" width="98" height="5" fill="#a8794a" stroke="#7a5533" stroke-width="2"/>`;
+  return s + `</g>`;
+}
+
+function svgTree() {
+  return `<g>
+    <ellipse cx="0" cy="30" rx="20" ry="6" fill="rgba(0,0,0,.18)"/>
+    <rect x="-6" y="0" width="12" height="30" fill="#7d5a38" stroke="#5a3f28" stroke-width="2.5"/>
+    <circle cx="0" cy="-16" r="26" fill="#3f9e6b" stroke="#2a7d54" stroke-width="3"/>
+    <circle cx="-16" cy="-4" r="16" fill="#4caf7d" stroke="#2a7d54" stroke-width="3"/>
+    <circle cx="16" cy="-4" r="16" fill="#4caf7d" stroke="#2a7d54" stroke-width="3"/>
+  </g>`;
+}
+
+function svgFlowers() {
+  let s = `<g>`;
+  const cols = ["#ffc857","#e8607a","#8f7bff","#ffffff"];
+  for (let i = 0; i < 7; i++) {
+    const x = -30 + i * 10, y = (i % 2 ? 4 : -4);
+    s += `<line x1="${x}" y1="${y+10}" x2="${x}" y2="${y}" stroke="#4caf7d" stroke-width="2.5"/>`;
+    s += `<circle cx="${x}" cy="${y}" r="5" fill="${cols[i%4]}" stroke="#6b4f30" stroke-width="1.6"/>`;
+  }
+  return s + `</g>`;
+}
+
+function svgCart() {
+  return `<g>
+    <ellipse cx="0" cy="20" rx="30" ry="6" fill="rgba(0,0,0,.18)"/>
+    <path d="M-26 -6 L26 -6 L22 12 L-22 12 Z" fill="#c98b4b" stroke="#6b4f30" stroke-width="3"/>
+    <rect x="-26" y="-12" width="52" height="7" fill="#a8794a" stroke="#6b4f30" stroke-width="2.5"/>
+    <circle cx="-15" cy="14" r="8" fill="#7d5a38" stroke="#5a3f28" stroke-width="3"/>
+    <circle cx="15" cy="14" r="8" fill="#7d5a38" stroke="#5a3f28" stroke-width="3"/>
+    <path d="M-20 -12 L-14 -22 L10 -22 L16 -12" fill="#ffd97a" stroke="#c98b4b" stroke-width="2.5"/>
+  </g>`;
+}
+
+function svgHay() {
+  return `<g>
+    <ellipse cx="0" cy="16" rx="24" ry="6" fill="rgba(0,0,0,.18)"/>
+    <ellipse cx="0" cy="2" rx="22" ry="16" fill="#e8c76a" stroke="#c98b4b" stroke-width="3"/>
+    <path d="M-16 -6 Q0 0 16 -6 M-16 4 Q0 10 16 4" stroke="#c98b4b" stroke-width="2.5" fill="none"/>
+  </g>`;
+}
+
+function svgPond() {
+  return `<g>
+    <ellipse cx="0" cy="0" rx="38" ry="20" fill="#4aa3d6" stroke="#2f7fae" stroke-width="3"/>
+    <ellipse cx="-10" cy="-5" rx="14" ry="6" fill="#7fc4e6" opacity=".8"/>
+    <ellipse cx="16" cy="6" rx="9" ry="4" fill="#7fc4e6" opacity=".7"/>
+    <ellipse cx="-26" cy="8" rx="8" ry="4" fill="#4caf7d"/>
+  </g>`;
+}
+
+function svgAnimal(kind) {
+  const body = { cow:"#f5f0e6", sheep:"#f0ece2", goat:"#d8cfc0", chicken:"#f7e7a8", dog:"#c98b4b" }[kind] || "#f0ece2";
+  const spot = kind === "cow" ? `<ellipse cx="-5" cy="-2" rx="7" ry="5" fill="#4a4a4a"/><ellipse cx="8" cy="3" rx="5" ry="4" fill="#4a4a4a"/>` : "";
+  const size = kind === "cow" ? 1.15 : kind === "chicken" ? .65 : .9;
+  return `<g transform="scale(${size})">
+    <ellipse cx="0" cy="14" rx="18" ry="4" fill="rgba(0,0,0,.16)"/>
+    <ellipse cx="0" cy="0" rx="17" ry="12" fill="${body}" stroke="#6b4f30" stroke-width="2.5"/>
+    ${spot}
+    <circle cx="-16" cy="-6" r="8" fill="${body}" stroke="#6b4f30" stroke-width="2.5"/>
+    <circle cx="-19" cy="-8" r="1.7" fill="#3a2c1e"/>
+    <line x1="-8" y1="11" x2="-8" y2="16" stroke="#6b4f30" stroke-width="3"/>
+    <line x1="7" y1="11" x2="7" y2="16" stroke="#6b4f30" stroke-width="3"/>
+  </g>`;
+}
+
+function svgBeehive() {
+  return `<g>
+    <ellipse cx="0" cy="16" rx="16" ry="5" fill="rgba(0,0,0,.16)"/>
+    <path d="M-13 14 Q-16 -2 0 -14 Q16 -2 13 14 Z" fill="#e8c76a" stroke="#c98b4b" stroke-width="3"/>
+    <path d="M-13 4 H13 M-15 9 H15" stroke="#c98b4b" stroke-width="2.5"/>
+    <circle cx="0" cy="8" r="3" fill="#6b4f30"/>
+    <circle cx="18" cy="-8" r="2.6" fill="#ffc857"/><circle cx="-19" cy="-4" r="2.2" fill="#ffc857"/>
+  </g>`;
+}
+
+function svgBarrels() {
+  return `<g>
+    <ellipse cx="0" cy="16" rx="26" ry="6" fill="rgba(0,0,0,.16)"/>
+    <rect x="-22" y="-6" width="18" height="22" rx="5" fill="#a8794a" stroke="#6b4f30" stroke-width="2.5"/>
+    <rect x="4" y="-6" width="18" height="22" rx="5" fill="#a8794a" stroke="#6b4f30" stroke-width="2.5"/>
+    <line x1="-22" y1="2" x2="-4" y2="2" stroke="#6b4f30" stroke-width="2"/>
+    <line x1="4" y1="2" x2="22" y2="2" stroke="#6b4f30" stroke-width="2"/>
+  </g>`;
+}
+
+function svgLamp() {
+  return `<g>
+    <ellipse cx="0" cy="26" rx="10" ry="4" fill="rgba(0,0,0,.18)"/>
+    <rect x="-3" y="-14" width="6" height="40" fill="#5a5f6b" stroke="#3f434d" stroke-width="2"/>
+    <path d="M-9 -14 L0 -26 L9 -14 Z" fill="#ffe08a" stroke="#c98b4b" stroke-width="2.5"/>
+    <circle cx="0" cy="-16" r="12" fill="#ffe08a" opacity=".28"/>
+  </g>`;
+}
+
+function svgBridge() {
+  return `<g>
+    <path d="M-44 10 Q0 -18 44 10" stroke="#a8794a" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M-44 10 Q0 -18 44 10" stroke="#7a5533" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <line x1="-30" y1="4" x2="-30" y2="16" stroke="#7a5533" stroke-width="3.5"/>
+    <line x1="0" y1="-10" x2="0" y2="14" stroke="#7a5533" stroke-width="3.5"/>
+    <line x1="30" y1="4" x2="30" y2="16" stroke="#7a5533" stroke-width="3.5"/>
+  </g>`;
+}
+
+/* --- Peizazhi bazë: qielli, malet, lumi, rrugët --- */
+function villageBackdrop() {
+  return `
+  <defs>
+    <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7ec9ef"/><stop offset="100%" stop-color="#b9e6f7"/>
+    </linearGradient>
+    <linearGradient id="grassG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7fc45f"/><stop offset="100%" stop-color="#5da743"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1000" height="620" fill="url(#skyG)"/>
+  <!-- retë -->
+  <g fill="#ffffff" opacity=".92">
+    <ellipse cx="180" cy="78" rx="46" ry="24"/><ellipse cx="222" cy="70" rx="34" ry="20"/><ellipse cx="140" cy="86" rx="30" ry="17"/>
+    <ellipse cx="700" cy="60" rx="42" ry="21"/><ellipse cx="742" cy="54" rx="30" ry="17"/>
+  </g>
+  <!-- malet -->
+  <path d="M0 250 L120 140 L230 250 Z" fill="#6f93c4"/>
+  <path d="M160 250 L300 120 L440 250 Z" fill="#5e83b8"/>
+  <path d="M380 250 L520 150 L660 250 Z" fill="#6f93c4"/>
+  <path d="M600 250 L740 130 L880 250 Z" fill="#5e83b8"/>
+  <path d="M820 250 L940 160 L1000 220 L1000 250 Z" fill="#6f93c4"/>
+  <!-- pylli në sfond -->
+  <g fill="#2f7d4f">
+    ${Array.from({length: 22}, (_, i) => `<circle cx="${i * 48 + 12}" cy="${248 - (i % 3) * 8}" r="${28 + (i % 4) * 5}"/>`).join("")}
+  </g>
+  <!-- livadhi -->
+  <rect x="0" y="250" width="1000" height="370" fill="url(#grassG)"/>
+  <!-- lumi -->
+  <path d="M0 560 Q160 520 300 556 Q470 596 660 552 Q830 512 1000 548 L1000 620 L0 620 Z" fill="#4aa3d6"/>
+  <path d="M0 560 Q160 520 300 556 Q470 596 660 552 Q830 512 1000 548" stroke="#2f7fae" stroke-width="4" fill="none"/>
+  <!-- rrugët -->
+  <path d="M500 300 L500 520" stroke="#cbb489" stroke-width="34" stroke-linecap="round"/>
+  <path d="M180 430 Q500 380 830 430" stroke="#cbb489" stroke-width="30" fill="none" stroke-linecap="round"/>
+  <circle cx="500" cy="418" r="46" fill="#cbb489"/>
+  `;
+}
+
+/* --- Truallet: ku qëndron secila ndërtesë (koordinata në sistemin 1000x620) --- */
+const VILLAGE_PLOTS = {
+  house:   { x: 300, y: 360, s: 1.35 },
+  field:   { x: 760, y: 330, s: 1.15 },
+  barn:    { x: 200, y: 470, s: 1.1 },
+  silo:    { x: 118, y: 430, s: .95 },
+  tower:   { x: 640, y: 300, s: 1.05 },
+  mill:    { x: 880, y: 430, s: 1.0 },
+  market:  { x: 500, y: 500, s: 1.0 },
+  well:    { x: 500, y: 418, s: .95 },
+  fence:   { x: 700, y: 470, s: 1.0 },
+  tree1:   { x: 70,  y: 320, s: 1.0 },
+  tree2:   { x: 940, y: 300, s: 1.0 },
+  flowers: { x: 390, y: 300, s: 1.0 },
+  cart:    { x: 330, y: 500, s: 1.0 },
+  hay:     { x: 262, y: 520, s: 1.0 },
+  pond:    { x: 860, y: 520, s: 1.0 },
+  beehive: { x: 60,  y: 500, s: 1.0 },
+  barrel:  { x: 148, y: 520, s: 1.0 },
+  lamp:    { x: 430, y: 470, s: 1.0 },
+  bridge:  { x: 300, y: 556, s: 1.0 },
+  chicken: { x: 640, y: 486, s: 1.0 },
+  dog:     { x: 380, y: 430, s: 1.0 },
+  sheep:   { x: 706, y: 452, s: 1.0 },
+  cow:     { x: 748, y: 470, s: 1.0 },
+  goat:    { x: 672, y: 466, s: 1.0 }
+};
+
+// Cila fazë e shtëpisë/arës është arritur
+function groupStageBuilt(group) {
+  let n = 0;
+  for (let i = 1; i <= 4; i++) if (stats.farmBuilt[group + i]) n = i;
+  return n;
+}
+
+function buildVillageSVG() {
+  ensureFarmCoins();
+  let parts = "";
+  const put = (plot, inner) => {
+    if (!plot) return;
+    parts += `<g class="vg-item" transform="translate(${plot.x},${plot.y}) scale(${plot.s})">${inner}</g>`;
+  };
+
+  // Renditja: gjërat e largëta/të mëdha para, të voglat pas
+  const hs = groupStageBuilt("house");
+  const fs = groupStageBuilt("field");
+  if (fs) put(VILLAGE_PLOTS.field, svgField(fs));
+  if (stats.farmBuilt.tower) put(VILLAGE_PLOTS.tower, svgTower());
+  if (stats.farmBuilt.silo) put(VILLAGE_PLOTS.silo, svgSilo());
+  if (stats.farmBuilt.tree1) put(VILLAGE_PLOTS.tree1, svgTree());
+  if (stats.farmBuilt.tree2) put(VILLAGE_PLOTS.tree2, svgTree());
+  if (stats.farmBuilt.mill) put(VILLAGE_PLOTS.mill, svgMill());
+  if (hs) put(VILLAGE_PLOTS.house, svgHouse(hs));
+  if (stats.farmBuilt.barn) put(VILLAGE_PLOTS.barn, svgBarn());
+  if (stats.farmBuilt.pond) put(VILLAGE_PLOTS.pond, svgPond());
+  if (stats.farmBuilt.fence) put(VILLAGE_PLOTS.fence, svgFence());
+  if (stats.farmBuilt.market) put(VILLAGE_PLOTS.market, svgMarket());
+  if (stats.farmBuilt.well) put(VILLAGE_PLOTS.well, svgWell());
+  if (stats.farmBuilt.bridge) put(VILLAGE_PLOTS.bridge, svgBridge());
+  if (stats.farmBuilt.cart) put(VILLAGE_PLOTS.cart, svgCart());
+  if (stats.farmBuilt.haybale) put(VILLAGE_PLOTS.hay, svgHay());
+  if (stats.farmBuilt.barrel) put(VILLAGE_PLOTS.barrel, svgBarrels());
+  if (stats.farmBuilt.beehive) put(VILLAGE_PLOTS.beehive, svgBeehive());
+  if (stats.farmBuilt.flowers) put(VILLAGE_PLOTS.flowers, svgFlowers());
+  if (stats.farmBuilt.lamp) put(VILLAGE_PLOTS.lamp, svgLamp());
+  if (stats.farmBuilt.cow) put(VILLAGE_PLOTS.cow, svgAnimal("cow"));
+  if (stats.farmBuilt.sheep) put(VILLAGE_PLOTS.sheep, svgAnimal("sheep"));
+  if (stats.farmBuilt.goat) put(VILLAGE_PLOTS.goat, svgAnimal("goat"));
+  if (stats.farmBuilt.chicken) put(VILLAGE_PLOTS.chicken, svgAnimal("chicken"));
+  if (stats.farmBuilt.dog) put(VILLAGE_PLOTS.dog, svgAnimal("dog"));
+
+  return `<svg viewBox="0 0 1000 620" class="village-svg" role="img" aria-label="Fshati im">
+    ${villageBackdrop()}
+    ${parts}
+  </svg>`;
+}
+
+let village3DStarted = false;
+let village3DFailed = false;
 
 function renderFarmScene() {
   ensureFarmCoins();
   const built = FARM_ITEMS.filter(i => stats.farmBuilt[i.id]);
   const scene = document.getElementById("farmScene");
   if (!scene) return;
-  if (!built.length) {
-    scene.innerHTML = `<div class="farm-empty">🌱 Fshati yt është ende bosh — blej ndërtimin e parë më poshtë!</div>`;
-    return;
+
+  const badge = built.length
+    ? `<div class="farm-stage-badge">${built.length} / ${FARM_ITEMS.length} ndërtime · rrotullo me gisht</div>`
+    : `<div class="farm-empty-badge">🏗️ Trualli të pret — blej ndërtimin e parë!</div>`;
+
+  // 1) Provo skenën 3D
+  if (!village3DFailed && typeof window.initVillage3D === "function") {
+    if (!village3DStarted) {
+      const holder = document.createElement("div");
+      holder.id = "village3DHolder";
+      holder.className = "village-3d";
+      scene.innerHTML = "";
+      scene.appendChild(holder);
+      const ok = window.initVillage3D(holder);
+      if (ok) {
+        village3DStarted = true;
+      } else {
+        village3DFailed = true;
+      }
+    }
+    if (village3DStarted) {
+      window.updateVillage3D(built.map(i => i.id));
+      let b = scene.querySelector(".farm-stage-badge, .farm-empty-badge");
+      if (b) b.remove();
+      scene.insertAdjacentHTML("beforeend", badge);
+      return;
+    }
   }
-  scene.innerHTML = built.map(i =>
-    `<div class="farm-piece" style="left:${i.x}%;top:${i.y}%;font-size:${i.size}rem;" title="${esc(i.name)}">${i.emoji}</div>`
-  ).join("");
+
+  // 2) Rezervë: skena vektoriale 2D, nëse 3D nuk funksionon
+  scene.innerHTML = buildVillageSVG() + badge;
 }
 
 function renderFarmShop() {
@@ -7216,7 +7625,7 @@ function renderFarmShop() {
   if (!shop) return;
 
   const groupsOrder = ["house", "field", "single"];
-  const groupLabel = { house: "🏠 Shtëpia", field: "🌾 Ara", single: "🎁 Të tjera" };
+  const groupLabel = { house: "🏰 Kulla kryesore", field: "🗼 Kulla e dytë", single: "🧱 Ndërtime të tjera" };
   let html = "";
   groupsOrder.forEach(g => {
     const items = FARM_ITEMS.filter(i => i.group === g);
@@ -7490,5 +7899,204 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+// Harta: ID e artikullit -> modeli 3D, pozicioni në rrjet, lartësia (për kullat me kate)
+const V3_MAP = {
+  house1:  { model: "tower-square-base",           x: -2,   z: -1,   y: 0    },
+  house2:  { model: "tower-square-mid-windows",    x: -2,   z: -1,   y: 1    },
+  house3:  { model: "tower-square-top",            x: -2,   z: -1,   y: 2    },
+  house4:  { model: "tower-square-top-roof-high",  x: -2,   z: -1,   y: 3    },
+  field1:  { model: "tower-hexagon-base",          x: 2.5,  z: -1.5, y: 0    },
+  field2:  { model: "tower-hexagon-mid",           x: 2.5,  z: -1.5, y: 1    },
+  field3:  { model: "tower-hexagon-roof",          x: 2.5,  z: -1.5, y: 2    },
+  barn:    { model: "gate",                        x: 0,    z: 1.6,  y: 0    },
+  silo:    { model: "tower-square-arch",           x: -3.6, z: 1,    y: 0    },
+  well:    { model: "wall-narrow-stairs",          x: 1.2,  z: 1.6,  y: 0    },
+  pond:    { model: "bridge-straight",             x: 0,    z: 3.4,  y: 0    },
+  haybale: { model: "tree-log",                    x: -3,   z: 2.6,  y: 0    },
+  tractor: { model: "siege-catapult",              x: 3.6,  z: 2.4,  y: 0, rot: -0.6 },
+  tree1:   { model: "tree-large",                  x: -4.4, z: -2.2, y: 0    },
+  tree2:   { model: "tree-small",                  x: 4.4,  z: -2.6, y: 0    },
+  flowers: { model: "wall-corner",                 x: -3,   z: -2.6, y: 0    },
+  chicken: { model: "flag",                        x: -1,   z: 2.4,  y: 0    },
+  dog:     { model: "flag-pennant",                x: 1,    z: 2.4,  y: 0    },
+  sheep:   { model: "wall-narrow-wood-fence",      x: 3.4,  z: 0.6,  y: 0    },
+  cow:     { model: "siege-ballista",              x: -4.2, z: 2.2,  y: 0, rot: 0.5 },
+  goat:    { model: "rocks-large",                 x: 4.6,  z: 1.4,  y: 0    },
+  cart:    { model: "siege-ram",                   x: 2.2,  z: 3.2,  y: 0, rot: 0.3 },
+  barrel:  { model: "wall",                        x: -1,   z: -2.6, y: 0    },
+  beehive: { model: "wall-doorway",                x: 1,    z: -2.6, y: 0    },
+  sun:     { model: "siege-trebuchet",             x: -2.4, z: 3.4,  y: 0, rot: 0.9 },
+  rainbow: { model: "bridge-draw",                 x: 3.4,  z: -3.4, y: 0    }
+};
+
+let v3 = null;              // { renderer, scene, camera, loader, cache, placed }
+let v3Ready = false;
+
+function setupVillage3D(container) {
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x8fd3f4);
+  scene.fog = new THREE.Fog(0x8fd3f4, 18, 34);
+
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  container.innerHTML = "";
+  container.appendChild(renderer.domElement);
+  renderer.domElement.style.width = "100%";
+  renderer.domElement.style.height = "100%";
+  renderer.domElement.style.display = "block";
+  renderer.domElement.style.touchAction = "pan-y";
+
+  // Drita
+  const sun = new THREE.DirectionalLight(0xffffff, 2.1);
+  sun.position.set(6, 10, 5);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(1024, 1024);
+  sun.shadow.camera.left = -10; sun.shadow.camera.right = 10;
+  sun.shadow.camera.top = 10; sun.shadow.camera.bottom = -10;
+  scene.add(sun);
+  scene.add(new THREE.HemisphereLight(0xbfe9ff, 0x6a9b4a, 1.1));
+
+  // Toka
+  const groundMat = new THREE.MeshLambertMaterial({ color: 0x74b356 });
+  const ground = new THREE.Mesh(new THREE.CircleGeometry(9, 48), groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  // Sheshi qendror me rrugë
+  const plaza = new THREE.Mesh(
+    new THREE.CircleGeometry(1.7, 32),
+    new THREE.MeshLambertMaterial({ color: 0xc7ad82 })
+  );
+  plaza.rotation.x = -Math.PI / 2; plaza.position.y = 0.02;
+  plaza.receiveShadow = true;
+  scene.add(plaza);
+
+  const roadMat = new THREE.MeshLambertMaterial({ color: 0xc7ad82 });
+  [[0, 3, 1.4, 5], [0, -3, 1.4, 5], [3.5, 0, 6, 1.2]].forEach(([x, z, w, d]) => {
+    const road = new THREE.Mesh(new THREE.PlaneGeometry(w, d), roadMat);
+    road.rotation.x = -Math.PI / 2; road.position.set(x, 0.015, z);
+    road.receiveShadow = true;
+    scene.add(road);
+  });
+
+  const group = new THREE.Group();
+  scene.add(group);
+
+  v3 = { renderer, scene, camera, group, loader: new GLTFLoader(), cache: {}, placed: {}, angle: 0.6, container };
+
+  // Rrotullim me gisht / mouse
+  let dragging = false, lastX = 0;
+  const el = renderer.domElement;
+  const start = (x) => { dragging = true; lastX = x; };
+  const move = (x) => { if (!dragging) return; v3.angle += (x - lastX) * 0.008; lastX = x; };
+  const end = () => { dragging = false; };
+  el.addEventListener("pointerdown", e => start(e.clientX));
+  window.addEventListener("pointermove", e => move(e.clientX));
+  window.addEventListener("pointerup", end);
+  window.addEventListener("pointercancel", end);
+
+  resizeV3();
+  window.addEventListener("resize", resizeV3);
+
+  let autoRotate = true;
+  el.addEventListener("pointerdown", () => { autoRotate = false; });
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if (!v3) return;
+    if (autoRotate && !dragging) v3.angle += 0.0016;
+    const r = 11.5;
+    v3.camera.position.set(Math.sin(v3.angle) * r, 7.4, Math.cos(v3.angle) * r);
+    v3.camera.lookAt(0, 1.2, 0);
+    v3.renderer.render(v3.scene, v3.camera);
+  }
+  animate();
+  v3Ready = true;
+}
+
+function resizeV3() {
+  if (!v3) return;
+  const w = v3.container.clientWidth || 320;
+  const h = Math.round(w * 0.62);
+  v3.container.style.height = h + "px";
+  v3.renderer.setSize(w, h, false);
+  v3.camera.aspect = w / h;
+  v3.camera.updateProjectionMatrix();
+}
+
+function loadModel(name) {
+  if (v3.cache[name]) return Promise.resolve(v3.cache[name].clone(true));
+  return new Promise((resolve, reject) => {
+    v3.loader.load("models/" + name + ".glb", gltf => {
+      const obj = gltf.scene;
+      obj.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+      v3.cache[name] = obj;
+      resolve(obj.clone(true));
+    }, undefined, reject);
+  });
+}
+
+// Vendos/hiq ndërtesat sipas listës së blerjeve
+async function updateVillage3D(builtIds) {
+  if (!v3 || !v3Ready) return;
+  const want = new Set(builtIds.filter(id => V3_MAP[id]));
+
+  // Hiq ato që s'janë më (p.sh. pas prestige)
+  Object.keys(v3.placed).forEach(id => {
+    if (!want.has(id)) {
+      v3.group.remove(v3.placed[id]);
+      delete v3.placed[id];
+    }
+  });
+
+  for (const id of want) {
+    if (v3.placed[id]) continue;
+    const cfg = V3_MAP[id];
+    try {
+      const obj = await loadModel(cfg.model);
+      obj.position.set(cfg.x, cfg.y, cfg.z);
+      if (cfg.rot) obj.rotation.y = cfg.rot;
+      obj.scale.setScalar(0.001);
+      v3.group.add(obj);
+      v3.placed[id] = obj;
+      // Animacion i vogël kur shfaqet
+      const t0 = performance.now();
+      (function grow() {
+        const p = Math.min(1, (performance.now() - t0) / 420);
+        const e = 1 - Math.pow(1 - p, 3);
+        obj.scale.setScalar(e);
+        if (p < 1) requestAnimationFrame(grow);
+      })();
+    } catch (e) {
+      console.warn("Modeli nuk u ngarkua:", cfg.model, e);
+    }
+  }
+}
+
+window.initVillage3D = function (container) {
+  try { setupVillage3D(container); return true; }
+  catch (e) { console.warn("3D nuk u nis:", e); return false; }
+};
+window.updateVillage3D = updateVillage3D;
+window.village3DReady = () => v3Ready;
+</script>
+
 </body>
 </html>
