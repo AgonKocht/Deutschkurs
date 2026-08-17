@@ -7236,7 +7236,15 @@ function svgHouse(stage) {
   // stage 1=themel, 2=mure, 3=çati, 4=i zbukuruar
   let s = `<g>`;
   s += `<ellipse cx="0" cy="34" rx="52" ry="9" fill="rgba(0,0,0,.18)"/>`;
-  s += `<rect x="-46" y="18" width="92" height="16" rx="2" fill="#9a8873"/>`;      // themeli
+  // Themeli: gurë të dukshëm + skela, që faza 1 të mos duket bosh
+  s += `<rect x="-46" y="6" width="92" height="28" rx="3" fill="#a99a86" stroke="#6b5b47" stroke-width="3"/>`;
+  s += `<path d="M-46 16 H46 M-24 6 V34 M0 6 V34 M24 6 V34" stroke="#6b5b47" stroke-width="2.5" opacity=".8"/>`;
+  if (stage < 2) {
+    s += `<g stroke="#c98b4b" stroke-width="4" stroke-linecap="round">
+      <line x1="-50" y1="6" x2="-50" y2="-26"/><line x1="50" y1="6" x2="50" y2="-26"/>
+      <line x1="-54" y1="-26" x2="54" y2="-26"/><line x1="-50" y1="-10" x2="50" y2="-10"/>
+    </g>`;
+  }
   if (stage >= 2) {
     s += `<rect x="-42" y="-18" width="84" height="38" fill="#f0e2c8"/>`;          // muret
     s += `<rect x="-42" y="-18" width="84" height="38" fill="none" stroke="#6b4f30" stroke-width="3"/>`;
@@ -7503,30 +7511,30 @@ function villageBackdrop() {
 
 /* --- Truallet: ku qëndron secila ndërtesë (koordinata në sistemin 1000x620) --- */
 const VILLAGE_PLOTS = {
-  house:   { x: 300, y: 360, s: 1.35 },
-  field:   { x: 760, y: 330, s: 1.15 },
-  barn:    { x: 200, y: 470, s: 1.1 },
-  silo:    { x: 118, y: 430, s: .95 },
-  tower:   { x: 640, y: 300, s: 1.05 },
-  mill:    { x: 880, y: 430, s: 1.0 },
-  market:  { x: 500, y: 500, s: 1.0 },
-  well:    { x: 500, y: 418, s: .95 },
-  fence:   { x: 700, y: 470, s: 1.0 },
-  tree1:   { x: 70,  y: 320, s: 1.0 },
-  tree2:   { x: 940, y: 300, s: 1.0 },
-  flowers: { x: 390, y: 300, s: 1.0 },
-  cart:    { x: 330, y: 500, s: 1.0 },
-  hay:     { x: 262, y: 520, s: 1.0 },
-  pond:    { x: 860, y: 520, s: 1.0 },
-  beehive: { x: 60,  y: 500, s: 1.0 },
-  barrel:  { x: 148, y: 520, s: 1.0 },
-  lamp:    { x: 430, y: 470, s: 1.0 },
-  bridge:  { x: 300, y: 556, s: 1.0 },
-  chicken: { x: 640, y: 486, s: 1.0 },
-  dog:     { x: 380, y: 430, s: 1.0 },
-  sheep:   { x: 706, y: 452, s: 1.0 },
-  cow:     { x: 748, y: 470, s: 1.0 },
-  goat:    { x: 672, y: 466, s: 1.0 }
+  house:   { x: 300, y: 360, s: 2.56 },
+  field:   { x: 760, y: 330, s: 2.18 },
+  barn:    { x: 200, y: 470, s: 2.09 },
+  silo:    { x: 118, y: 430, s: 1.8 },
+  tower:   { x: 640, y: 300, s: 1.99 },
+  mill:    { x: 880, y: 430, s: 1.9 },
+  market:  { x: 500, y: 500, s: 1.9 },
+  well:    { x: 500, y: 418, s: 1.8 },
+  fence:   { x: 700, y: 470, s: 1.9 },
+  tree1:   { x: 70,  y: 320, s: 1.9 },
+  tree2:   { x: 940, y: 300, s: 1.9 },
+  flowers: { x: 390, y: 300, s: 1.9 },
+  cart:    { x: 330, y: 500, s: 1.9 },
+  hay:     { x: 262, y: 520, s: 1.9 },
+  pond:    { x: 860, y: 520, s: 1.9 },
+  beehive: { x: 60,  y: 500, s: 1.9 },
+  barrel:  { x: 148, y: 520, s: 1.9 },
+  lamp:    { x: 430, y: 470, s: 1.9 },
+  bridge:  { x: 300, y: 556, s: 1.9 },
+  chicken: { x: 640, y: 486, s: 1.9 },
+  dog:     { x: 380, y: 430, s: 1.9 },
+  sheep:   { x: 706, y: 452, s: 1.9 },
+  cow:     { x: 748, y: 470, s: 1.9 },
+  goat:    { x: 672, y: 466, s: 1.9 }
 };
 
 // Cila fazë e shtëpisë/arës është arritur
