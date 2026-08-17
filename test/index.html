@@ -932,6 +932,7 @@
   .proto-title { font-size: .78rem; font-weight: 800; color: var(--gold); margin-bottom: 10px; }
   .proto-btns { display: flex; gap: 8px; flex-wrap: wrap; }
   .proto-btns .btn { flex: 1; min-width: 100px; padding: 11px 8px; font-size: .8rem; }
+  .proto-status { margin-top: 10px; font-size: .72rem; font-weight: 700; color: var(--muted); word-break: break-word; }
   .farm-shop { margin-bottom: 14px; }
   .farm-shop-group { margin-bottom: 14px; }
   .farm-shop-group h4 { margin: 0 0 8px; font-size: .84rem; font-weight: 800; color: var(--ink); padding-left: 2px; }
@@ -1605,6 +1606,7 @@
       <button class="btn btn-secondary" id="btnProtoClear">Zbraz kalanë</button>
       <button class="btn btn-secondary" id="btnProtoStep">+1 ndërtim</button>
     </div>
+    <div class="proto-status" id="protoStatus">Statusi: —</div>
   </div>
   <div class="farm-shop" id="farmShop"></div>
 </div>
@@ -7176,7 +7178,7 @@ const FARM_ITEMS = [
 
 function ensureFarmCoins() {
   if (typeof stats.farmCoins !== "number") stats.farmCoins = 0;
-  if (stats.farmCoins < 99999) stats.farmCoins = 99999;   // PROTOTIP: monedha pa fund
+  if (stats.farmCoins < 99999) stats.farmCoins = 99999;   // PROTOTIP
   if (!stats.farmBuilt) stats.farmBuilt = {};      // { itemId: ISO-datë kur u ndërtua }
   // Përdoruesit që tashmë kishin nivel të lartë PARA se të ekzistonte fshati:
   // marrin një herë monedha për pikët që kishin fituar tashmë, që të mos fillojnë bosh.
@@ -7194,7 +7196,7 @@ function ensureFarmCoins() {
 }
 
 // Nivelet e mëparshme te një grup (house/field) duhen ndërtuar para tjetrës
-function farmItemUnlocked(item) { return true; }   // PROTOTIP: pa kufizime radhe
+function farmItemUnlocked(item) { return true; }   // PROTOTIP
 
 function farmCanAfford(item) { return stats.farmCoins >= itemCost(item); }
 
@@ -7607,9 +7609,10 @@ function renderFarmScene() {
   const scene = document.getElementById("farmScene");
   if (!scene) return;
 
+  const mode = (!village3DFailed && village3DStarted) ? "3D" : "2D";
   const badge = built.length
-    ? `<div class="farm-stage-badge">${built.length} / ${FARM_ITEMS.length} ndërtime · rrotullo me gisht</div>`
-    : `<div class="farm-empty-badge">🏗️ Trualli të pret — blej ndërtimin e parë!</div>`;
+    ? `<div class="farm-stage-badge">${built.length} / ${FARM_ITEMS.length} ndërtime · ${mode}</div>`
+    : `<div class="farm-empty-badge">🏗️ Trualli të pret — blej ndërtimin e parë! (${mode})</div>`;
 
   // 1) Provo skenën 3D
   if (!village3DFailed && typeof window.initVillage3D === "function") {
@@ -7631,6 +7634,16 @@ function renderFarmScene() {
       let b = scene.querySelector(".farm-stage-badge, .farm-empty-badge");
       if (b) b.remove();
       scene.insertAdjacentHTML("beforeend", badge);
+      // Nëse modelet nuk u ngarkuan (p.sh. mungon dosja "models"),
+      // kalo automatikisht te skena 2D, që të mos mbetet ekrani bosh.
+      setTimeout(() => {
+        if (window.village3DError && !village3DFailed) {
+          village3DFailed = true;
+          village3DStarted = false;
+          console.warn("Kalohet te skena 2D:", window.village3DError);
+          renderFarmScene();
+        }
+      }, 1500);
       return;
     }
   }
@@ -7904,21 +7917,30 @@ document.getElementById("btnSaveUsername").addEventListener("click", async () =>
   const all = document.getElementById("btnProtoAll");
   const clear = document.getElementById("btnProtoClear");
   const step = document.getElementById("btnProtoStep");
+  const st = document.getElementById("protoStatus");
+  function refreshStatus() {
+    if (!st) return;
+    const n = FARM_ITEMS.filter(i => stats.farmBuilt && stats.farmBuilt[i.id]).length;
+    const mode = (typeof village3DStarted !== "undefined" && village3DStarted && !village3DFailed) ? "3D aktiv" : "2D (rezervë)";
+    const err = window.village3DError ? (" · gabim: " + window.village3DError) : "";
+    st.textContent = `Statusi: ${mode} · ${n}/${FARM_ITEMS.length} ndërtime${err}`;
+  }
   if (all) all.addEventListener("click", () => {
     ensureFarmCoins();
     FARM_ITEMS.forEach(i => { stats.farmBuilt[i.id] = new Date().toISOString(); });
-    queueSave(); renderFarmView(); spawnConfetti();
+    queueSave(); renderFarmView(); spawnConfetti(); setTimeout(refreshStatus, 300);
   });
   if (clear) clear.addEventListener("click", () => {
-    ensureFarmCoins();
-    stats.farmBuilt = {};
-    queueSave(); renderFarmView();
+    ensureFarmCoins(); stats.farmBuilt = {};
+    queueSave(); renderFarmView(); setTimeout(refreshStatus, 300);
   });
   if (step) step.addEventListener("click", () => {
     ensureFarmCoins();
     const next = FARM_ITEMS.find(i => !stats.farmBuilt[i.id]);
     if (next) buildFarmItem(next.id);
+    setTimeout(refreshStatus, 300);
   });
+  setInterval(refreshStatus, 1500);
 })();
 
 /* ============ START ============ */
@@ -7937,7 +7959,7 @@ if (hudFarmRowEl) hudFarmRowEl.addEventListener("click", () => goToView("stats")
 // und auch ohne Internet weiter funktioniert (Karten, Quiz, Prüfung).
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    /* PROTOTIP: pa service worker, që testimi të mos kapet në cache */
+    /* PROTOTIP: pa service worker */
   });
 }
 </script>
@@ -8064,9 +8086,9 @@ function setupVillage3D(container) {
     requestAnimationFrame(animate);
     if (!v3) return;
     if (autoRotate && !dragging) v3.angle += 0.0016;
-    const r = 11.5;
-    v3.camera.position.set(Math.sin(v3.angle) * r, 7.4, Math.cos(v3.angle) * r);
-    v3.camera.lookAt(0, 1.2, 0);
+    const r = 13.5;
+    v3.camera.position.set(Math.sin(v3.angle) * r, 9.0, Math.cos(v3.angle) * r);
+    v3.camera.lookAt(0, 1.6, 0);
     v3.renderer.render(v3.scene, v3.camera);
   }
   animate();
@@ -8113,8 +8135,10 @@ async function updateVillage3D(builtIds) {
     const cfg = V3_MAP[id];
     try {
       const obj = await loadModel(cfg.model);
-      obj.position.set(cfg.x, cfg.y, cfg.z);
+      const S = 1.7;                       // modelet janë ~1 njësi -> i zmadhojmë
+      obj.position.set(cfg.x * S, cfg.y * S, cfg.z * S);
       if (cfg.rot) obj.rotation.y = cfg.rot;
+      obj.userData.finalScale = S;
       obj.scale.setScalar(0.001);
       v3.group.add(obj);
       v3.placed[id] = obj;
@@ -8123,11 +8147,12 @@ async function updateVillage3D(builtIds) {
       (function grow() {
         const p = Math.min(1, (performance.now() - t0) / 420);
         const e = 1 - Math.pow(1 - p, 3);
-        obj.scale.setScalar(e);
+        obj.scale.setScalar(e * (obj.userData.finalScale || 1));
         if (p < 1) requestAnimationFrame(grow);
       })();
     } catch (e) {
       console.warn("Modeli nuk u ngarkua:", cfg.model, e);
+      window.village3DError = "Modeli '" + cfg.model + "' nuk u ngarkua";
     }
   }
 }
