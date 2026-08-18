@@ -8022,6 +8022,280 @@ const V3_MAP = {
 let v3 = null;              // { renderer, scene, camera, loader, cache, placed }
 let v3Ready = false;
 
+/* ---- Teksturë organike për tokën, vetëm materiali ndryshon, jo gjeometria ---- */
+function buildGrassTexture() {
+  const size = 512;
+  const cnv = document.createElement("canvas");
+  cnv.width = size; cnv.height = size;
+  const ctx = cnv.getContext("2d");
+
+  // Bazë: gradient i lehtë mes dy jeshileve, jo ngjyrë e sheshtë
+  const base = ctx.createLinearGradient(0, 0, size, size);
+  base.addColorStop(0, "#7fbd58");
+  base.addColorStop(0.5, "#74b356");
+  base.addColorStop(1, "#6aa84e");
+  ctx.fillStyle = base;
+  ctx.fillRect(0, 0, size, size);
+
+  // Njolla organike (të buta, të mjegulluara) — variacion natyror, jo kaos
+  const blotchColors = ["#8bc766", "#699a4a", "#5f9143", "#87c060"];
+  ctx.globalAlpha = 0.35;
+  for (let i = 0; i < 46; i++) {
+    const x = Math.random() * size, y = Math.random() * size;
+    const r = 18 + Math.random() * 46;
+    const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+    const c = blotchColors[i % blotchColors.length];
+    grad.addColorStop(0, c);
+    grad.addColorStop(1, "transparent");
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // Pak "rrugica" të holla dheu, shumë delikate, jo dominuese
+  ctx.globalAlpha = 0.12;
+  ctx.strokeStyle = "#a98a55";
+  for (let i = 0; i < 5; i++) {
+    ctx.lineWidth = 2 + Math.random() * 3;
+    ctx.beginPath();
+    let x = Math.random() * size, y = Math.random() * size;
+    ctx.moveTo(x, y);
+    for (let j = 0; j < 4; j++) {
+      x += (Math.random() - 0.5) * 140;
+      y += (Math.random() - 0.5) * 140;
+      ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+
+  // Grimca të imëta bari — jep ndjesinë e strukturës nga afër, pa u dukur e trazuar nga larg
+  ctx.globalAlpha = 0.5;
+  for (let i = 0; i < 2200; i++) {
+    const x = Math.random() * size, y = Math.random() * size;
+    const shade = Math.random();
+    ctx.fillStyle = shade > 0.5 ? "rgba(255,255,255,.08)" : "rgba(30,50,20,.10)";
+    ctx.fillRect(x, y, 1.4, 1.4);
+  }
+  ctx.globalAlpha = 1;
+
+  const tex = new THREE.CanvasTexture(cnv);
+  tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(5, 5);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+/* ---- Teksturë e butë për shesh/rrugë, po ashtu vetëm material ---- */
+function buildPathTexture() {
+  const size = 256;
+  const cnv = document.createElement("canvas");
+  cnv.width = size; cnv.height = size;
+  const ctx = cnv.getContext("2d");
+  ctx.fillStyle = "#c7ad82";
+  ctx.fillRect(0, 0, size, size);
+  ctx.globalAlpha = 0.25;
+  for (let i = 0; i < 60; i++) {
+    const x = Math.random() * size, y = Math.random() * size;
+    const r = 6 + Math.random() * 16;
+    const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+    grad.addColorStop(0, Math.random() > 0.5 ? "#d9c39a" : "#b6976a");
+    grad.addColorStop(1, "transparent");
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  const tex = new THREE.CanvasTexture(cnv);
+  tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(3, 3);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+/* ============ KAFSHË DEKORATIVE: sillen ngadalë, rrinë, kthehen ============ */
+function makeChicken() {
+  const g = new THREE.Group();
+  const white = new THREE.MeshStandardMaterial({ color: 0xfaf3e4, roughness: 0.9 });
+  const orange = new THREE.MeshStandardMaterial({ color: 0xffa726, roughness: 0.7 });
+  const red = new THREE.MeshStandardMaterial({ color: 0xd8453a, roughness: 0.7 });
+
+  const body = new THREE.Mesh(new THREE.SphereGeometry(0.13, 10, 8), white);
+  body.scale.set(1, 0.9, 1.25); body.position.y = 0.15; body.castShadow = true;
+  g.add(body);
+
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 6), white);
+  head.position.set(0, 0.27, 0.14); head.castShadow = true;
+  g.add(head);
+
+  const comb = new THREE.Mesh(new THREE.ConeGeometry(0.018, 0.045, 6), red);
+  comb.position.set(0, 0.335, 0.14);
+  g.add(comb);
+
+  const beak = new THREE.Mesh(new THREE.ConeGeometry(0.022, 0.05, 6), orange);
+  beak.rotation.x = Math.PI / 2; beak.position.set(0, 0.27, 0.21);
+  g.add(beak);
+
+  [-0.045, 0.045].forEach(dx => {
+    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.009, 0.009, 0.1, 5), orange);
+    leg.position.set(dx, 0.05, 0); leg.castShadow = true;
+    g.add(leg);
+  });
+
+  g.userData.bodyRef = body;
+  g.userData.headRef = head;
+  return g;
+}
+
+function makeSheep() {
+  const g = new THREE.Group();
+  const wool = new THREE.MeshStandardMaterial({ color: 0xf3efe4, roughness: 1, flatShading: true });
+  const dark = new THREE.MeshStandardMaterial({ color: 0x453c33, roughness: 0.9 });
+
+  const body = new THREE.Mesh(new THREE.IcosahedronGeometry(0.19, 1), wool);
+  body.position.y = 0.24; body.scale.set(1, 0.9, 1.15); body.castShadow = true;
+  g.add(body);
+
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 6), dark);
+  head.position.set(0, 0.26, 0.22); head.castShadow = true;
+  g.add(head);
+
+  [[-0.09, 0], [0.09, 0], [-0.08, 0.19], [0.08, 0.19]].forEach(([dx, dz]) => {
+    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.15, 5), dark);
+    leg.position.set(dx, 0.075, dz); leg.castShadow = true;
+    g.add(leg);
+  });
+
+  g.userData.bodyRef = body;
+  g.userData.headRef = head;
+  return g;
+}
+
+function makeCow() {
+  const g = new THREE.Group();
+  const white = new THREE.MeshStandardMaterial({ color: 0xf7f5ef, roughness: 0.85 });
+  const black = new THREE.MeshStandardMaterial({ color: 0x2e2a26, roughness: 0.85 });
+  const pink = new THREE.MeshStandardMaterial({ color: 0xf0a8ae, roughness: 0.7 });
+
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.22, 0.5), white);
+  body.position.y = 0.28; body.castShadow = true;
+  g.add(body);
+
+  [[0.1, 0.06, 0.1], [-0.08, 0.03, -0.05], [0.06, -0.03, -0.15]].forEach(([dx, dy, dz], i) => {
+    const patch = new THREE.Mesh(new THREE.SphereGeometry(0.07 + i * 0.01, 6, 5), black);
+    patch.position.set(dx, 0.28 + dy, dz);
+    patch.scale.set(1, 0.6, 1);
+    g.add(patch);
+  });
+
+  const head = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.16, 0.16), white);
+  head.position.set(0, 0.3, 0.32); head.castShadow = true;
+  g.add(head);
+  const nose = new THREE.Mesh(new THREE.SphereGeometry(0.05, 6, 5), pink);
+  nose.position.set(0, 0.26, 0.4);
+  g.add(nose);
+
+  [[-0.12, -0.2], [0.12, -0.2], [-0.12, 0.15], [0.12, 0.15]].forEach(([dx, dz]) => {
+    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.24, 6), white);
+    leg.position.set(dx, 0.12, dz); leg.castShadow = true;
+    g.add(leg);
+  });
+
+  const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.16, 5), black);
+  tail.position.set(0, 0.24, -0.27); tail.rotation.x = 0.3;
+  g.add(tail);
+
+  g.userData.bodyRef = body;
+  g.userData.headRef = head;
+  return g;
+}
+
+const ANIMAL_BUILDERS = { chicken: makeChicken, sheep: makeSheep, cow: makeCow };
+
+// Distanca minimale nga çdo truall ndërtese (edhe të pandërtuara), që kafshët të mos kalojnë përmes tyre
+function farFromPlots(x, z, minDist) {
+  for (const key in V3_MAP) {
+    const c = V3_MAP[key];
+    const bx = c.x * 1.7, bz = c.z * 1.7;
+    if (Math.hypot(x - bx, z - bz) < minDist) return false;
+  }
+  return true;
+}
+
+function randomGrassSpot() {
+  for (let i = 0; i < 40; i++) {
+    const ang = Math.random() * Math.PI * 2;
+    const rad = 2.1 + Math.random() * 6.1;
+    const x = Math.cos(ang) * rad, z = Math.sin(ang) * rad;
+    if (farFromPlots(x, z, 1.35)) return { x, z };
+  }
+  return { x: 0, z: 0 };
+}
+
+function addVillageAnimals(scene) {
+  const plan = ["chicken", "chicken", "sheep", "sheep", "cow"];
+  const animals = [];
+  plan.forEach((type, i) => {
+    const mesh = ANIMAL_BUILDERS[type]();
+    const spot = randomGrassSpot();
+    mesh.position.set(spot.x, 0, spot.z);
+    mesh.rotation.y = Math.random() * Math.PI * 2;
+    mesh.scale.setScalar(0.001);
+    scene.add(mesh);
+    const a = {
+      mesh, type, seed: Math.random() * 10,
+      state: "idle", stateTimer: 1 + Math.random() * 3,
+      target: new THREE.Vector3(spot.x, 0, spot.z),
+      speed: type === "cow" ? 0.22 : type === "sheep" ? 0.28 : 0.34
+    };
+    animals.push(a);
+    // Rritje e butë kur shfaqet
+    const t0 = performance.now();
+    (function grow() {
+      const p = Math.min(1, (performance.now() - t0) / 500);
+      mesh.scale.setScalar(1 - Math.pow(1 - p, 3));
+      if (p < 1) requestAnimationFrame(grow);
+    })();
+  });
+  return animals;
+}
+
+function updateAnimals(animals, dt) {
+  if (!animals || !animals.length) return;
+  const t = performance.now() / 1000;
+  animals.forEach(a => {
+    a.stateTimer -= dt;
+    if (a.state === "idle") {
+      // lëkundje e lehtë, jo hektike — vetëm frymëmarrje/shikim
+      const bob = Math.sin(t * 1.6 + a.seed) * 0.012;
+      a.mesh.position.y = bob;
+      if (a.mesh.userData.headRef) a.mesh.userData.headRef.rotation.y = Math.sin(t * 0.6 + a.seed) * 0.25;
+      if (a.stateTimer <= 0) {
+        const spot = randomGrassSpot();
+        a.target.set(spot.x, 0, spot.z);
+        a.state = "walk";
+        a.stateTimer = 2.5 + Math.random() * 3.5;
+      }
+    } else {
+      const dx = a.target.x - a.mesh.position.x, dz = a.target.z - a.mesh.position.z;
+      const dist = Math.hypot(dx, dz);
+      if (dist < 0.1 || a.stateTimer <= 0) {
+        a.state = "idle";
+        a.stateTimer = 2 + Math.random() * 3;
+      } else {
+        const nx = dx / dist, nz = dz / dist;
+        a.mesh.position.x += nx * a.speed * dt;
+        a.mesh.position.z += nz * a.speed * dt;
+        const targetAngle = Math.atan2(nx, nz);
+        let diff = targetAngle - a.mesh.rotation.y;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        a.mesh.rotation.y += diff * Math.min(1, dt * 5);
+        a.mesh.position.y = Math.abs(Math.sin(t * 7 + a.seed)) * 0.02;
+      }
+    }
+  });
+}
+
 function setupVillage3D(container) {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x8fd3f4);
@@ -8052,23 +8326,25 @@ function setupVillage3D(container) {
   scene.add(new THREE.HemisphereLight(0xbfe9ff, 0x6a9b4a, 1.5));
   scene.add(new THREE.AmbientLight(0xffffff, 0.35));
 
-  // Toka
-  const groundMat = new THREE.MeshLambertMaterial({ color: 0x74b356 });
+  // Toka — e njëjta gjeometri/madhësi si më parë, vetëm materiali është më i pasur
+  const grassTex = buildGrassTexture();
+  const groundMat = new THREE.MeshStandardMaterial({ map: grassTex, roughness: 1 });
   const ground = new THREE.Mesh(new THREE.CircleGeometry(9, 48), groundMat);
   ground.rotation.x = -Math.PI / 2;
   ground.receiveShadow = true;
   scene.add(ground);
 
   // Sheshi qendror me rrugë
+  const pathTex = buildPathTexture();
   const plaza = new THREE.Mesh(
     new THREE.CircleGeometry(1.7, 32),
-    new THREE.MeshLambertMaterial({ color: 0xc7ad82 })
+    new THREE.MeshStandardMaterial({ map: pathTex, roughness: 1 })
   );
   plaza.rotation.x = -Math.PI / 2; plaza.position.y = 0.02;
   plaza.receiveShadow = true;
   scene.add(plaza);
 
-  const roadMat = new THREE.MeshLambertMaterial({ color: 0xc7ad82 });
+  const roadMat = new THREE.MeshStandardMaterial({ map: pathTex, roughness: 1 });
   [[0, 3, 1.4, 5], [0, -3, 1.4, 5], [3.5, 0, 6, 1.2]].forEach(([x, z, w, d]) => {
     const road = new THREE.Mesh(new THREE.PlaneGeometry(w, d), roadMat);
     road.rotation.x = -Math.PI / 2; road.position.set(x, 0.015, z);
@@ -8079,7 +8355,10 @@ function setupVillage3D(container) {
   const group = new THREE.Group();
   scene.add(group);
 
-  v3 = { renderer, scene, camera, group, loader: new GLTFLoader(), cache: {}, placed: {}, angle: 0.6, container };
+  // Kafshë dekorative — nuk prekin ndërtesat apo pozicionet ekzistuese
+  const animals = addVillageAnimals(scene);
+
+  v3 = { renderer, scene, camera, group, animals, loader: new GLTFLoader(), cache: {}, placed: {}, angle: 0.6, container };
 
   // Rrotullim me gisht / mouse
   let dragging = false, lastX = 0;
@@ -8098,13 +8377,18 @@ function setupVillage3D(container) {
   let autoRotate = true;
   el.addEventListener("pointerdown", () => { autoRotate = false; });
 
+  let lastFrame = performance.now();
   function animate() {
     requestAnimationFrame(animate);
     if (!v3) return;
+    const now = performance.now();
+    const dt = Math.min(0.1, (now - lastFrame) / 1000);
+    lastFrame = now;
     if (autoRotate && !dragging) v3.angle += 0.0016;
     const r = 13.5;
     v3.camera.position.set(Math.sin(v3.angle) * r, 9.0, Math.cos(v3.angle) * r);
     v3.camera.lookAt(0, 1.6, 0);
+    updateAnimals(v3.animals, dt);
     v3.renderer.render(v3.scene, v3.camera);
   }
   animate();
