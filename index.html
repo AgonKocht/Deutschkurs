@@ -8296,10 +8296,249 @@ function updateAnimals(animals, dt) {
   });
 }
 
+/* ============ HIMMELSKUPPEL: verlaufender Himmel statt einfarbig ============ */
+function buildSkyTexture() {
+  const w = 512, h = 512;
+  const cnv = document.createElement("canvas");
+  cnv.width = w; cnv.height = h;
+  const ctx = cnv.getContext("2d");
+
+  const g = ctx.createLinearGradient(0, 0, 0, h);
+  g.addColorStop(0, "#5fa8dc");
+  g.addColorStop(0.45, "#9fd0ea");
+  g.addColorStop(0.78, "#d9ecf0");
+  g.addColorStop(1, "#eef6ee");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, w, h);
+
+  // Re të buta, të mjegulluara — jo forma të mprehta
+  ctx.globalAlpha = 0.5;
+  for (let i = 0; i < 9; i++) {
+    const cx = Math.random() * w, cy = h * 0.12 + Math.random() * h * 0.28;
+    const rw = 60 + Math.random() * 90, rh = 16 + Math.random() * 14;
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, rw);
+    grad.addColorStop(0, "rgba(255,255,255,.85)");
+    grad.addColorStop(1, "rgba(255,255,255,0)");
+    ctx.save();
+    ctx.translate(cx, cy); ctx.scale(1, rh / rw);
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.arc(0, 0, rw, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  ctx.globalAlpha = 1;
+
+  const tex = new THREE.CanvasTexture(cnv);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+function buildSkyDome(scene) {
+  const geo = new THREE.SphereGeometry(70, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.55);
+  const mat = new THREE.MeshBasicMaterial({ map: buildSkyTexture(), side: THREE.BackSide, fog: false });
+  const dome = new THREE.Mesh(geo, mat);
+  dome.position.y = -4;
+  scene.add(dome);
+  return dome;
+}
+
+/* ============ MALE NË HORIZONT: silueta të buta, larg fshatit ============ */
+function hillColorFor(ring) {
+  // sa më larg, aq më e zbehtë/e kaltërt ngjyra — efekt thellësie natyror
+  const cols = ["#5f8f6a", "#729a86", "#8fb0a6", "#a9c3c2", "#c3d7dc"];
+  return cols[Math.min(ring, cols.length - 1)];
+}
+
+function buildHillMesh(radius, height, color) {
+  const geo = new THREE.ConeGeometry(radius, height, 6 + Math.floor(Math.random() * 3), 1);
+  // Jo kon perfekt — çrregullojmë pak majat për siluetë natyrale
+  const pos = geo.attributes.position;
+  for (let i = 0; i < pos.count; i++) {
+    const y = pos.getY(i);
+    if (y < height * 0.4) {
+      pos.setX(i, pos.getX(i) * (0.9 + Math.random() * 0.25));
+      pos.setZ(i, pos.getZ(i) * (0.9 + Math.random() * 0.25));
+    }
+  }
+  geo.computeVertexNormals();
+  const mat = new THREE.MeshStandardMaterial({ color, roughness: 1, fog: true });
+  return new THREE.Mesh(geo, mat);
+}
+
+function buildMountainRing(scene) {
+  const rings = [
+    { dist: 17, count: 10, hMin: 2.2, hMax: 3.6, rMin: 3.5, rMax: 5.5 },
+    { dist: 23, count: 12, hMin: 3.2, hMax: 5.2, rMin: 5,   rMax: 8   },
+    { dist: 30, count: 12, hMin: 4.5, hMax: 7,   rMin: 7,   rMax: 11  }
+  ];
+  rings.forEach((ring, ringIdx) => {
+    for (let i = 0; i < ring.count; i++) {
+      const ang = (i / ring.count) * Math.PI * 2 + Math.random() * 0.3;
+      const dist = ring.dist + (Math.random() - 0.5) * 3;
+      const h = ring.hMin + Math.random() * (ring.hMax - ring.hMin);
+      const r = ring.rMin + Math.random() * (ring.rMax - ring.rMin);
+      const hill = buildHillMesh(r, h, hillColorFor(ringIdx + 1));
+      hill.position.set(Math.cos(ang) * dist, h / 2 - 0.6, Math.sin(ang) * dist);
+      hill.rotation.y = Math.random() * Math.PI;
+      scene.add(hill);
+    }
+  });
+}
+
+/* ============ TERRENI I JASHTËM: bën që fusha kryesore të mos duket si ishull ============ */
+function buildOuterTerrainTexture() {
+  const size = 512;
+  const cnv = document.createElement("canvas");
+  cnv.width = size; cnv.height = size;
+  const ctx = cnv.getContext("2d");
+  ctx.fillStyle = "#5d8f52";
+  ctx.fillRect(0, 0, size, size);
+  const blotches = ["#4f7d46", "#6a9a58", "#557f4c", "#729e5f"];
+  ctx.globalAlpha = 0.4;
+  for (let i = 0; i < 60; i++) {
+    const x = Math.random() * size, y = Math.random() * size;
+    const r = 20 + Math.random() * 60;
+    const grad = ctx.createRadialGradient(x, y, 0, x, y, r);
+    grad.addColorStop(0, blotches[i % blotches.length]);
+    grad.addColorStop(1, "transparent");
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  const tex = new THREE.CanvasTexture(cnv);
+  tex.wrapS = THREE.RepeatWrapping; tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(6, 6);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+// Rreth i çrregullt (jo rreth perfekt) me shumë kulme, buzë natyrale
+function buildOuterTerrainGeometry(baseR, segs) {
+  const shape = new THREE.Shape();
+  const seed1 = Math.random() * 10, seed2 = Math.random() * 10;
+  for (let i = 0; i <= segs; i++) {
+    const t = (i / segs) * Math.PI * 2;
+    const r = baseR
+      + Math.sin(t * 3 + seed1) * baseR * 0.09
+      + Math.sin(t * 5 + seed2) * baseR * 0.05
+      + Math.sin(t * 9) * baseR * 0.02;
+    const x = Math.cos(t) * r, y = Math.sin(t) * r;
+    if (i === 0) shape.moveTo(x, y); else shape.lineTo(x, y);
+  }
+  const geo = new THREE.ShapeGeometry(shape, 1);
+  return geo;
+}
+
+function buildOuterTerrain(scene) {
+  const geo = buildOuterTerrainGeometry(15.5, 64);
+  const mat = new THREE.MeshStandardMaterial({ map: buildOuterTerrainTexture(), roughness: 1 });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.rotation.x = -Math.PI / 2;
+  mesh.position.y = -0.06;
+  mesh.receiveShadow = true;
+  scene.add(mesh);
+  return mesh;
+}
+
+/* ============ VEGJETACION: shkurre, gurë, lule, pemë shtesë ============ */
+function buildBush() {
+  const g = new THREE.Group();
+  const cols = [0x3f9e6b, 0x4caf7d, 0x2f8d5f];
+  for (let i = 0; i < 3; i++) {
+    const mat = new THREE.MeshStandardMaterial({ color: cols[i % cols.length], roughness: 1, flatShading: true });
+    const s = new THREE.Mesh(new THREE.IcosahedronGeometry(0.16 + Math.random() * 0.07, 0), mat);
+    s.position.set((Math.random() - 0.5) * 0.18, 0.13 + Math.random() * 0.06, (Math.random() - 0.5) * 0.18);
+    s.castShadow = true;
+    g.add(s);
+  }
+  return g;
+}
+
+function buildRockDeco() {
+  const mat = new THREE.MeshStandardMaterial({ color: 0x9aa0a6, roughness: 0.95, flatShading: true });
+  const geo = new THREE.DodecahedronGeometry(0.09 + Math.random() * 0.08, 0);
+  const rock = new THREE.Mesh(geo, mat);
+  rock.rotation.set(Math.random(), Math.random(), Math.random());
+  rock.scale.y = 0.6 + Math.random() * 0.3;
+  rock.castShadow = true;
+  return rock;
+}
+
+function buildFlowerPatch() {
+  const g = new THREE.Group();
+  const petalCols = [0xffe08a, 0xff9ec4, 0xffffff, 0x8f7bff];
+  const n = 3 + Math.floor(Math.random() * 3);
+  for (let i = 0; i < n; i++) {
+    const stem = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.004, 0.004, 0.09, 4),
+      new THREE.MeshStandardMaterial({ color: 0x3f9e6b, roughness: 1 })
+    );
+    const dx = (Math.random() - 0.5) * 0.16, dz = (Math.random() - 0.5) * 0.16;
+    stem.position.set(dx, 0.045, dz);
+    g.add(stem);
+    const bloom = new THREE.Mesh(
+      new THREE.SphereGeometry(0.018, 6, 5),
+      new THREE.MeshStandardMaterial({ color: petalCols[i % petalCols.length], roughness: 0.8 })
+    );
+    bloom.position.set(dx, 0.095, dz);
+    g.add(bloom);
+  }
+  return g;
+}
+
+async function scatterVegetation(scene) {
+  // Buzë e brendshme (rrethi kryesor prej 9) deri te terreni i jashtëm — fsheh "buzën" e ishullit
+  const spots = [];
+  for (let i = 0; i < 26; i++) {
+    const ang = Math.random() * Math.PI * 2;
+    const rad = 8.3 + Math.random() * 5.5; // pikërisht mbi tegelin
+    spots.push({ x: Math.cos(ang) * rad, z: Math.sin(ang) * rad, kind: "edge" });
+  }
+  // Të shpërndara nëpër bar, larg ndërtesave
+  for (let i = 0; i < 22; i++) {
+    const p = randomGrassSpot();
+    spots.push({ x: p.x, z: p.z, kind: "inner" });
+  }
+
+  spots.forEach(spot => {
+    if (!farFromPlots(spot.x, spot.z, 1.1)) return;
+    const roll = Math.random();
+    let obj;
+    if (roll < 0.4) obj = buildBush();
+    else if (roll < 0.65) obj = buildRockDeco();
+    else obj = buildFlowerPatch();
+    obj.position.set(spot.x, 0, spot.z);
+    obj.rotation.y = Math.random() * Math.PI * 2;
+    obj.scale.setScalar(0.85 + Math.random() * 0.4);
+    scene.add(obj);
+  });
+
+  // Pak pemë shtesë (ripërdorim modelet ekzistuese GLB, tashmë të ngarkuara në cache)
+  const extraTreeSpots = [];
+  for (let i = 0; i < 7; i++) {
+    const ang = Math.random() * Math.PI * 2;
+    const rad = 9.5 + Math.random() * 4.5;
+    extraTreeSpots.push({ x: Math.cos(ang) * rad, z: Math.sin(ang) * rad });
+  }
+  for (const p of extraTreeSpots) {
+    if (!farFromPlots(p.x, p.z, 1.2)) continue;
+    try {
+      const name = Math.random() > 0.5 ? "tree-large" : "tree-small";
+      const tree = await loadModel(name);
+      const s = 1.3 + Math.random() * 0.6;
+      tree.position.set(p.x, 0, p.z);
+      tree.scale.setScalar(s);
+      tree.rotation.y = Math.random() * Math.PI * 2;
+      scene.add(tree);
+    } catch (e) { /* modeli mungon — thjesht anashkalo, s'prish asgjë */ }
+  }
+}
+
 function setupVillage3D(container) {
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x8fd3f4);
-  scene.fog = new THREE.Fog(0x8fd3f4, 18, 34);
+  scene.background = new THREE.Color(0xeef6ee);   // rezervë, kupola mbulon gjithçka
+  scene.fog = new THREE.Fog(0xcfe6e0, 21, 40);     // përputhet me horizontin e qiellit
+  buildSkyDome(scene);
+  buildMountainRing(scene);
 
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
 
@@ -8354,6 +8593,10 @@ function setupVillage3D(container) {
 
   const group = new THREE.Group();
   scene.add(group);
+
+  // Terreni i jashtëm dhe vegjetacioni — vetëm zbukurim, nuk prekin trojet e ndërtesave
+  buildOuterTerrain(scene);
+  scatterVegetation(scene);
 
   // Kafshë dekorative — nuk prekin ndërtesat apo pozicionet ekzistuese
   const animals = addVillageAnimals(scene);
