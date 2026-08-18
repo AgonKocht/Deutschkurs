@@ -42,10 +42,10 @@
     margin: 0; font-family: var(--font);
     color: var(--ink);
     background:
-      radial-gradient(1100px 600px at 15% -10%, rgba(91,140,255,.16), transparent 60%),
-      radial-gradient(900px 500px at 110% 10%, rgba(255,95,109,.10), transparent 55%),
-      radial-gradient(800px 500px at 50% 120%, rgba(53,220,156,.09), transparent 55%),
-      var(--bg-0);
+      radial-gradient(1100px 600px at 15% -10%, rgba(91,140,255,.14), transparent 60%),
+      radial-gradient(900px 500px at 110% 10%, rgba(255,95,109,.08), transparent 55%),
+      radial-gradient(800px 500px at 50% 120%, rgba(53,220,156,.07), transparent 55%),
+      transparent;
     background-attachment: fixed;
     display: flex; flex-direction: column; align-items: center;
     min-height: 100vh; min-height: 100dvh;
@@ -54,8 +54,29 @@
     font-size: 16px;
     -webkit-user-select: none; user-select: none;
     overscroll-behavior-y: contain;
+    position: relative; z-index: 0;
   }
   input, textarea { -webkit-user-select: text; user-select: text; }
+
+  /* ---- Sfondi video ---- */
+  .bg-video-wrap { position: fixed; inset: 0; z-index: -1; overflow: hidden; background: var(--bg-0); }
+  .bg-video {
+    position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%;
+    width: auto; height: auto; transform: translate(-50%, -50%);
+    object-fit: cover; filter: saturate(1.15) brightness(.8);
+  }
+  .bg-video-overlay {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(6,8,16,.72) 0%, rgba(6,8,16,.55) 40%, rgba(6,8,16,.8) 100%);
+  }
+  /* Kush preferon më pak lëvizje ose kursen të dhëna: video statike (poster) */
+  @media (prefers-reduced-motion: reduce) {
+    .bg-video { display: none; }
+    .bg-video-wrap { background: var(--bg-0) url("bg/bg-poster.jpg") center/cover no-repeat; }
+  }
+  body.bg-video-paused .bg-video { display: none; }
+  body.bg-video-paused .bg-video-wrap { background: var(--bg-0) url("bg/bg-poster.jpg") center/cover no-repeat; }
 
   @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes popIn { 0% { transform: scale(.85); opacity: 0; } 60% { transform: scale(1.04); opacity: 1; } 100% { transform: scale(1); } }
@@ -68,11 +89,21 @@
   .view, .hud, .account-bar { animation: fadeSlideIn .35s cubic-bezier(.2,.8,.2,1); }
 
   header { text-align: center; margin: 0 auto 4px; width: 100%; max-width: 520px; }
-  .header-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
-  h1 {
-    font-size: 1.35rem; margin: 0 0 3px 0; font-weight: 800; letter-spacing: -.015em;
-    display: flex; align-items: center; gap: 8px;
+  .app-logo-row {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    margin-bottom: 10px;
   }
+  .app-logo-img {
+    width: 56px; height: 56px; object-fit: contain; flex-shrink: 0;
+    filter: drop-shadow(0 4px 14px rgba(0,0,0,.4)) drop-shadow(0 0 20px var(--gold-glow));
+    animation: floatGlow 3s ease-in-out infinite;
+  }
+  .app-logo-text {
+    font-size: 2rem; margin: 0; font-weight: 800; letter-spacing: -.02em;
+    background: linear-gradient(135deg, #fff, #c9d6ff);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .header-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
   .subtitle { color: var(--muted); font-size: .82rem; font-weight: 600; }
   .cefr-pill {
     padding: 5px 12px; border-radius: var(--radius-pill); font-size: .78rem; font-weight: 800;
@@ -216,7 +247,11 @@
     color: var(--muted); font-family: var(--font);
     transition: transform .12s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease, color .18s ease;
   }
-  nav button .tab-icon { font-size: 1.28rem; line-height: 1; transition: transform .18s ease; }
+  nav button .tab-icon {
+    font-size: 1.28rem; line-height: 1; height: 24px; width: 24px;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .18s ease;
+  }
   nav button .tab-label {
     letter-spacing: 0; line-height: 1.15; text-align: center;
     max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
@@ -226,7 +261,7 @@
     background: linear-gradient(160deg, var(--blue), #6f97ff); color: #fff; border-color: transparent;
     box-shadow: 0 6px 20px var(--blue-glow), inset 0 1px 0 rgba(255,255,255,.35);
   }
-  nav button.active .tab-icon { transform: scale(1.14) translateY(-1px); }
+  nav button.active .tab-icon { transform: scale(1.14); }
   nav button.active .tab-label { color: #fff; }
   .view { width: 100%; max-width: 520px; }
   .hidden { display: none !important; }
@@ -745,8 +780,8 @@
 
 
   /* ---- Ushtrim i shpejtë ---- */
-  .tab-icon-img { width: 30px; height: 30px; object-fit: contain; display: block; }
-  nav button.active .tab-icon-img { transform: scale(1.12) translateY(-1px); transition: transform .18s ease; }
+  .tab-icon-img { width: 24px; height: 24px; object-fit: contain; display: block; }
+  nav button.active .tab-icon-img { transform: scale(1.14); transition: transform .18s ease; }
   .practice-hero { text-align: center; margin-bottom: 18px; }
   .practice-hero-img {
     width: 130px; height: 130px; object-fit: contain; margin-bottom: 10px;
@@ -1114,12 +1149,13 @@
   /* Telefona të vegjël (iPhone SE, mini) */
   @media (max-width: 400px) {
     body { padding-left: calc(12px + env(safe-area-inset-left)); padding-right: calc(12px + env(safe-area-inset-right)); }
-    h1 { font-size: 1.18rem; }
+    .app-logo-img { width: 44px; height: 44px; }
+    .app-logo-text { font-size: 1.5rem; }
     .subtitle { font-size: .76rem; }
     nav { gap: 4px; padding: 6px; border-radius: 20px; }
     nav button { padding: 9px 5px 8px; font-size: .6rem; border-radius: 15px; gap: 2px; min-width: 54px; max-width: 72px; }
-    nav button .tab-icon { font-size: 1.12rem; }
-    .tab-icon-img { width: 22px; height: 22px; }
+    nav button .tab-icon { font-size: 1.12rem; height: 20px; width: 20px; }
+    .tab-icon-img { width: 20px; height: 20px; }
     .hud { padding: 12px 13px; }
     .hud-stat-value { font-size: 1.02rem; }
     .hud-stat-icon { font-size: 1rem; }
@@ -1152,11 +1188,12 @@
   @media (min-width: 700px) {
     body { padding-left: calc(28px + env(safe-area-inset-left)); padding-right: calc(28px + env(safe-area-inset-right)); }
     .view, .hud, .account-bar, nav, header { max-width: 640px; }
-    h1 { font-size: 1.7rem; }
+    .app-logo-img { width: 68px; height: 68px; }
+    .app-logo-text { font-size: 2.4rem; }
     .subtitle { font-size: .92rem; }
     nav button { font-size: .8rem; padding: 14px 6px 12px; }
-    nav button .tab-icon { font-size: 1.5rem; }
-    .tab-icon-img { width: 34px; height: 34px; }
+    nav button .tab-icon { font-size: 1.5rem; height: 30px; width: 30px; }
+    .tab-icon-img { width: 30px; height: 30px; }
     .hud { padding: 16px 20px; }
     .hud-stat-value { font-size: 1.3rem; }
     .hud-stat-icon { font-size: 1.3rem; }
@@ -1200,13 +1237,36 @@
     .practice-hero-img { width: 80px; height: 80px; }
     .mascot-fab { width: 54px; height: 54px; }
     nav button { padding: 7px 2px 6px; }
-    nav button .tab-icon { font-size: 1.05rem; }
-    .tab-icon-img { width: 22px; height: 22px; }
+    nav button .tab-icon { font-size: 1.05rem; height: 19px; width: 19px; }
+    .tab-icon-img { width: 19px; height: 19px; }
   }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
+
+<!-- SFONDI: video atmosferik, respekton "reduced motion" dhe kursen baterinë -->
+<div class="bg-video-wrap" id="bgVideoWrap">
+  <video class="bg-video" id="bgVideo" autoplay muted loop playsinline preload="auto"
+         poster="bg/bg-poster.jpg" aria-hidden="true">
+    <source src="bg/bg-video.mp4" type="video/mp4">
+  </video>
+  <div class="bg-video-overlay"></div>
+</div>
+<script>
+(function () {
+  var v = document.getElementById("bgVideo");
+  if (!v) return;
+  // Kursen të dhëna: nëse përdoruesi ka "Data Saver" të ndezur, mos e luaj videon
+  var conn = navigator.connection || navigator.webkitConnection;
+  if (conn && conn.saveData) { document.body.classList.add("bg-video-paused"); return; }
+  // Kursen baterinë: ndalo videon kur skeda është në sfond, rifillo kur kthehesh
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) v.pause(); else v.play().catch(function(){});
+  });
+  v.play().catch(function () {}); // disa shfletues kërkojnë nis eksplicite
+})();
+</script>
 
 <!-- MASKOTTI: URANI (Shqiponja) -->
 <div class="mascot-wrap" id="mascotWrap">
@@ -1227,12 +1287,14 @@
 </div>
 
 <header>
+  <div class="app-logo-row">
+    <img src="icons/icon-192.png" alt="Shkolla" class="app-logo-img">
+    <h1 class="app-logo-text">Shkolla</h1>
+  </div>
   <div class="header-row">
-    <h1>Shqip–Gjermanisht</h1>
     <div class="cefr-pill hidden" id="cefrPill">B1</div>
     <div class="prestige-pill hidden" id="prestigeBadge">🥉 Ishulli 2/10</div>
   </div>
-  <div class="subtitle">Fjalor &amp; përgatitje provimi</div>
 </header>
 
 <div class="hud">
