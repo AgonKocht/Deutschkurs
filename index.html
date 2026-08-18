@@ -493,7 +493,12 @@
   .sync-note { font-size: .76rem; color: var(--muted); text-align: center; margin-top: 14px; line-height: 1.5; font-weight: 600; }
 
   /* ---- badges / achievements ---- */
-  .badges-row { display: flex; gap: 7px; justify-content: center; flex-wrap: wrap; margin: 14px 0 0; }
+  .hud-prestige-row {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line);
+  }
+  .hud-prestige-img { width: 28px; height: 28px; object-fit: contain; filter: drop-shadow(0 0 8px var(--gold-glow)); }
+  .hud-prestige-text { font-size: .82rem; font-weight: 800; color: var(--ink); letter-spacing: .01em; }
 
   .answer-streak-fill {
     height: 100%; border-radius: var(--radius-pill); transition: width .4s cubic-bezier(.2,.8,.2,1);
@@ -512,15 +517,6 @@
   }
   .milestone-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
   .milestone-toast .flame { font-size: 1.4rem; animation: flicker 1s ease-in-out infinite; }
-  .badge {
-    width: 46px; height: 46px; border-radius: var(--radius-pill); display: flex; align-items: center; justify-content: center;
-    font-size: 1.2rem; background: var(--surface); border: 1px solid var(--line); opacity: .35; filter: grayscale(1);
-    transition: all .3s ease;
-  }
-  .badge.unlocked {
-    opacity: 1; filter: none; background: radial-gradient(circle at 30% 30%, #ffe08a, var(--gold));
-    box-shadow: 0 0 16px var(--gold-glow); animation: popIn .4s ease;
-  }
 
   /* ---- level-up overlay + confetti ---- */
   .levelup-overlay {
@@ -1135,7 +1131,6 @@
     .quiz-question { padding: 20px 16px; }
     .quiz-question .word { font-size: 1.35rem; }
     .quiz-option { padding: 13px 14px; font-size: .92rem; }
-    .badge { width: 40px; height: 40px; font-size: 1.05rem; }
     .practice-hero-img { width: 104px; height: 104px; }
     .practice-hero h2 { font-size: 1.18rem; }
     .practice-img-frame { height: 168px; }
@@ -1169,7 +1164,6 @@
     .card-word { font-size: 2rem; }
     .quiz-question .word { font-size: 1.8rem; }
     .quiz-option { padding: 17px 18px; font-size: 1.02rem; }
-    .badge { width: 52px; height: 52px; font-size: 1.35rem; }
     .exam-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     #wordList { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .word-item { margin-bottom: 0; }
@@ -1293,7 +1287,10 @@
     </div>
   </div>
 
-  <div class="badges-row" id="badgesRow"></div>
+  <div class="hud-prestige-row" id="hudPrestigeRow">
+    <img src="prestige/badge1-64.png" alt="" class="hud-prestige-img" id="hudPrestigeImg" onerror="this.style.display='none';">
+    <span class="hud-prestige-text" id="hudPrestigeText">Niveli 1</span>
+  </div>
 </div>
 
 <div class="account-bar">
@@ -3260,14 +3257,6 @@ function wordBuckets() {
 }
 let lastActiveDate = null;
 
-const BADGES = [
-  { id: "bronze", threshold: 50,   icon: "🥉", name: "Hapat e parë" },
-  { id: "silber", threshold: 200,  icon: "🥈", name: "Në rrugë të mirë" },
-  { id: "gold",   threshold: 500,  icon: "🥇", name: "I avancuar" },
-  { id: "platin", threshold: 1000, icon: "💎", name: "Kandidat për B1" },
-  { id: "meister",threshold: 2000, icon: "👑", name: "Gati për provim" }
-];
-
 function todayStr() { return new Date().toISOString().slice(0,10); }
 
 function touchStreak() {
@@ -3341,14 +3330,22 @@ function showLevelUp(level) {
   document.getElementById("btnCloseLevelUp").addEventListener("click", close);
 }
 
-function renderBadges() {
+function renderPrestigeHud() {
   ensureStats();
-  // Abzeichet mbeten të hapura përgjithmonë, edhe nëse pikët rikthehen te zero me prestigen
-  if (!stats.maxPointsEver || totalPoints > stats.maxPointsEver) stats.maxPointsEver = totalPoints;
-  const row = document.getElementById("badgesRow");
-  row.innerHTML = BADGES.map(b =>
-    `<div class="badge ${stats.maxPointsEver >= b.threshold ? "unlocked" : ""}" title="${esc(b.name)} (${b.threshold} pikë)">${b.icon}</div>`
-  ).join("");
+  if (typeof ensurePrestige === "function") ensurePrestige();
+  const level = Math.floor(totalPoints / 100) + 1;
+  const img = document.getElementById("hudPrestigeImg");
+  const txt = document.getElementById("hudPrestigeText");
+  if (!img || !txt) return;
+
+  const p = stats.prestige || 0;
+  if (p > 0 && typeof islandMedalImg === "function") {
+    img.src = islandMedalImg(p, 64);
+    img.style.display = "";
+  } else {
+    img.style.display = "none";
+  }
+  txt.textContent = "Niveli " + level + (p > 0 ? " · Ishulli " + (p + 1) : "");
 }
 
 function addPoints(n) {
@@ -3357,7 +3354,7 @@ function addPoints(n) {
   totalPoints += n;
   const newLevel = Math.floor(totalPoints / 100) + 1;
   renderPoints(from);
-  renderBadges();
+  renderPrestigeHud();
   touchStreak();
   ensureStats();
   stats.farmCoins = (stats.farmCoins || 0) + n;   // monedhat për fshatin rriten njësoj si pikët
@@ -3384,7 +3381,7 @@ function renderPoints(animateFrom) {
   }
   document.getElementById("levelBadge").textContent = "Niveli " + (Math.floor(totalPoints/100)+1);
   document.getElementById("levelProgressBar").style.width = (totalPoints % 100) + "%";
-  renderBadges();
+  renderPrestigeHud();
   renderStreak();
   renderHudFarmRow();
 }
@@ -5735,7 +5732,7 @@ function showGrandGift(score) {
         </div>
         <div class="grandgift-bonus">+500 pikë bonus 🎉</div>
         <div class="grandgift-real">
-          <div class="real-label">🎁 Mesazh personal nga Agoni</div>
+          <div class="real-label">🎁 Mesazh personal nga Urani</div>
           <div class="real-text">Kjo arritje meriton diçka reale, jo vetëm pikë. Kur të shohësh këtë mesazh, eja te unë — kam një kupon prej <strong>100€</strong> për ty, personalisht.</div>
         </div>
         <button class="btn btn-primary" id="btnCloseGrandGift" style="width:100%;padding:16px;font-size:1rem;margin-top:18px;">Faleminderit, Uran!</button>
@@ -7595,9 +7592,10 @@ function renderFarmScene() {
   const scene = document.getElementById("farmScene");
   if (!scene) return;
 
+  const mode = (!village3DFailed && village3DStarted) ? "3D" : "2D";
   const badge = built.length
-    ? `<div class="farm-stage-badge">${built.length} / ${FARM_ITEMS.length} ndërtime · rrotullo me gisht</div>`
-    : `<div class="farm-empty-badge">🏗️ Trualli të pret — blej ndërtimin e parë!</div>`;
+    ? `<div class="farm-stage-badge">${built.length} / ${FARM_ITEMS.length} ndërtime · ${mode}</div>`
+    : `<div class="farm-empty-badge">🏗️ Trualli të pret — blej ndërtimin e parë! (${mode})</div>`;
 
   // 1) Provo skenën 3D
   if (!village3DFailed && typeof window.initVillage3D === "function") {
@@ -7619,6 +7617,16 @@ function renderFarmScene() {
       let b = scene.querySelector(".farm-stage-badge, .farm-empty-badge");
       if (b) b.remove();
       scene.insertAdjacentHTML("beforeend", badge);
+      // Nëse modelet nuk u ngarkuan (p.sh. mungon dosja "models"),
+      // kalo automatikisht te skena 2D, që të mos mbetet ekrani bosh.
+      setTimeout(() => {
+        if (window.village3DError && !village3DFailed) {
+          village3DFailed = true;
+          village3DStarted = false;
+          console.warn("Kalohet te skena 2D:", window.village3DError);
+          renderFarmScene();
+        }
+      }, 1500);
       return;
     }
   }
@@ -7698,7 +7706,7 @@ function doPrestige() {
   stats.farmCoins = 0;
   stats.farmBuilt = {};
   renderPoints(0);
-  renderBadges();
+  renderPrestigeHud();
   queueSave();
 
   const overlay = document.createElement("div");
@@ -7921,13 +7929,13 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 // Harta: ID e artikullit -> modeli 3D, pozicioni në rrjet, lartësia (për kullat me kate)
 const V3_MAP = {
-  house1:  { model: "tower-square-base",           x: -2,   z: -1,   y: 0    },
-  house2:  { model: "tower-square-mid-windows",    x: -2,   z: -1,   y: 1    },
-  house3:  { model: "tower-square-top",            x: -2,   z: -1,   y: 2    },
-  house4:  { model: "tower-square-top-roof-high",  x: -2,   z: -1,   y: 3    },
-  field1:  { model: "tower-hexagon-base",          x: 2.5,  z: -1.5, y: 0    },
-  field2:  { model: "tower-hexagon-mid",           x: 2.5,  z: -1.5, y: 1    },
-  field3:  { model: "tower-hexagon-roof",          x: 2.5,  z: -1.5, y: 2    },
+  house1:  { model: "tower-square-base",           x: -2,   z: -1,   y: 0     },
+  house2:  { model: "tower-square-mid-windows",    x: -2,   z: -1,   y: 1.010 },
+  house3:  { model: "tower-square-top",            x: -2,   z: -1,   y: 2.020 },
+  house4:  { model: "tower-square-top-roof-high",  x: -2,   z: -1,   y: 2.320 },
+  field1:  { model: "tower-hexagon-base",          x: 2.5,  z: -1.5, y: 0     },
+  field2:  { model: "tower-hexagon-mid",           x: 2.5,  z: -1.5, y: 1.310 },
+  field3:  { model: "tower-hexagon-roof",          x: 2.5,  z: -1.5, y: 1.770 },
   barn:    { model: "gate",                        x: 0,    z: 1.6,  y: 0    },
   silo:    { model: "tower-square-arch",           x: -3.6, z: 1,    y: 0    },
   well:    { model: "wall-narrow-stairs",          x: 1.2,  z: 1.6,  y: 0    },
@@ -7963,6 +7971,7 @@ function setupVillage3D(container) {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;   // ngjyrat e vërteta të teksturës
   container.innerHTML = "";
   container.appendChild(renderer.domElement);
   renderer.domElement.style.width = "100%";
@@ -7978,7 +7987,8 @@ function setupVillage3D(container) {
   sun.shadow.camera.left = -10; sun.shadow.camera.right = 10;
   sun.shadow.camera.top = 10; sun.shadow.camera.bottom = -10;
   scene.add(sun);
-  scene.add(new THREE.HemisphereLight(0xbfe9ff, 0x6a9b4a, 1.1));
+  scene.add(new THREE.HemisphereLight(0xbfe9ff, 0x6a9b4a, 1.5));
+  scene.add(new THREE.AmbientLight(0xffffff, 0.35));
 
   // Toka
   const groundMat = new THREE.MeshLambertMaterial({ color: 0x74b356 });
@@ -8030,9 +8040,9 @@ function setupVillage3D(container) {
     requestAnimationFrame(animate);
     if (!v3) return;
     if (autoRotate && !dragging) v3.angle += 0.0016;
-    const r = 11.5;
-    v3.camera.position.set(Math.sin(v3.angle) * r, 7.4, Math.cos(v3.angle) * r);
-    v3.camera.lookAt(0, 1.2, 0);
+    const r = 13.5;
+    v3.camera.position.set(Math.sin(v3.angle) * r, 9.0, Math.cos(v3.angle) * r);
+    v3.camera.lookAt(0, 1.6, 0);
     v3.renderer.render(v3.scene, v3.camera);
   }
   animate();
@@ -8054,7 +8064,23 @@ function loadModel(name) {
   return new Promise((resolve, reject) => {
     v3.loader.load("models/" + name + ".glb", gltf => {
       const obj = gltf.scene;
-      obj.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+      obj.traverse(o => {
+        if (!o.isMesh) return;
+        o.castShadow = true; o.receiveShadow = true;
+        const mats = Array.isArray(o.material) ? o.material : [o.material];
+        mats.forEach(m => {
+          if (!m) return;
+          if (m.map) {
+            m.map.colorSpace = THREE.SRGBColorSpace;
+            m.map.magFilter = THREE.NearestFilter;   // paleta e Kenney-t: pa turbullim
+            m.map.minFilter = THREE.LinearMipmapLinearFilter;
+            m.map.needsUpdate = true;
+          }
+          m.metalness = 0;
+          m.roughness = 0.85;
+          m.needsUpdate = true;
+        });
+      });
       v3.cache[name] = obj;
       resolve(obj.clone(true));
     }, undefined, reject);
@@ -8079,8 +8105,10 @@ async function updateVillage3D(builtIds) {
     const cfg = V3_MAP[id];
     try {
       const obj = await loadModel(cfg.model);
-      obj.position.set(cfg.x, cfg.y, cfg.z);
+      const S = 1.7;                       // modelet janë ~1 njësi -> i zmadhojmë
+      obj.position.set(cfg.x * S, cfg.y * S, cfg.z * S);
       if (cfg.rot) obj.rotation.y = cfg.rot;
+      obj.userData.finalScale = S;
       obj.scale.setScalar(0.001);
       v3.group.add(obj);
       v3.placed[id] = obj;
@@ -8089,11 +8117,12 @@ async function updateVillage3D(builtIds) {
       (function grow() {
         const p = Math.min(1, (performance.now() - t0) / 420);
         const e = 1 - Math.pow(1 - p, 3);
-        obj.scale.setScalar(e);
+        obj.scale.setScalar(e * (obj.userData.finalScale || 1));
         if (p < 1) requestAnimationFrame(grow);
       })();
     } catch (e) {
       console.warn("Modeli nuk u ngarkua:", cfg.model, e);
+      window.village3DError = "Modeli '" + cfg.model + "' nuk u ngarkua";
     }
   }
 }
